@@ -42,7 +42,7 @@ src/
 - **Professional placeholder images** for missing artwork
 
 ### Navigation (Navbar.jsx)
-- **Logo**: Art Gallery with camera icon
+- **Logo**: Sateesh's Sketch Book with camera icon
 - **Navigation items**: Home, About, Contact
 - **Active state indicators** with underlines
 - **Mobile responsive** with collapsible menu

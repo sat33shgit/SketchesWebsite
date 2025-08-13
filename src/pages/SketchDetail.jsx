@@ -40,7 +40,7 @@ const SketchDetail = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Sketch not found</h1>
           <Link to="/" className="text-blue-600 hover:text-blue-800">
-            Return to Gallery
+            Return to Sketch Book
           </Link>
         </div>
       </div>
