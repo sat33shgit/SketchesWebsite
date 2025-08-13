@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { sketches } from '../data/sketches'
+import { getAssetPath } from '../utils/paths'
 
 const Gallery = () => {
   return (
@@ -26,7 +27,7 @@ const Gallery = () => {
               <div className="aspect-square bg-gray-100 rounded-t-lg overflow-hidden">
                 {sketch.imagePath ? (
                   <img
-                    src={sketch.imagePath}
+                    src={getAssetPath(sketch.imagePath)}
                     alt={sketch.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {

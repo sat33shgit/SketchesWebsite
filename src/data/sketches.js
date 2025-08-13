@@ -4,7 +4,7 @@ export const sketches = [
     title: "Cute Girl",
     description: "Very cute girl isn't it?? Well, after spending long time i could complete this sketch at last. It took around 48hrs to complete it. Thanks to my friend for giving me the drawing book. This is the first sketch from that book.",
     completedDate: "11 September 2010",
-    imagePath: "/images/Cute-Girl.jpg",
+    imagePath: "images/Cute-Girl.jpg",
     category: "Portrait"
   },
   {

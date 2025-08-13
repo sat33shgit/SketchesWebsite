@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState } from 'react'
 import { getSketchById } from '../data/sketches'
+import { getAssetPath } from '../utils/paths'
 
 const SketchDetail = () => {
   const { id } = useParams()
@@ -73,7 +74,7 @@ const SketchDetail = () => {
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
               {sketch.imagePath ? (
                 <img
-                  src={sketch.imagePath}
+                  src={getAssetPath(sketch.imagePath)}
                   alt={sketch.title}
                   className="w-full h-full object-cover"
                   onError={(e) => {
