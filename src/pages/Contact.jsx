@@ -125,8 +125,8 @@ const Contact = () => {
                   </svg>
                   <div>
                     <p className="font-medium text-gray-900">Email</p>
-                    <a href="mailto:sateesh.art@email.com" className="text-blue-600 hover:text-blue-800">
-                      sateesh.art@email.com
+                    <a href="mailto:bsateeshk@gmail.com" className="text-blue-600 hover:text-blue-800">
+                      bsateeshk@gmail.com
                     </a>
                   </div>
                 </div>
@@ -138,57 +138,10 @@ const Contact = () => {
                   </svg>
                   <div>
                     <p className="font-medium text-gray-900">Location</p>
-                    <p className="text-gray-600">Bangalore, India</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3">
-                  <svg className="w-5 h-5 text-blue-600 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <div>
-                    <p className="font-medium text-gray-900">Response Time</p>
-                    <p className="text-gray-600">Usually within 24 hours</p>
+                    <p className="text-gray-600">Victoria, Canada</p>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Services */}
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Services</h2>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-center space-x-2">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span>Custom Portrait Commissions</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span>Landscape Drawings</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span>Still Life Compositions</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span>Art Consultation</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  <span>Workshops & Tutorials</span>
-                </li>
-              </ul>
             </div>
 
             {/* Social Media */}
@@ -196,7 +149,7 @@ const Contact = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Follow My Work</h2>
               <div className="flex space-x-4">
                 <a
-                  href="https://www.facebook.com/bsateeshk"
+                  href="https://www.facebook.com/media/set/?set=a.367537920160&type=3"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors"

@@ -22,7 +22,7 @@ const About = () => {
                 />
               </div>
               <div className="text-center lg:text-left mt-6">
-                <h2 className="text-2xl font-bold text-gray-900">Sateesh</h2>
+                <h2 className="text-2xl font-bold text-gray-900">Sateesh Kumar Boggarapu</h2>
                 <p className="text-gray-600 mt-1">Pencil Sketch Artist</p>
               </div>
             </div>
@@ -33,9 +33,9 @@ const About = () => {
             {/* Bio */}
             <div>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Sateesh is a talented pencil sketch artist based in Bangalore, India. With a passion for capturing the 
-                essence of his subjects, Sateesh creates detailed and lifelike portraits, landscapes, and still life drawings. 
-                His work showcases a deep understanding of light, shadow, and texture, bringing his art to life on paper.
+                Sateesh is a talented pencil sketch artist based in Victoria, Canada, originally from India. With a passion for capturing the 
+                essence of his subjects, Sateesh creates detailed and lifelike portraits, and still life drawings. 
+                His work showcases a deep understanding of light, shadow, and texture, bringing his art to life on paper using pencil(s).
               </p>
             </div>
 
@@ -63,11 +63,8 @@ const About = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Contact</h3>
               <p className="text-gray-700 leading-relaxed mb-4">
                 For inquiries, commissions, or collaborations, please reach out to me at{' '}
-                <a href="mailto:sateesh.art@email.com" className="text-blue-600 hover:text-blue-800">
-                  sateesh.art@email.com
-                </a>. You can also follow my work on social media{' '}
-                <a href="#" className="text-blue-600 hover:text-blue-800">
-                  @sateesh_art
+                <a href="mailto:bsateeshk@gmail.com" className="text-blue-600 hover:text-blue-800">
+                  bsateeshk@gmail.com
                 </a>.
               </p>
             </div>
@@ -86,7 +83,7 @@ const About = () => {
                 </svg>
               </a>
               <a
-                href="https://www.facebook.com/bsateeshk"
+                href="https://www.facebook.com/media/set/?set=a.367537920160&type=3"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-blue-600 transition-colors"

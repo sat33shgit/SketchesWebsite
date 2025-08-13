@@ -62,7 +62,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {/* Facebook Link */}
             <a
-              href="https://www.facebook.com/bsateeshk"
+              href="https://www.facebook.com/media/set/?set=a.367537920160&type=3"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-blue-600 transition-colors"
@@ -134,7 +134,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-6 px-3 py-2 border-t border-gray-100 mt-2 pt-3">
             <span className="text-sm font-medium text-gray-500">Follow:</span>
             <a
-              href="https://www.facebook.com/bsateeshk"
+              href="https://www.facebook.com/media/set/?set=a.367537920160&type=3"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-blue-600 transition-colors"
