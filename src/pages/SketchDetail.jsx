@@ -1,10 +1,11 @@
-import { useParams, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { getSketchById } from '../data/sketches'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useCallback } from 'react'
+import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 
 const SketchDetail = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
   const sketch = getSketchById(id)
   const [newComment, setNewComment] = useState('')
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -15,6 +16,23 @@ const SketchDetail = () => {
   
   // Comments data - initially empty, real comments would come from a backend
   const [comments] = useState([])
+
+  // Navigation helpers
+  const currentIndex = sketches.findIndex(s => s.id === parseInt(id))
+  const previousSketch = currentIndex > 0 ? sketches[currentIndex - 1] : null
+  const nextSketch = currentIndex < sketches.length - 1 ? sketches[currentIndex + 1] : null
+
+  const goToPrevious = () => {
+    if (previousSketch) {
+      navigate(`/sketch/${previousSketch.id}`)
+    }
+  }
+
+  const goToNext = () => {
+    if (nextSketch) {
+      navigate(`/sketch/${nextSketch.id}`)
+    }
+  }
 
   if (!sketch) {
     return (
@@ -45,18 +63,18 @@ const SketchDetail = () => {
     document.body.style.overflow = 'hidden' // Prevent background scrolling
   }
 
-  const closeFullscreen = () => {
+  const closeFullscreen = useCallback(() => {
     setIsFullscreen(false)
     setZoomLevel(1)
     setImagePosition({ x: 0, y: 0 })
     document.body.style.overflow = 'unset' // Restore scrolling
-  }
+  }, [])
 
-  const zoomIn = () => {
+  const zoomIn = useCallback(() => {
     setZoomLevel(prev => Math.min(prev * 1.5, 5)) // Max zoom 5x
-  }
+  }, [])
 
-  const zoomOut = () => {
+  const zoomOut = useCallback(() => {
     setZoomLevel(prev => {
       const newZoom = Math.max(prev / 1.5, 0.5) // Min zoom 0.5x
       if (newZoom === 1) {
@@ -64,12 +82,12 @@ const SketchDetail = () => {
       }
       return newZoom
     })
-  }
+  }, [])
 
-  const resetZoom = () => {
+  const resetZoom = useCallback(() => {
     setZoomLevel(1)
     setImagePosition({ x: 0, y: 0 })
-  }
+  }, [])
 
   const handleMouseDown = (e) => {
     if (zoomLevel > 1) {
@@ -103,7 +121,7 @@ const SketchDetail = () => {
     }
   }
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = useCallback((e) => {
     if (e.key === 'Escape') {
       closeFullscreen()
     } else if (e.key === '+' || e.key === '=') {
@@ -112,8 +130,22 @@ const SketchDetail = () => {
       zoomOut()
     } else if (e.key === '0') {
       resetZoom()
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault()
+      const currentIdx = sketches.findIndex(s => s.id === parseInt(id))
+      const prevSketch = currentIdx > 0 ? sketches[currentIdx - 1] : null
+      if (prevSketch) {
+        navigate(`/sketch/${prevSketch.id}`)
+      }
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault()
+      const currentIdx = sketches.findIndex(s => s.id === parseInt(id))
+      const nextSk = currentIdx < sketches.length - 1 ? sketches[currentIdx + 1] : null
+      if (nextSk) {
+        navigate(`/sketch/${nextSk.id}`)
+      }
     }
-  }
+  }, [id, navigate, closeFullscreen, zoomIn, zoomOut, resetZoom])
 
   // Add event listeners
   useEffect(() => {
@@ -128,7 +160,25 @@ const SketchDetail = () => {
         window.removeEventListener('mouseup', handleMouseUp)
       }
     }
-  }, [isFullscreen, isDragging, dragStart, imagePosition])
+  }, [isFullscreen, handleKeyDown, isDragging, dragStart, imagePosition])
+
+  // Add navigation keyboard shortcuts when not in fullscreen
+  useEffect(() => {
+    if (!isFullscreen) {
+      const handleGlobalKeyDown = (e) => {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault()
+          goToPrevious()
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault()
+          goToNext()
+        }
+      }
+
+      window.addEventListener('keydown', handleGlobalKeyDown)
+      return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+    }
+  }, [isFullscreen, currentIndex])
 
   return (
     <div className="min-h-screen bg-white">
@@ -142,7 +192,7 @@ const SketchDetail = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image */}
-          <div className="lg:sticky lg:top-8">
+          <div className="lg:sticky lg:top-8 relative">
             <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square relative group">
               {sketch.imagePath ? (
                 <>
@@ -176,6 +226,35 @@ const SketchDetail = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Navigation arrows */}
+            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 pointer-events-none">
+              {/* Previous arrow */}
+              {previousSketch && (
+                <button
+                  onClick={goToPrevious}
+                  className="pointer-events-auto bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200 transform hover:scale-110"
+                  title={`Previous: ${previousSketch.title}`}
+                >
+                  <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
+              
+              {/* Next arrow */}
+              {nextSketch && (
+                <button
+                  onClick={goToNext}
+                  className="pointer-events-auto bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200 transform hover:scale-110 ml-auto"
+                  title={`Next: ${nextSketch.title}`}
+                >
+                  <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Content */}
@@ -193,6 +272,41 @@ const SketchDetail = () => {
               <p className="text-gray-700 leading-relaxed">
                 {sketch.description}
               </p>
+            </div>
+
+            {/* Navigation Info */}
+            <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-6">
+              <div className="flex items-center space-x-2">
+                {previousSketch ? (
+                  <Link to={`/sketch/${previousSketch.id}`} className="flex items-center space-x-2 hover:text-gray-700 transition-colors">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>{previousSketch.title}</span>
+                  </Link>
+                ) : (
+                  <span className="text-gray-300">First sketch</span>
+                )}
+              </div>
+              
+              <div className="flex items-center space-x-1 text-xs bg-gray-50 px-3 py-1 rounded-full">
+                <span>{currentIndex + 1} of {sketches.length}</span>
+                <span className="text-gray-400">•</span>
+                <span>Use ← → keys to navigate</span>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                {nextSketch ? (
+                  <Link to={`/sketch/${nextSketch.id}`} className="flex items-center space-x-2 hover:text-gray-700 transition-colors">
+                    <span>{nextSketch.title}</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                ) : (
+                  <span className="text-gray-300">Last sketch</span>
+                )}
+              </div>
             </div>
 
             {/* Comments Section */}
@@ -356,6 +470,10 @@ const SketchDetail = () => {
               <div className="mt-1">
                 <kbd className="bg-gray-700 px-2 py-1 rounded text-xs">0</kbd> to reset
               </div>
+              <div className="mt-1">
+                <kbd className="bg-gray-700 px-2 py-1 rounded text-xs">←</kbd> / 
+                <kbd className="bg-gray-700 px-2 py-1 rounded text-xs ml-1">→</kbd> to navigate
+              </div>
             </div>
 
             {/* Image Container */}
@@ -376,6 +494,35 @@ const SketchDetail = () => {
                 onMouseDown={handleMouseDown}
                 draggable={false}
               />
+            </div>
+
+            {/* Navigation arrows in fullscreen */}
+            <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-8 pointer-events-none z-10">
+              {/* Previous arrow */}
+              {previousSketch && (
+                <button
+                  onClick={goToPrevious}
+                  className="pointer-events-auto bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full p-3 text-white transition-all duration-200 transform hover:scale-110"
+                  title={`Previous: ${previousSketch.title}`}
+                >
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              )}
+              
+              {/* Next arrow */}
+              {nextSketch && (
+                <button
+                  onClick={goToNext}
+                  className="pointer-events-auto bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full p-3 text-white transition-all duration-200 transform hover:scale-110 ml-auto"
+                  title={`Next: ${nextSketch.title}`}
+                >
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
             </div>
 
             {/* Click anywhere to close overlay (only when zoom is 1x) */}
