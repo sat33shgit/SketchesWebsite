@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { getSketchById } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 
@@ -7,34 +7,14 @@ const SketchDetail = () => {
   const { id } = useParams()
   const sketch = getSketchById(id)
   const [newComment, setNewComment] = useState('')
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [zoomLevel, setZoomLevel] = useState(1)
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   
-  // Mock comments data - in a real app, this would come from a backend
-  const [comments] = useState([
-    {
-      id: 1,
-      author: "Sophia Clark",
-      avatar: "https://via.placeholder.com/40",
-      content: "Absolutely stunning work! The level of detail is incredible, and the way you've captured the city's energy is truly remarkable.",
-      timeAgo: "2 days ago",
-      likes: 5
-    },
-    {
-      id: 2,
-      author: "Alex Carter",
-      avatar: "https://via.placeholder.com/40",
-      content: "I love the contrast between the light and shadow. It really brings the city to life. The perspective is also very well done.",
-      timeAgo: "3 days ago",
-      likes: 3
-    },
-    {
-      id: 3,
-      author: "Olivia Bennett",
-      avatar: "https://via.placeholder.com/40",
-      content: "This is one of the best pencil sketches I've ever seen. The detail in the buildings and the sense of movement are just breathtaking. You're incredibly talented!",
-      timeAgo: "4 days ago",
-      likes: 8
-    }
-  ])
+  // Comments data - initially empty, real comments would come from a backend
+  const [comments] = useState([])
 
   if (!sketch) {
     return (
@@ -58,6 +38,98 @@ const SketchDetail = () => {
     }
   }
 
+  const openFullscreen = () => {
+    setIsFullscreen(true)
+    setZoomLevel(1)
+    setImagePosition({ x: 0, y: 0 })
+    document.body.style.overflow = 'hidden' // Prevent background scrolling
+  }
+
+  const closeFullscreen = () => {
+    setIsFullscreen(false)
+    setZoomLevel(1)
+    setImagePosition({ x: 0, y: 0 })
+    document.body.style.overflow = 'unset' // Restore scrolling
+  }
+
+  const zoomIn = () => {
+    setZoomLevel(prev => Math.min(prev * 1.5, 5)) // Max zoom 5x
+  }
+
+  const zoomOut = () => {
+    setZoomLevel(prev => {
+      const newZoom = Math.max(prev / 1.5, 0.5) // Min zoom 0.5x
+      if (newZoom === 1) {
+        setImagePosition({ x: 0, y: 0 }) // Reset position when back to 1x
+      }
+      return newZoom
+    })
+  }
+
+  const resetZoom = () => {
+    setZoomLevel(1)
+    setImagePosition({ x: 0, y: 0 })
+  }
+
+  const handleMouseDown = (e) => {
+    if (zoomLevel > 1) {
+      setIsDragging(true)
+      setDragStart({
+        x: e.clientX - imagePosition.x,
+        y: e.clientY - imagePosition.y
+      })
+    }
+  }
+
+  const handleMouseMove = (e) => {
+    if (isDragging && zoomLevel > 1) {
+      setImagePosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  const handleWheel = (e) => {
+    e.preventDefault()
+    if (e.deltaY < 0) {
+      zoomIn()
+    } else {
+      zoomOut()
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      closeFullscreen()
+    } else if (e.key === '+' || e.key === '=') {
+      zoomIn()
+    } else if (e.key === '-') {
+      zoomOut()
+    } else if (e.key === '0') {
+      resetZoom()
+    }
+  }
+
+  // Add event listeners
+  useEffect(() => {
+    if (isFullscreen) {
+      window.addEventListener('keydown', handleKeyDown)
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+      
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown)
+        window.removeEventListener('mousemove', handleMouseMove)
+        window.removeEventListener('mouseup', handleMouseUp)
+      }
+    }
+  }, [isFullscreen, isDragging, dragStart, imagePosition])
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -71,17 +143,28 @@ const SketchDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image */}
           <div className="lg:sticky lg:top-8">
-            <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square">
+            <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square relative group">
               {sketch.imagePath ? (
-                <img
-                  src={getAssetPath(sketch.imagePath)}
-                  alt={sketch.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
+                <>
+                  <img
+                    src={getAssetPath(sketch.imagePath)}
+                    alt={sketch.title}
+                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={openFullscreen}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  {/* Fullscreen indicator */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center cursor-pointer" onClick={openFullscreen}>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white bg-opacity-90 rounded-full p-3">
+                      <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                      </svg>
+                    </div>
+                  </div>
+                </>
               ) : null}
               <div className="w-full h-full flex items-center justify-center bg-gray-100" style={{ display: sketch.imagePath ? 'none' : 'flex' }}>
                 <div className="text-center">
@@ -118,31 +201,37 @@ const SketchDetail = () => {
               
               {/* Comments List */}
               <div className="space-y-6 mb-8">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="flex space-x-3">
-                    <img
-                      src={comment.avatar}
-                      alt={comment.author}
-                      className="w-10 h-10 rounded-full bg-gray-200"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h4 className="text-sm font-semibold text-gray-900">{comment.author}</h4>
-                        <span className="text-xs text-gray-500">{comment.timeAgo}</span>
-                      </div>
-                      <p className="text-sm text-gray-700 mb-2">{comment.content}</p>
-                      <div className="flex items-center space-x-4 text-xs text-gray-500">
-                        <button className="flex items-center space-x-1 hover:text-gray-700">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                          </svg>
-                          <span>{comment.likes}</span>
-                        </button>
-                        <button className="hover:text-gray-700">Reply</button>
+                {comments.length > 0 ? (
+                  comments.map((comment) => (
+                    <div key={comment.id} className="flex space-x-3">
+                      <img
+                        src={comment.avatar}
+                        alt={comment.author}
+                        className="w-10 h-10 rounded-full bg-gray-200"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <h4 className="text-sm font-semibold text-gray-900">{comment.author}</h4>
+                          <span className="text-xs text-gray-500">{comment.timeAgo}</span>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-2">{comment.content}</p>
+                        <div className="flex items-center space-x-4 text-xs text-gray-500">
+                          <button className="flex items-center space-x-1 hover:text-gray-700">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                            <span>{comment.likes}</span>
+                          </button>
+                          <button className="hover:text-gray-700">Reply</button>
+                        </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 text-sm">No comments yet. Be the first to share your thoughts!</p>
                   </div>
-                ))}
+                )}
               </div>
 
               {/* Add Comment Form */}
@@ -176,6 +265,129 @@ const SketchDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* Fullscreen Modal */}
+        {isFullscreen && sketch.imagePath && (
+          <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center">
+            {/* Close button */}
+            <button
+              onClick={closeFullscreen}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+              aria-label="Close fullscreen view"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Minimize button */}
+            <button
+              onClick={closeFullscreen}
+              className="absolute top-4 left-4 text-white hover:text-gray-300 transition-colors z-10 flex items-center space-x-2"
+              aria-label="Exit fullscreen view"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M15 9v-4.5M15 9h4.5M15 9l5.25-5.25M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 15v4.5M15 15h4.5m0 0l5.25 5.25" />
+              </svg>
+              <span className="text-sm">Exit Fullscreen</span>
+            </button>
+
+            {/* Zoom Controls */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 flex items-center space-x-2 bg-black bg-opacity-50 rounded-lg p-2">
+              <button
+                onClick={zoomOut}
+                disabled={zoomLevel <= 0.5}
+                className="text-white hover:text-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors p-1"
+                aria-label="Zoom out"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+                </svg>
+              </button>
+              
+              <div className="text-white text-sm font-medium min-w-[60px] text-center">
+                {Math.round(zoomLevel * 100)}%
+              </div>
+              
+              <button
+                onClick={zoomIn}
+                disabled={zoomLevel >= 5}
+                className="text-white hover:text-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors p-1"
+                aria-label="Zoom in"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                </svg>
+              </button>
+
+              <div className="w-px h-6 bg-gray-400 mx-1"></div>
+
+              <button
+                onClick={resetZoom}
+                className="text-white hover:text-gray-300 transition-colors p-1 text-xs"
+                aria-label="Reset zoom"
+              >
+                1:1
+              </button>
+            </div>
+
+            {/* Image info overlay */}
+            <div className="absolute bottom-4 left-4 text-white z-10">
+              <h3 className="text-xl font-semibold mb-1">{sketch.title}</h3>
+              <p className="text-sm text-gray-300">
+                Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+              {zoomLevel > 1 && (
+                <p className="text-xs text-gray-400 mt-1">Click and drag to pan around</p>
+              )}
+            </div>
+
+            {/* Help text */}
+            <div className="absolute bottom-4 right-4 text-gray-400 text-sm z-10 text-right">
+              <div>Press <kbd className="bg-gray-700 px-2 py-1 rounded text-xs">Esc</kbd> to exit</div>
+              <div className="mt-1">
+                <kbd className="bg-gray-700 px-2 py-1 rounded text-xs">+</kbd> / 
+                <kbd className="bg-gray-700 px-2 py-1 rounded text-xs ml-1">-</kbd> to zoom
+              </div>
+              <div className="mt-1">
+                <kbd className="bg-gray-700 px-2 py-1 rounded text-xs">0</kbd> to reset
+              </div>
+            </div>
+
+            {/* Image Container */}
+            <div 
+              className="w-full h-full flex items-center justify-center overflow-hidden"
+              onWheel={handleWheel}
+            >
+              <img
+                src={getAssetPath(sketch.imagePath)}
+                alt={sketch.title}
+                className={`transition-transform duration-200 ${zoomLevel > 1 ? 'cursor-grab' : 'cursor-pointer'} ${isDragging ? 'cursor-grabbing' : ''}`}
+                style={{
+                  transform: `scale(${zoomLevel}) translate(${imagePosition.x / zoomLevel}px, ${imagePosition.y / zoomLevel}px)`,
+                  maxWidth: zoomLevel === 1 ? '90%' : 'none',
+                  maxHeight: zoomLevel === 1 ? '90%' : 'none',
+                }}
+                onClick={zoomLevel === 1 ? closeFullscreen : undefined}
+                onMouseDown={handleMouseDown}
+                draggable={false}
+              />
+            </div>
+
+            {/* Click anywhere to close overlay (only when zoom is 1x) */}
+            {zoomLevel === 1 && (
+              <div 
+                className="absolute inset-0 cursor-pointer"
+                onClick={closeFullscreen}
+                aria-label="Click to close fullscreen view"
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
