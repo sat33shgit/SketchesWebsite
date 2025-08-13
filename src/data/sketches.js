@@ -1,10 +1,10 @@
 export const sketches = [
   {
     id: 1,
-    title: "Portrait of a Woman",
-    description: "A detailed portrait capturing the essence and grace of femininity through careful shading and line work.",
-    completedDate: "2023-05-15",
-    imagePath: "/images/portrait-woman.jpg",
+    title: "Cute Girl",
+    description: "Very cute girl isn't it?? Well, after spending long time i could complete this sketch at last. It took around 48hrs to complete it. Thanks to my friend for giving me the drawing book. This is the first sketch from that book.",
+    completedDate: "11 September 2010",
+    imagePath: "/images/Cute-Girl.jpg",
     category: "Portrait"
   },
   {
