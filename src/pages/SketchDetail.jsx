@@ -7,15 +7,15 @@ const SketchDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const sketch = getSketchById(id)
-  const [newComment, setNewComment] = useState('')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   
-  // Comments data - initially empty, real comments would come from a backend
-  const [comments] = useState([])
+  // Comments functionality disabled for now
+  // const [comments] = useState([])
+  // const [newComment, setNewComment] = useState('')
 
   // Navigation helpers
   const currentIndex = sketches.findIndex(s => s.id === parseInt(id))
@@ -47,14 +47,14 @@ const SketchDetail = () => {
     )
   }
 
-  const handleSubmitComment = (e) => {
-    e.preventDefault()
-    if (newComment.trim()) {
-      // In a real app, this would send the comment to a backend
-      console.log('New comment:', newComment)
-      setNewComment('')
-    }
-  }
+  // Comments functionality disabled for now
+  // const handleSubmitComment = (e) => {
+  //   e.preventDefault()
+  //   if (newComment.trim()) {
+  //     console.log('New comment:', newComment)
+  //     setNewComment('')
+  //   }
+  // }
 
   const openFullscreen = () => {
     setIsFullscreen(true)
@@ -309,74 +309,15 @@ const SketchDetail = () => {
               </div>
             </div>
 
-            {/* Comments Section */}
+            {/* Comments Section - Disabled */}
+            {/* 
             <div className="border-t border-gray-200 pt-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Comments</h2>
-              
-              {/* Comments List */}
-              <div className="space-y-6 mb-8">
-                {comments.length > 0 ? (
-                  comments.map((comment) => (
-                    <div key={comment.id} className="flex space-x-3">
-                      <img
-                        src={comment.avatar}
-                        alt={comment.author}
-                        className="w-10 h-10 rounded-full bg-gray-200"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="text-sm font-semibold text-gray-900">{comment.author}</h4>
-                          <span className="text-xs text-gray-500">{comment.timeAgo}</span>
-                        </div>
-                        <p className="text-sm text-gray-700 mb-2">{comment.content}</p>
-                        <div className="flex items-center space-x-4 text-xs text-gray-500">
-                          <button className="flex items-center space-x-1 hover:text-gray-700">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                            </svg>
-                            <span>{comment.likes}</span>
-                          </button>
-                          <button className="hover:text-gray-700">Reply</button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500 text-sm">No comments yet. Be the first to share your thoughts!</p>
-                  </div>
-                )}
+              <div className="text-center py-8">
+                <p className="text-gray-500 text-sm">Comments are currently disabled.</p>
               </div>
-
-              {/* Add Comment Form */}
-              <form onSubmit={handleSubmitComment} className="space-y-4">
-                <div className="flex space-x-3">
-                  <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <textarea
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Add a comment..."
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={!newComment.trim()}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Post
-                  </button>
-                </div>
-              </form>
             </div>
+            */}
           </div>
         </div>
 
