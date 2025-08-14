@@ -1,4 +1,4 @@
-# Pencil Sketches Website
+npm run dev# Pencil Sketches Website
 
 A modern, responsive website showcasing pencil sketch artwork by Sateesh, built with React, Vite, and Tailwind CSS.
 
