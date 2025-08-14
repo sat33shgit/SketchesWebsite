@@ -15,10 +15,11 @@ const About = () => {
             <div className="sticky top-8">
               <div className="w-64 h-64 mx-auto lg:mx-0 rounded-full overflow-hidden bg-gray-200">
                 <img
-                  src={getAssetPath('/images/sateesh-profile.jpg')}
+                  src="/SketchesWebsite/images/sateesh-profile.jpg"
                   alt="Sateesh"
                   className="w-full h-full object-cover"
                   onError={(e) => {
+                    console.log('Image failed to load:', e.target.src);
                     e.target.src = "https://via.placeholder.com/256x256/374151/ffffff?text=Sateesh"
                   }}
                 />
