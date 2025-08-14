@@ -1,7 +1,7 @@
 export const sketches = [
   {
     id: 11,
-    title: "Oliver Solomon with Swapna",
+    title: "Oliver Solomon (Son) with Swapna",
     description: "Privileged to do the sketch of my Son, Oliver Solomon, with his mother, Swapna. One of the complex work (two faces) I have done. It took 84hrs in the span of 5.5 months.",
     completedDate: "2020-07-27",
     imagePath: "/images/OliverWithSwapna.jpg",
@@ -9,7 +9,7 @@ export const sketches = [
   },
   {
     id: 12,
-    title: "Oliver Solomon with Sateesh",
+    title: "Oliver Solomon (Son) with Sateesh",
     description: "Privileged to do the sketch of my Son, Oliver Solomon, with me. He was 2 months old when I took a selfie with him. \nMy first sketch of my own portrait. It took 48hrs time to complete in the span of 4 months.",
     completedDate: "2020-06-21",
     imagePath: "/images/OliverWithSateesh.jpg",
@@ -17,8 +17,8 @@ export const sketches = [
   },
   {
     id: 10,
-    title: "SuryaKumari",
-    description: "Done this sketch of cute girl, Juliana, a church member in Dublin. Took 76 hrs to complete it and worked for around 4 months. The hair was the complex part of the pic.",
+    title: "Boggarapu Surya Kumari (Mother)",
+    description: "I was honored to create a sketch of my mother from one of her pictures from the 1980s and gave it to her as a gift on her 60th birthday. It took me 45hrs to complete it in a span of 2months 10days.",
     completedDate: "2018-11-25",
     imagePath: "/images/SuryaKumari.jpg",
     category: "Mother"
@@ -41,7 +41,7 @@ export const sketches = [
   },
   {
     id: 7,
-    title: "Boggarapu Rama Rao",
+    title: "Boggarapu Rama Rao (Father)",
     description: "Sketch of my father's 1980s picture. Done on the behalf of his 60th birthday. Completed it in 42hrs over a period of 2 months.",
     completedDate: "2014-06-07",
     imagePath: "/images/Ramarao.jpg",
@@ -49,8 +49,8 @@ export const sketches = [
   },
   {
     id: 6,
-    title: "Swapna",
-    description: "Well, after a span of 2 years, i attempted to do sketch again and this time the picture of my better half. It took around 60hrs of time for around 2 months time span.",
+    title: "Swapna (Spouse)",
+    description: "Well, after a span of 2 years, i attempted to do sketch again and this time the picture of my better half, Swapna. It took around 60hrs of time for around 2 months time span.",
     completedDate: "2012-11-02",
     imagePath: "/images/Swapna.jpg",
     category: "Cuteness"
