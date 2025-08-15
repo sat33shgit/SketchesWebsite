@@ -6,12 +6,12 @@
   "homepage": "https://sat33shgit.github.io/SketchesWebsite",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npx vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "vercel-build": "npm run build"
+    "vercel-build": "npx vite build"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
