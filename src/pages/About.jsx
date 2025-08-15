@@ -15,7 +15,7 @@ const About = () => {
             <div className="sticky top-8">
               <div className="w-64 h-64 mx-auto lg:mx-0 rounded-full overflow-hidden bg-gray-200">
                 <img
-                  src="/SketchesWebsite/images/sateesh-profile.jpg"
+                  src={getAssetPath("/images/sateesh-profile.jpg")}
                   alt="Sateesh"
                   className="w-full h-full object-cover"
                   onError={(e) => {
