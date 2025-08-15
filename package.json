@@ -4,14 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "homepage": "https://sat33shgit.github.io/SketchesWebsite",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
-    "vercel-build": "npx vite build"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
