@@ -1,7 +1,7 @@
 // Vercel API-based database service for cross-device persistence
-const API_BASE = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:3000' 
-  : 'https://your-vercel-app.vercel.app'
+const API_BASE = typeof window !== 'undefined' 
+  ? window.location.origin
+  : 'https://sketches-website.vercel.app'
 
 // Get device ID for tracking votes
 const getDeviceId = () => {
