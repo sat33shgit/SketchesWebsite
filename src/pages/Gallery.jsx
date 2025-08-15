@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
+import LikeDislike from '../components/LikeDislike'
 
 const Gallery = () => {
   return (
@@ -59,9 +60,12 @@ const Gallery = () => {
                     day: 'numeric'
                   })}
                 </p>
-                <span className="inline-block bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full">
-                  {sketch.category}
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="inline-block bg-gray-100 text-gray-800 text-xs px-3 py-1 rounded-full">
+                    {sketch.category}
+                  </span>
+                  <LikeDislike sketchId={sketch.id} size="small" showCounts={true} className="ml-2" />
+                </div>
               </div>
             </Link>
           ))}

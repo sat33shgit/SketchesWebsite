@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
+import LikeDislike from '../components/LikeDislike'
 
 const SketchDetail = () => {
   const { id } = useParams()
@@ -436,6 +437,16 @@ const SketchDetail = () => {
               <p className="text-gray-700 leading-relaxed">
                 {sketch.description}
               </p>
+              
+              {/* Like/Dislike Component */}
+              <div className="pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <span className="text-sm text-gray-600">What do you think of this sketch?</span>
+                    <LikeDislike sketchId={sketch.id} size="large" showCounts={true} />
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Navigation Info */}
