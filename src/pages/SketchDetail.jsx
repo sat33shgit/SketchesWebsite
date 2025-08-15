@@ -12,6 +12,7 @@ const SketchDetail = () => {
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [showCopySuccess, setShowCopySuccess] = useState(false)
   
   // Comments functionality disabled for now
   // const [comments] = useState([])
@@ -31,6 +32,27 @@ const SketchDetail = () => {
   const goToNext = () => {
     if (nextSketch) {
       navigate(`/sketch/${nextSketch.id}`)
+    }
+  }
+
+  // Share functionality
+  const handleCopyURL = async () => {
+    const currentURL = window.location.href
+    
+    try {
+      await navigator.clipboard.writeText(currentURL)
+      setShowCopySuccess(true)
+      setTimeout(() => setShowCopySuccess(false), 2000)
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = currentURL
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+      setShowCopySuccess(true)
+      setTimeout(() => setShowCopySuccess(false), 2000)
     }
   }
 
@@ -261,7 +283,36 @@ const SketchDetail = () => {
           <div className="space-y-8">
             {/* Sketch Info */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{sketch.title}</h1>
+              <div className="flex items-start justify-between mb-4">
+                <h1 className="text-3xl font-bold text-gray-900 flex-1">{sketch.title}</h1>
+                
+                {/* Share Button */}
+                <div className="relative ml-4">
+                  <button
+                    onClick={handleCopyURL}
+                    className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    title="Copy page URL to share this sketch"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                    </svg>
+                    <span className="text-sm font-medium">Share</span>
+                  </button>
+                  
+                  {/* Success message */}
+                  {showCopySuccess && (
+                    <div className="absolute top-full right-0 mt-2 px-3 py-2 bg-green-100 text-green-800 text-sm rounded-lg shadow-lg border border-green-200 whitespace-nowrap z-10">
+                      <div className="flex items-center space-x-2">
+                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>URL copied to clipboard!</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
               <p className="text-gray-600 text-sm mb-4">
                 Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
                   year: 'numeric',
