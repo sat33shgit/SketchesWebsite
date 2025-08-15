@@ -1,175 +1,193 @@
-npm run dev# Pencil Sketches Website
+# Pencil Sketches Website
 
-A modern, responsive website showcasing pencil sketch artwork by Sateesh, built with React, Vite, and Tailwind CSS.
+A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar Boggarapu, built with React, Vite, and Tailwind CSS.
+
+## 🌐 Live Website
+**Production URL**: https://sketches-website.vercel.app/
 
 ## ✅ Current Status
-- **Fully functional** website with modern design
-- **Gallery view** with professional no-image placeholders
-- **Individual sketch pages** with comment sections
-- **About page** with artist information
-- **Contact form** ready for inquiries
-- **Responsive design** optimized for all devices
-- **Ready for deployment** to any hosting platform
+- **✅ Fully deployed** on Vercel with automatic deployments
+- **✅ Cross-device like/dislike system** with localStorage fallback
+- **✅ Professional gallery** with optimized image loading
+- **✅ Individual sketch pages** with detailed views
+- **✅ About page** with artist information and profile
+- **✅ Contact form** ready for inquiries (EmailJS integration)
+- **✅ Responsive design** optimized for all devices
+- **✅ Modern UI/UX** with smooth interactions and hover effects
 
 ## 🎨 Features
 
-- **Gallery View**: Browse all sketches in a beautiful grid layout
-- **Sketch Detail Pages**: View individual sketches with descriptions and comments
-- **About Page**: Learn about the artist and their artistic journey
-- **Contact Form**: Get in touch for inquiries and commissions
-- **Responsive Design**: Optimized for all device sizes
-- **Modern UI**: Clean, professional design with smooth interactions
+### Gallery & Artwork
+- **Interactive Gallery**: Grid layout with hover effects and image optimization
+- **Like/Dislike System**: Cross-device persistence for sketch ratings
+- **Sketch Categories**: Organized artwork by themes (Cuteness, Portrait, etc.)
+- **High-Quality Images**: Optimized loading with fallback placeholders
 
-## Tech Stack
+### User Experience  
+- **Sketch Detail Pages**: Individual pages with full descriptions and metadata
+- **Artist Profile**: Professional about page with biography and artist statement
+- **Contact Integration**: EmailJS-powered contact form for commissions
+- **Mobile-First Design**: Fully responsive across all device sizes
 
-- **React 18** - Modern React with functional components and hooks
-- **Vite** - Fast build tool and development server
-- **React Router** - Client-side routing for single-page application
-- **Tailwind CSS** - Utility-first CSS framework for rapid styling
+### Technical Features
+- **Fast Loading**: Vite build system with optimized assets
+- **SEO Friendly**: Proper meta tags and semantic HTML structure
+- **Cross-Browser**: Compatible with all modern browsers
+- **API Ready**: Backend endpoints prepared for future database integration
+
+## 🛠️ Tech Stack
+
+- **React 19** - Latest React with functional components and hooks
+- **Vite 4.5** - Lightning-fast build tool and development server  
+- **React Router 6** - Modern client-side routing
+- **Tailwind CSS 3** - Utility-first CSS framework
+- **Vercel** - Production hosting with serverless functions
+- **EmailJS** - Contact form integration
 - **JavaScript ES6+** - Modern JavaScript features
 
-## 🚀 Quick Start
+## 🚀 Deployment
 
-1. **Check in to GitHub:**
-   See `GIT_SETUP_COMMANDS.md` for step-by-step instructions
+### Current Deployment
+- **Platform**: Vercel
+- **URL**: https://sketches-website.vercel.app/
+- **Auto-Deploy**: Connected to GitHub main branch
+- **Build Status**: ✅ Successful builds
 
-2. **Deploy to Vercel (Recommended):**
-   - Connect your GitHub repo to Vercel
-   - Auto-deploys on every push
-   - Live site in minutes
+### Deployment Process
+1. **Automatic**: Push to main branch triggers deployment
+2. **Manual**: Deploy via Vercel dashboard
+3. **Preview**: Pull requests create preview deployments
 
-3. **Add Your Sketches:**
-   - Place images in `public/images/` folder
-   - Update `src/data/sketches.js` with your artwork details
+## 📁 Project Structure
 
-## 🛠️ Development
+```
+src/
+├── components/           # Reusable UI components
+│   ├── Navbar.jsx       # Navigation with mobile menu
+│   ├── Footer.jsx       # Site footer with copyright
+│   └── LikeDislike.jsx  # Interactive rating component
+├── pages/               # Main page components
+│   ├── Gallery.jsx      # Homepage with sketch grid
+│   ├── SketchDetail.jsx # Individual sketch pages
+│   ├── About.jsx        # Artist biography and statement
+│   └── Contact.jsx      # Contact form with EmailJS
+├── data/                # Static data
+│   └── sketches.js      # Artwork data and utilities
+├── utils/               # Helper functions
+│   ├── paths.js         # Asset path utilities
+│   └── vercelDatabase.js # API service layer
+├── App.jsx              # Main app with routing
+└── main.jsx            # Application entry point
 
-### Prerequisites
+public/
+├── images/              # Artwork image files
+│   ├── *.jpg           # Sketch images
+│   └── sateesh-profile.jpg # Artist profile photo
+└── index.html          # HTML template
 
-- Node.js (v16 or higher recommended)
-- npm or yarn package manager
+api/                     # Vercel serverless functions
+└── sketches/           # API endpoints for like/dislike system
+```
 
-### Installation
+## 🎨 Adding New Sketches
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd pencil-sketches-website
+To add new artwork to the gallery:
+
+1. **Add Image**: Place high-quality image in `public/images/`
+   ```
+   public/images/my-new-sketch.jpg
    ```
 
-2. Install dependencies:
+2. **Update Data**: Add sketch info to `src/data/sketches.js`:
+   ```javascript
+   {
+     id: 13, // Next available ID
+     title: "Portrait Study",
+     description: "Detailed description of the artwork and process...",
+     completedDate: "2025-01-15", // YYYY-MM-DD format
+     imagePath: "/images/my-new-sketch.jpg",
+     category: "Portrait" // Choose appropriate category
+   }
+   ```
+
+3. **Deploy**: Commit and push changes for automatic deployment
+
+## ⚙️ Development Setup
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Git
+
+### Local Development
+1. **Clone Repository**:
+   ```bash
+   git clone https://github.com/sat33shgit/SketchesWebsite.git
+   cd SketchesWebsite/WebSite
+   ```
+
+2. **Install Dependencies**:
    ```bash
    npm install
    ```
 
-3. Start the development server:
+3. **Start Development Server**:
    ```bash
    npm run dev
    ```
+   Visit `http://localhost:5173`
 
-4. Open your browser and visit `http://localhost:5173`
+4. **Build for Production**:
+   ```bash
+   npm run build
+   ```
 
-### Build for Production
-
-```bash
-npm run build
+### Environment Variables
+Create `.env` file for local development:
+```
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_template_id  
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
 ```
 
-The built files will be in the `dist` directory.
+## 🔧 Configuration Files
 
-## Project Structure
+- `vercel.json` - Vercel deployment configuration
+- `vite.config.js` - Vite build settings
+- `tailwind.config.js` - Tailwind CSS customization
+- `package.json` - Dependencies and scripts
 
-```
-src/
-├── components/          # Reusable UI components
-│   ├── Navbar.jsx      # Navigation component
-│   └── Footer.jsx      # Footer component
-├── pages/              # Main page components
-│   ├── Gallery.jsx     # Homepage/Gallery view
-│   ├── SketchDetail.jsx # Individual sketch pages
-│   ├── About.jsx       # About the artist
-│   └── Contact.jsx     # Contact form
-├── data/               # Static data and utilities
-│   └── sketches.js     # Sketch data and helper functions
-├── App.jsx             # Main app component with routing
-├── main.jsx           # App entry point
-└── index.css          # Global styles and Tailwind imports
-```
+## 📈 Performance Features
 
-## Adding New Sketches
+- **Image Optimization**: Automatic image compression and loading
+- **Code Splitting**: Optimized bundle sizes with Vite
+- **Caching**: Browser caching for static assets
+- **CDN Delivery**: Global content delivery via Vercel
+- **Mobile Performance**: Optimized for mobile devices
 
-To add new sketches to the gallery:
+## 🎯 Future Enhancements
 
-1. Add your sketch image to `public/images/`
-2. Update the `sketches` array in `src/data/sketches.js` with the new sketch information:
+- **Database Integration**: Replace localStorage with persistent database
+- **User Comments**: Allow visitors to comment on sketches  
+- **Search & Filter**: Advanced gallery filtering options
+- **Social Sharing**: Share individual sketches on social media
+- **Artist Blog**: Add blog section for artistic journey
+- **E-commerce**: Sell prints and commission services
 
-```javascript
-{
-  id: 11, // unique ID
-  title: "Your Sketch Title",
-  description: "Description of your sketch",
-  completedDate: "2024-03-15", // YYYY-MM-DD format
-  imagePath: "/images/your-sketch.jpg",
-  category: "Portrait" // or other category
-}
-```
-
-## Deployment Options
-
-### Vercel (Recommended)
-1. Push your code to GitHub
-2. Connect your GitHub repo to Vercel
-3. Deploy automatically with each push
-
-### Netlify
-1. Build the project: `npm run build`
-2. Upload the `dist` folder to Netlify
-3. Or connect your GitHub repo for continuous deployment
-
-### GitHub Pages
-1. Install gh-pages: `npm install --save-dev gh-pages`
-2. Add deploy script to package.json
-3. Run `npm run deploy`
-
-## Customization
-
-### Colors and Styling
-- Edit `tailwind.config.js` to customize the color scheme
-- Modify components in `src/components/` to change layouts
-- Update `src/index.css` for global style changes
-
-### Content
-- Update artist information in `src/pages/About.jsx`
-- Modify contact details in `src/pages/Contact.jsx`
-- Add or remove navigation items in `src/components/Navbar.jsx`
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Commit your changes: `git commit -am 'Add feature'`
-4. Push to the branch: `git push origin feature-name`
-5. Submit a pull request
-
-## License
+## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## Contact
+## 📧 Contact
 
-For questions about the website or the artwork, please visit the [Contact](./src/pages/Contact.jsx) page or reach out to sateesh.art@email.com.
+**Artist**: Sateesh Kumar Boggarapu  
+**Website**: https://sketches-website.vercel.app/  
+**Email**: bsateeshk@gmail.com
+
+For technical questions about the website, please open an issue on GitHub.
 
 ---
 
-Built with ❤️ using React and Tailwind CSS+ Vite
+**© 2025 Sateesh Sketch Book. All rights reserved.**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+*Built with ❤️ using React, Vite, and Tailwind CSS*
