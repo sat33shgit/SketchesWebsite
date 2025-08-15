@@ -61,17 +61,6 @@ const About = () => {
               </p>
             </div>
 
-            {/* Contact */}
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Contact</h3>
-              <p className="text-gray-700 leading-relaxed mb-4">
-                For inquiries, commissions, or collaborations, please reach out to me at{' '}
-                <a href="mailto:bsateeshk@gmail.com" className="text-blue-600 hover:text-blue-800">
-                  bsateeshk@gmail.com
-                </a>.
-              </p>
-            </div>
-
             {/* Social Media */}
             <div className="flex space-x-6 pt-6">
               <a
