@@ -9,7 +9,7 @@ import './App.css'
 
 function App() {
   return (
-    <Router basename="/SketchesWebsite">
+    <Router>
       <div className="min-h-screen flex flex-col">
         <Navbar />
         <main className="flex-grow">
