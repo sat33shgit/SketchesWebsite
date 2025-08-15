@@ -1,26 +1,51 @@
 import { useState, useEffect } from 'react'
-import { toggleLike, toggleDislike, getSketchStats } from '../utils/likeSystem'
+import { toggleLike, toggleDislike, getSketchStats } from '../utils/vercelDatabase'
 
 const LikeDislike = ({ sketchId, size = 'small', showCounts = true, className = '' }) => {
   const [stats, setStats] = useState({ likes: 0, dislikes: 0, userLiked: false, userDisliked: false })
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    // Load initial stats
-    setStats(getSketchStats(sketchId))
+    // Load initial stats asynchronously from Firebase
+    const loadStats = async () => {
+      const initialStats = await getSketchStats(sketchId)
+      setStats(initialStats)
+    }
+    loadStats()
   }, [sketchId])
 
-  const handleLike = (e) => {
+  const handleLike = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    const newStats = toggleLike(sketchId)
-    setStats(newStats)
+    
+    if (isLoading) return
+    
+    setIsLoading(true)
+    try {
+      const newStats = await toggleLike(sketchId)
+      setStats(newStats)
+    } catch (error) {
+      console.error('Error toggling like:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const handleDislike = (e) => {
+  const handleDislike = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    const newStats = toggleDislike(sketchId)
-    setStats(newStats)
+    
+    if (isLoading) return
+    
+    setIsLoading(true)
+    try {
+      const newStats = await toggleDislike(sketchId)
+      setStats(newStats)
+    } catch (error) {
+      console.error('Error toggling dislike:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const sizeClasses = {
@@ -46,11 +71,12 @@ const LikeDislike = ({ sketchId, size = 'small', showCounts = true, className = 
       {/* Like Button */}
       <button
         onClick={handleLike}
+        disabled={isLoading}
         className={`flex items-center space-x-1 ${buttonSizeClasses[size]} rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
           stats.userLiked 
             ? 'text-blue-600 bg-blue-50 hover:bg-blue-100' 
             : 'text-gray-400 hover:text-blue-600 hover:bg-blue-50'
-        }`}
+        } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         title={stats.userLiked ? 'Remove like' : 'Like this sketch'}
       >
         <svg 
@@ -76,11 +102,12 @@ const LikeDislike = ({ sketchId, size = 'small', showCounts = true, className = 
       {/* Dislike Button */}
       <button
         onClick={handleDislike}
+        disabled={isLoading}
         className={`flex items-center space-x-1 ${buttonSizeClasses[size]} rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 ${
           stats.userDisliked 
             ? 'text-red-600 bg-red-50 hover:bg-red-100' 
             : 'text-gray-400 hover:text-red-600 hover:bg-red-50'
-        }`}
+        } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
         title={stats.userDisliked ? 'Remove dislike' : 'Dislike this sketch'}
       >
         <svg 

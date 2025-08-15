@@ -1,0 +1,186 @@
+// Vercel API-based database service for cross-device persistence
+const API_BASE = process.env.NODE_ENV === 'development' 
+  ? 'http://localhost:3000' 
+  : 'https://your-vercel-app.vercel.app'
+
+// Get device ID for tracking votes
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem('deviceId')
+  if (!deviceId) {
+    deviceId = 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now()
+    localStorage.setItem('deviceId', deviceId)
+  }
+  return deviceId
+}
+
+// Fallback localStorage functions
+const getStatsFromLocalStorage = (sketchId) => {
+  try {
+    const likes = JSON.parse(localStorage.getItem('sketch_likes') || '{}')
+    const dislikes = JSON.parse(localStorage.getItem('sketch_dislikes') || '{}')
+    const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
+    const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
+    
+    return {
+      likes: likes[sketchId] || 0,
+      dislikes: dislikes[sketchId] || 0,
+      userLiked,
+      userDisliked
+    }
+  } catch (error) {
+    return { likes: 0, dislikes: 0, userLiked: false, userDisliked: false }
+  }
+}
+
+const saveToLocalStorage = (sketchId, stats) => {
+  try {
+    const likes = JSON.parse(localStorage.getItem('sketch_likes') || '{}')
+    const dislikes = JSON.parse(localStorage.getItem('sketch_dislikes') || '{}')
+    
+    likes[sketchId] = stats.likes
+    dislikes[sketchId] = stats.dislikes
+    
+    localStorage.setItem('sketch_likes', JSON.stringify(likes))
+    localStorage.setItem('sketch_dislikes', JSON.stringify(dislikes))
+    
+    if (stats.userLiked) {
+      localStorage.setItem(`user_liked_${sketchId}`, 'true')
+    } else {
+      localStorage.removeItem(`user_liked_${sketchId}`)
+    }
+    
+    if (stats.userDisliked) {
+      localStorage.setItem(`user_disliked_${sketchId}`, 'true')
+    } else {
+      localStorage.removeItem(`user_disliked_${sketchId}`)
+    }
+  } catch (error) {
+    console.error('Error saving to localStorage:', error)
+  }
+}
+
+// Get sketch statistics from Vercel API
+export const getSketchStats = async (sketchId) => {
+  console.log(`Getting stats for sketch ${sketchId}`)
+  
+  try {
+    const response = await fetch(`/api/sketches/${sketchId}/stats`)
+    
+    if (response.ok) {
+      const result = await response.json()
+      if (result.success) {
+        const deviceId = getDeviceId()
+        const data = result.data
+        
+        // Check user preferences from localStorage
+        const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
+        const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
+        
+        const stats = {
+          likes: data.likes,
+          dislikes: data.dislikes,
+          userLiked,
+          userDisliked
+        }
+        
+        // Save to localStorage for caching
+        saveToLocalStorage(sketchId, stats)
+        console.log('API stats:', stats)
+        return stats
+      }
+    }
+  } catch (error) {
+    console.log('API unavailable, using localStorage:', error.message)
+  }
+  
+  // Fallback to localStorage
+  const localStats = getStatsFromLocalStorage(sketchId)
+  console.log('Local fallback stats:', localStats)
+  return localStats
+}
+
+// Toggle like using Vercel API
+export const toggleLike = async (sketchId) => {
+  console.log(`Toggling like for sketch ${sketchId}`)
+  
+  const deviceId = getDeviceId()
+  const currentStats = getStatsFromLocalStorage(sketchId)
+  const action = currentStats.userLiked ? 'unlike' : 'like'
+  
+  try {
+    const response = await fetch(`/api/sketches/${sketchId}/like`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ deviceId, action })
+    })
+    
+    if (response.ok) {
+      const result = await response.json()
+      if (result.success) {
+        const newStats = result.data
+        saveToLocalStorage(sketchId, newStats)
+        console.log('API like toggle result:', newStats)
+        return newStats
+      }
+    }
+  } catch (error) {
+    console.log('API unavailable, using localStorage:', error.message)
+  }
+  
+  // Fallback to localStorage
+  const newStats = {
+    likes: currentStats.userLiked ? Math.max(0, currentStats.likes - 1) : currentStats.likes + 1,
+    dislikes: currentStats.userDisliked ? Math.max(0, currentStats.dislikes - 1) : currentStats.dislikes,
+    userLiked: !currentStats.userLiked,
+    userDisliked: false
+  }
+  
+  saveToLocalStorage(sketchId, newStats)
+  console.log('Local fallback like toggle:', newStats)
+  return newStats
+}
+
+// Toggle dislike using Vercel API
+export const toggleDislike = async (sketchId) => {
+  console.log(`Toggling dislike for sketch ${sketchId}`)
+  
+  const deviceId = getDeviceId()
+  const currentStats = getStatsFromLocalStorage(sketchId)
+  const action = currentStats.userDisliked ? 'undislike' : 'dislike'
+  
+  try {
+    const response = await fetch(`/api/sketches/${sketchId}/dislike`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ deviceId, action })
+    })
+    
+    if (response.ok) {
+      const result = await response.json()
+      if (result.success) {
+        const newStats = result.data
+        saveToLocalStorage(sketchId, newStats)
+        console.log('API dislike toggle result:', newStats)
+        return newStats
+      }
+    }
+  } catch (error) {
+    console.log('API unavailable, using localStorage:', error.message)
+  }
+  
+  // Fallback to localStorage
+  const newStats = {
+    likes: currentStats.userLiked ? Math.max(0, currentStats.likes - 1) : currentStats.likes,
+    dislikes: currentStats.userDisliked ? Math.max(0, currentStats.dislikes - 1) : currentStats.dislikes + 1,
+    userLiked: false,
+    userDisliked: !currentStats.userDisliked
+  }
+  
+  saveToLocalStorage(sketchId, newStats)
+  console.log('Local fallback dislike toggle:', newStats)
+  return newStats
+}
