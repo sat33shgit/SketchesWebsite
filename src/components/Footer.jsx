@@ -5,7 +5,7 @@ const Footer = () => {
         <div className="py-6 flex items-center justify-center">
           {/* Copyright */}
           <div className="text-sm text-gray-500">
-            © 2024 Sateesh Sketch Book. All rights reserved.
+            © 2025 Sateesh Sketch Book. All rights reserved.
           </div>
         </div>
       </div>
