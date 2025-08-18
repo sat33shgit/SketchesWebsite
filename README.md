@@ -1,6 +1,8 @@
 # Pencil Sketches Website
 
-A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar Boggarapu, built with React, Vite, and Tailwind CSS.
+A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar Bo     category: "Portrait" // Choose appropriate category
+   }
+   ```, built with React, Vite, and Tailwind CSS.
 
 ## 🌐 Live Website
 **Production URL**: https://sketches-website.vercel.app/
@@ -107,7 +109,11 @@ To add new artwork to the gallery:
      completedDate: "2025-01-15", // YYYY-MM-DD format
      imagePath: "/images/my-new-sketch.jpg",
      category: "Portrait" // Choose appropriate category
-   }
+   }I felt really privileged to sketch my son, Oliver Solomon, alongside his mom, Swapna. This piece was one of the most challenging I’ve ever worked on—not just because it’s a double portrait, but because capturing two faces together adds a whole new level of complexity. There are tiny details, subtle expressions, and trying to get the likeness just right for both of them took a lot of focus and patience.
+
+Honestly, it was a huge commitment. I spread the work out over five and a half months, totaling around 84 hours. Some days I’d work for hours and barely make progress, just because I wanted it to be perfect. Other days, I’d suddenly find a groove and see the sketch really coming to life.
+
+But more than just the technical challenges, working on this meant a lot to me personally. So much love and connection in one piece—and it’s almost like every hour spent was worth it to capture that feeling between mother and son.
    ```
 
 3. **Deploy**: Commit and push changes for automatic deployment
