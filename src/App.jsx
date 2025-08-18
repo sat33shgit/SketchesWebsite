@@ -10,9 +10,9 @@ import './App.css'
 function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
+      <div className="app">
         <Navbar />
-        <main className="flex-grow">
+        <main className="content">
           <Routes>
             <Route path="/" element={<Gallery />} />
             <Route path="/gallery" element={<Gallery />} />
