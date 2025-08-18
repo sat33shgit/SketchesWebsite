@@ -2,6 +2,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
+import { parseRichText } from '../utils/richText'
 import LikeDislike from '../components/LikeDislike'
 
 const SketchDetail = () => {
@@ -434,9 +435,9 @@ const SketchDetail = () => {
                   day: 'numeric'
                 })}
               </p>
-              <p className="text-gray-700 leading-relaxed">
-                {sketch.description}
-              </p>
+              <div className="text-gray-700 leading-relaxed">
+                {parseRichText(sketch.description)}
+              </div>
               
               {/* Like/Dislike Component */}
               <div className="pt-4 border-t border-gray-100">

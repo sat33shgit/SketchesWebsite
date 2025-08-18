@@ -12,3 +12,26 @@ body {
   color: #1f2937;
   line-height: 1.6;
 }
+
+/* Rich text content styles */
+.rich-text-content {
+  line-height: 1.7;
+}
+
+.rich-text-content p {
+  margin-bottom: 1rem;
+}
+
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text-content strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.rich-text-content em {
+  font-style: italic;
+  color: #374151;
+}
