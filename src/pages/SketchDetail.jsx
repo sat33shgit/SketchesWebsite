@@ -108,12 +108,16 @@ const SketchDetail = () => {
 
   if (!sketch) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Sketch not found</h1>
-          <Link to="/" className="text-blue-600 hover:text-blue-800">
-            Return to Sketch Book
-          </Link>
+      <div className="sketch-detail-page">
+        <div className="sketch-detail-container">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+            <div style={{ textAlign: 'center' }}>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>Sketch not found</h1>
+              <Link to="/" style={{ color: '#3b82f6', textDecoration: 'none' }}>
+                Return to Sketch Book
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -253,25 +257,25 @@ const SketchDetail = () => {
   }, [isFullscreen, currentIndex])
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="sketch-detail-page">
+      <div className="sketch-detail-container">
         {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
-          <Link to="/" className="hover:text-gray-700">Sketches</Link>
-          <span>/</span>
-          <span className="text-gray-900">{sketch.title}</span>
+        <nav className="breadcrumb">
+          <Link to="/">Sketches</Link>
+          <span> / </span>
+          <span style={{ color: '#1f2937' }}>{sketch.title}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="sketch-detail-content">
           {/* Image */}
-          <div className="lg:sticky lg:top-8 relative">
-            <div className="bg-gray-100 rounded-lg overflow-hidden aspect-square relative group">
+          <div className="sketch-image-section">
+            <div style={{ background: '#f3f4f6', borderRadius: '0.5rem', overflow: 'hidden', aspectRatio: '1', position: 'relative' }}>
               {sketch.imagePath ? (
                 <>
                   <img
                     src={getAssetPath(sketch.imagePath)}
                     alt={sketch.title}
-                    className="w-full h-full object-cover cursor-pointer"
+                    className="sketch-detail-image"
                     onClick={openFullscreen}
                     onError={(e) => {
                       e.target.style.display = 'none';
