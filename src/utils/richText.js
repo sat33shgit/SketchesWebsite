@@ -24,11 +24,10 @@ export const parseRichText = (text) => {
     // Process inline formatting within each paragraph
     const elements = parseInlineFormatting(paragraph)
     
-    return (
-      <p key={pIndex} className="mb-4 last:mb-0">
-        {elements}
-      </p>
-    )
+    return React.createElement('p', {
+      key: pIndex,
+      className: 'mb-4 last:mb-0'
+    }, elements)
   }).filter(Boolean)
 }
 
@@ -44,7 +43,7 @@ const parseInlineFormatting = (text) => {
   
   lines.forEach((line, lineIndex) => {
     if (lineIndex > 0) {
-      elements.push(<br key={`br-${lineIndex}`} />)
+      elements.push(React.createElement('br', { key: `br-${lineIndex}` }))
     }
     
     // Process formatting within the line
@@ -69,9 +68,10 @@ const processTextFormatting = (text, startIndex = 0) => {
     const boldMatch = remaining.match(/^\*\*(.*?)\*\*/)
     if (boldMatch) {
       elements.push(
-        <strong key={`bold-${elementIndex}`} className="font-semibold">
-          {boldMatch[1]}
-        </strong>
+        React.createElement('strong', {
+          key: `bold-${elementIndex}`,
+          className: 'font-semibold'
+        }, boldMatch[1])
       )
       remaining = remaining.slice(boldMatch[0].length)
       elementIndex++
@@ -82,9 +82,10 @@ const processTextFormatting = (text, startIndex = 0) => {
     const italicMatch = remaining.match(/^\*(.*?)\*/)
     if (italicMatch) {
       elements.push(
-        <em key={`italic-${elementIndex}`} className="italic">
-          {italicMatch[1]}
-        </em>
+        React.createElement('em', {
+          key: `italic-${elementIndex}`,
+          className: 'italic'
+        }, italicMatch[1])
       )
       remaining = remaining.slice(italicMatch[0].length)
       elementIndex++
@@ -130,12 +131,10 @@ export const parseSimpleHTML = (text) => {
     processedText = `<p>${processedText}</p>`
   }
   
-  return (
-    <div 
-      className="rich-text-content"
-      dangerouslySetInnerHTML={{ __html: processedText }}
-    />
-  )
+  return React.createElement('div', {
+    className: 'rich-text-content',
+    dangerouslySetInnerHTML: { __html: processedText }
+  })
 }
 
 /**
