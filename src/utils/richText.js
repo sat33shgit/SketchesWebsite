@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * Utility functions for rendering rich text in sketch descriptions
  */
