@@ -599,64 +599,36 @@ const SketchDetail = () => {
 
             {/* Navigation Info */}
             <div className="sketch-navigation-section">
-<<<<<<< HEAD
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-=======
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-start', flex: 1, minWidth: 0 }}>
->>>>>>> f86fcb9 (Initial project commit)
                 {previousSketch ? (
                   <Link 
                     to={`/sketch/${previousSketch.id}`} 
                     className="sketch-nav-link"
-<<<<<<< HEAD
-                  >
-                    <svg style={{ width: '1rem', height: '1rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    <span>{previousSketch.title}</span>
-=======
                     style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}
                   >
                     <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                     <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, marginLeft: '0.25rem' }}>{previousSketch.title}</span>
->>>>>>> f86fcb9 (Initial project commit)
                   </Link>
                 ) : (
                   <span className="sketch-nav-disabled">First sketch</span>
                 )}
               </div>
               
-<<<<<<< HEAD
-              <div className="sketch-nav-counter">
-                <span>{currentIndex + 1} of {sketches.length}</span>
-                <span>•</span>
-                <span>Use ← → keys to navigate</span>
-              </div>
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-=======
               <div className="sketch-nav-counter" style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 500 }}>
                 <span style={{ background: '#f3f4f6', borderRadius: '1.25rem', padding: '0.10rem 0.75rem', minWidth: '56px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 500, display: 'inline-block' }}>{currentIndex + 1} of {sketches.length}</span>
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end', flex: 1, minWidth: 0 }}>
->>>>>>> f86fcb9 (Initial project commit)
                 {nextSketch ? (
                   <Link 
                     to={`/sketch/${nextSketch.id}`} 
                     className="sketch-nav-link"
-<<<<<<< HEAD
-                  >
-                    <span>{nextSketch.title}</span>
-                    <svg style={{ width: '1rem', height: '1rem' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-=======
                     style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}
                   >
                     <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, marginRight: '0.25rem' }}>{nextSketch.title}</span>
                     <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
->>>>>>> f86fcb9 (Initial project commit)
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
