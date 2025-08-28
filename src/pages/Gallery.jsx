@@ -59,7 +59,7 @@ const Gallery = () => {
                 <span className="sketch-category">
                   {sketch.category}
                 </span>
-                <LikeDislike sketchId={sketch.id} size="small" showCounts={true} />
+                <LikeDislike sketchId={sketch.id} size="small" showCounts={false} />
               </div>
             </div>
           </Link>
