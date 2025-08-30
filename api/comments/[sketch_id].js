@@ -2,6 +2,12 @@ import { sql } from '@vercel/postgres';
 
 
 export default async function handler(req, res) {
+  console.log('API called:', {
+    method: req.method,
+    query: req.query,
+    body: req.body,
+    headers: req.headers,
+  });
   const {
     query: { sketch_id },
     method,
