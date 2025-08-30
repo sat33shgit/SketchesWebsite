@@ -7,6 +7,7 @@ const CommentsSection = ({ sketchId }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+
   useEffect(() => {
     if (!sketchId) return;
     setLoading(true);
@@ -17,6 +18,12 @@ const CommentsSection = ({ sketchId }) => {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  }, [sketchId]);
+
+  // Clear success and error messages when sketchId changes
+  useEffect(() => {
+    setSuccess('');
+    setError('');
   }, [sketchId]);
 
   const handleChange = e => {
