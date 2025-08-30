@@ -290,8 +290,8 @@ const SketchDetail = () => {
 
 
   return (
-    <div className="sketch-detail-page">
-      <div className="sketch-detail-container">
+    <div className="sketch-detail-page split-view">
+      <div className="sketch-detail-container split-view-container">
         {/* Breadcrumb */}
         <nav className="breadcrumb">
           <Link to="/">Sketches</Link>
@@ -299,20 +299,10 @@ const SketchDetail = () => {
           <span style={{ color: '#1f2937' }}>{sketch.title}</span>
         </nav>
 
-        <div className="sketch-detail-content">
-          {/* Image */}
-          <div className="sketch-image-section">
-            <div style={{ 
-              background: 'transparent', 
-              borderRadius: '0.75rem', 
-              overflow: 'hidden', 
-              position: 'relative',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
-              border: '1px solid #e5e7eb',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
+        <div className="split-view-content">
+          {/* Left: Image (fixed, non-scrollable) */}
+          <div className="split-view-image">
+            <div className="sketch-image-section">
               {sketch.imagePath ? (
                 <>
                   <img
@@ -325,132 +315,89 @@ const SketchDetail = () => {
                       e.target.nextSibling.style.display = 'flex';
                     }}
                   />
-                  {/* Fullscreen indicator overlay */}
-                  <div 
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      background: 'rgba(0, 0, 0, 0)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      transition: 'background-color 0.3s',
-                      borderRadius: '0.75rem'
-                    }}
-                    onClick={openFullscreen}
-                    onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.1)'}
-                    onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0)'}
-                  >
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.9)',
-                      borderRadius: '50%',
-                      padding: '0.75rem',
-                      opacity: 0,
-                      transition: 'opacity 0.3s',
-                      pointerEvents: 'none'
-                    }}>
-                      <svg style={{ width: '1.5rem', height: '1.5rem', color: '#1f2937' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
-                      </svg>
-                    </div>
-                  </div>
                 </>
-              ) : null}
-              <div style={{ 
-                width: '100%', 
-                height: '200px', 
-                display: sketch.imagePath ? 'none' : 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'transparent'
-              }}>
-                <div style={{ textAlign: 'center' }}>
-                  <svg style={{ width: '6rem', height: '6rem', margin: '0 auto 1.5rem', color: '#9ca3af' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <p style={{ color: '#9ca3af', fontSize: '1.125rem', fontWeight: '500' }}>No Image Available</p>
-                  <p style={{ color: '#d1d5db', fontSize: '0.875rem', marginTop: '0.5rem' }}>Sketch artwork will be displayed here</p>
+              ) : (
+                <div style={{ width: '100%', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <svg style={{ width: '6rem', height: '6rem', margin: '0 auto 1.5rem', color: '#9ca3af' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p style={{ color: '#9ca3af', fontSize: '1.125rem', fontWeight: '500' }}>No Image Available</p>
+                    <p style={{ color: '#d1d5db', fontSize: '0.875rem', marginTop: '0.5rem' }}>Sketch artwork will be displayed here</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-            
-            {/* Removed navigation arrows from under the image - they are duplicated in fullscreen mode */}
           </div>
 
-          {/* Content */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            {/* Sketch Info */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <h1 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#1f2937', flex: '1' }}>{sketch.title}</h1>
-                
-                {/* Share Button */}
-                <div style={{ position: 'relative', marginLeft: '1rem' }} className="share-menu-container">
-                  {/* ...existing code... */}
-                  {/* Share button and menu code unchanged */}
-                  {/* ...existing code... */}
+          {/* Right: Details, navigation, comments (scrollable) */}
+          <div className="split-view-details">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              {/* Sketch Info */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <h1 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#1f2937', flex: '1' }}>{sketch.title}</h1>
+                  {/* Share Button */}
+                  <div style={{ position: 'relative', marginLeft: '1rem' }} className="share-menu-container">
+                    {/* ...existing code... */}
+                    {/* Share button and menu code unchanged */}
+                    {/* ...existing code... */}
+                  </div>
+                </div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1rem' }}>
+                  Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
+                <div style={{ color: '#374151', lineHeight: 1.7 }}>
+                  {parseRichText(sketch.description)}
                 </div>
               </div>
-              
-              <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1rem' }}>
-                Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-              <div style={{ color: '#374151', lineHeight: 1.7 }}>
-                {parseRichText(sketch.description)}
-              </div>
-            </div>
 
-            {/* Navigation Info */}
-            <div className="sketch-navigation-section">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-start', flex: 1, minWidth: 0 }}>
-                {previousSketch ? (
-                  <Link 
-                    to={`/sketch/${previousSketch.id}`} 
-                    className="sketch-nav-link"
-                    style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}
-                  >
-                    <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, marginLeft: '0.25rem' }}>{previousSketch.title}</span>
-                  </Link>
-                ) : (
-                  <span className="sketch-nav-disabled">First sketch</span>
-                )}
+              {/* Navigation Info */}
+              <div className="sketch-navigation-section">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-start', flex: 1, minWidth: 0 }}>
+                  {previousSketch ? (
+                    <Link 
+                      to={`/sketch/${previousSketch.id}`} 
+                      className="sketch-nav-link"
+                      style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}
+                    >
+                      <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, marginLeft: '0.25rem' }}>{previousSketch.title}</span>
+                    </Link>
+                  ) : (
+                    <span className="sketch-nav-disabled">First sketch</span>
+                  )}
+                </div>
+                <div className="sketch-nav-counter" style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 500 }}>
+                  <span style={{ background: '#f3f4f6', borderRadius: '1.25rem', padding: '0.10rem 0.75rem', minWidth: '56px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 500, display: 'inline-block' }}>{currentIndex + 1} of {sketches.length}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end', flex: 1, minWidth: 0 }}>
+                  {nextSketch ? (
+                    <Link 
+                      to={`/sketch/${nextSketch.id}`} 
+                      className="sketch-nav-link"
+                      style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}
+                    >
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, marginRight: '0.25rem' }}>{nextSketch.title}</span>
+                      <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  ) : (
+                    <span className="sketch-nav-disabled">Last sketch</span>
+                  )}
+                </div>
               </div>
-              
-              <div className="sketch-nav-counter" style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 500 }}>
-                <span style={{ background: '#f3f4f6', borderRadius: '1.25rem', padding: '0.10rem 0.75rem', minWidth: '56px', textAlign: 'center', fontSize: '0.85rem', fontWeight: 500, display: 'inline-block' }}>{currentIndex + 1} of {sketches.length}</span>
-              </div>
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end', flex: 1, minWidth: 0 }}>
-                {nextSketch ? (
-                  <Link 
-                    to={`/sketch/${nextSketch.id}`} 
-                    className="sketch-nav-link"
-                    style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}
-                  >
-                    <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, marginRight: '0.25rem' }}>{nextSketch.title}</span>
-                    <svg style={{ width: '1.25rem', height: '1.25rem', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                ) : (
-                  <span className="sketch-nav-disabled">Last sketch</span>
-                )}
-              </div>
-            </div>
 
-            {/* Comments Section */}
-            <CommentsSection sketchId={id} />
+              {/* Comments Section */}
+              <CommentsSection sketchId={id} />
+            </div>
           </div>
         </div>
 
