@@ -17,6 +17,13 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    host: true
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'https://sateesh-sketch-book.vercel.app/', // <-- replace with your deployed Vercel URL
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   }
 })
