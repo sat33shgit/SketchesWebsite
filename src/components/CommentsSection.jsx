@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { sendNotificationEmail } from '../utils/emailService'
 
-const CommentsSection = ({ sketchId }) => {
+const CommentsSection = ({ sketchId, sketchName }) => {
   const [comments, setComments] = useState([]);
   const [form, setForm] = useState({ name: '', comment: '' });
   const [loading, setLoading] = useState(false);
@@ -46,8 +47,21 @@ const CommentsSection = ({ sketchId }) => {
         body: JSON.stringify({ name: form.name, comment: form.comment })
       });
       if (!res.ok) throw new Error('Failed to post comment');
-  setForm({ name: '', comment: '' });
+      // capture values for email notification before clearing form
+      const commenterName = form.name
+      const commenterComment = form.comment
+      setForm({ name: '', comment: '' });
       setSuccess('Comment posted!');
+      // send email notification (best-effort, do not block UI on failure)
+      try {
+        await sendNotificationEmail({
+          sketchName: sketchName || sketchId,
+          commenterName: commenterName,
+          message: `Hi,\nA new comment was posted on "${sketchName || sketchId}" by ${commenterName}\n\n${commenterComment}`
+        })
+      } catch (emailErr) {
+        console.error('Failed to send comment notification email', emailErr)
+      }
       // Refresh comments
       const commentsRes = await fetch(`/api/comments/${sketchId}`);
       const commentsData = await commentsRes.json();

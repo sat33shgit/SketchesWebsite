@@ -396,7 +396,7 @@ const SketchDetail = () => {
               </div>
 
               {/* Comments Section */}
-              <CommentsSection sketchId={id} />
+              <CommentsSection sketchId={id} sketchName={sketch.title} />
             </div>
           </div>
         </div>

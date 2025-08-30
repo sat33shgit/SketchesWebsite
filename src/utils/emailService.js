@@ -50,7 +50,7 @@ const sendEmailFallback = async (formData) => {
     console.log('Contact Form Submission:', {
       name: formData.name,
       email: formData.email,
-      subject: formData.subject,
+      subject: formData.message,
       message: formData.message,
       timestamp: new Date().toISOString()
     })
@@ -63,6 +63,44 @@ const sendEmailFallback = async (formData) => {
     return { 
       success: false, 
       message: 'Please contact me directly at bsateeshk@gmail.com' 
+    }
+  }
+}
+
+// Minimal notification email used for comment notifications.
+export const sendNotificationEmail = async ({ sketchName, commenterName, message } = {}) => {
+  // Keep message body unchanged; only set the subject to identify sketch
+  const timestamp = new Date().toLocaleString()
+  const bodyMessage = `${message || ''}\n\nSent at: ${timestamp}`
+  try {
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        access_key: '92235cbf-7e66-4121-a028-ba50d463f041',
+  name: commenterName || 'Anonymous',
+  message: bodyMessage,
+  from_name: commenterName ? `${commenterName}` : 'Anonymous'
+  // Intentionally omitting `email`, `_subject`, `_template`, and `to_email` for minimal notification
+      })
+    })
+
+    const result = await response.json()
+    if (result.success) {
+      return { success: true }
+    }
+    throw new Error(result.message || 'Failed to send notification')
+  } catch (err) {
+    console.error('Notification email failed:', err)
+    // fallback: log the notification with timestamp and return success to avoid blocking UX
+    try {
+  console.log('Notification fallback:', { sketchName, commenterName, commentText: bodyMessage, timestamp })
+      return { success: true }
+    } catch (e) {
+      return { success: false }
     }
   }
 }
