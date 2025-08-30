@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 import LikeDislike from '../components/LikeDislike'
+import CommentCount from '../components/CommentCount'
 
 const Gallery = () => {
   return (
@@ -55,10 +56,8 @@ const Gallery = () => {
                   day: 'numeric'
                 })}
               </p>
-              <div className="sketch-card-footer">
-                <span className="sketch-category">
-                  {sketch.category}
-                </span>
+              <div className="sketch-card-footer" style={{ alignItems: 'center', gap: '1rem' }}>
+                <CommentCount sketchId={sketch.id} />
                 <LikeDislike sketchId={sketch.id} size="small" showCounts={false} />
               </div>
             </div>

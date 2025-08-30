@@ -160,14 +160,17 @@ html, body {
 
 /* Apply padding only to non-sketch-detail and non-about pages */
 .content:not(:has(.sketch-detail-page)):not(:has(.about-page)) {
-  /* include header height in page padding so top spacing is consistent */
-  padding: calc(var(--header-height) + 3rem) 0;
+  /* include header height in page padding so top spacing is consistent; reduce bottom gap by 50% */
+  padding-top: calc(var(--header-height) + 1.5rem);
+  padding-bottom: 0.75rem;
 }
 
 /* For browsers that don't support :has(), use a fallback */
 @supports not (selector(:has(*))) {
   .content {
-    padding: 3rem 0;
+    /* fallback: include header height and a smaller bottom gap */
+    padding-top: calc(var(--header-height) + 1.5rem);
+    padding-bottom: 0.75rem;
   }
   
   .content .sketch-detail-page,
@@ -286,7 +289,7 @@ nav {
 /* Gallery styles */
 .gallery-header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 .gallery-title {
