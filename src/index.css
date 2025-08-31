@@ -101,15 +101,15 @@ footer {
     overflow: visible;
   }
   .split-view-image {
-    max-width: 100vw;
-    width: 100vw;
+  max-width: 100%;
+  width: 100%;
     height: auto;
     padding-left: 0;
     position: static;
   }
   .split-view-details {
-    max-width: 100vw;
-    width: 100vw;
+  max-width: 100%;
+  width: 100%;
     height: auto;
     padding-left: 0;
   min-height: 0;
@@ -235,6 +235,15 @@ nav {
 .nav-links {
   display: flex;
   gap: 2rem;
+}
+
+/* Hide hamburger and mobile menu by default (desktop) */
+.hamburger {
+  display: none;
+}
+
+.mobile-menu {
+  display: none;
 }
 
 .nav-links a {
@@ -531,18 +540,22 @@ nav {
 .contact-page {
   min-height: 100vh;
   background: #f9fafb;
-  padding: 4rem 0;
+  /* decreased further to reduce gap under header */
+  /* minimal vertical padding so content appears close to header */
+  padding: 0.5rem 0;
 }
 
-.contact-container {
+  .contact-container {
   max-width: 1024px;
   margin: 0 auto;
+  /* remove extra top padding; keep horizontal padding */
   padding: 0 1rem;
 }
 
-.contact-header {
+  .contact-header {
   text-align: center;
-  margin-bottom: 4rem;
+  /* tighten spacing so the heading sits nearer the header */
+  margin: 0.25rem 0 0.75rem 0;
 }
 
 .contact-header h1 {
@@ -1048,14 +1061,109 @@ footer {
   font-style: italic;
 }
 
+/* Mobile padding fixes: ensure content has a small right padding so text/images don't get truncated */
+@media (max-width: 767px) {
+  .page-container,
+  .page-container-full {
+    padding-left: 0.5rem;
+    padding-right: 0.75rem;
+  }
+
+  .sketch-detail-container {
+    padding-left: 0.5rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Ensure main content doesn't overflow viewport width on mobile */
+  .content {
+    padding-right: 0.5rem;
+  }
+
+  /* Small image/container adjustments to avoid edge clipping */
+  .sketch-image-container,
+  .sketch-detail-image,
+  .split-view-image {
+    padding-right: 0.25rem;
+  }
+}
+
+/* Additional mobile safety rules to avoid right-side truncation */
+@media (max-width: 767px) {
+  .sketch-detail-container,
+  .page-container,
+  .page-container-full,
+  .content,
+  .sketch-info {
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    overflow-x: hidden;
+  }
+
+  /* Ensure rich text wraps and long words don't overflow */
+  .sketch-description,
+  .rich-text-content,
+  .sketch-meta {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Images must never exceed container width */
+  .sketch-detail-image,
+  .sketch-image-container img,
+  .sketch-image {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+  }
+}
+
 /* Mobile responsive */
 @media (max-width: 767px) {
+  /* Hide full nav links on mobile; show hamburger instead */
   .nav-links {
     display: none;
   }
-  
+
   .nav-container {
     padding: 0 0.5rem;
+  }
+
+  /* Hamburger button */
+  .hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #374151;
+  }
+
+  .mobile-menu {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0.5rem 1rem 1rem 1rem;
+  }
+
+  .mobile-menu a {
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+  }
+
+  .mobile-menu a.active,
+  .mobile-menu a:hover {
+    color: #1f2937;
+    background: #f3f4f6;
   }
   
   .gallery-title {
@@ -1089,7 +1197,53 @@ footer {
   
   .about-container,
   .contact-container {
-    padding: 5.5rem 1rem 2rem 1rem;
+    /* reduce large mobile top padding further (approximately half of previous) */
+    padding: 1.375rem 1rem 2rem 1rem;
+  }
+
+  /* About page: prevent avatar overlapping text on small screens */
+  .about-profile {
+    position: static !important; /* disable sticky behavior on mobile */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem; /* space before the about text */
+  }
+
+  .profile-image {
+  width: 160px;
+  height: 160px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
+
+  .profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .profile-info {
+    text-align: center;
+    margin-top: 0.25rem;
+    padding-top: 0.25rem;
+    line-height: 1.1;
+  }
+
+  .about-text {
+    margin-top: 0.75rem;
+    clear: both;
+  }
+
+  /* Reduce name size on small screens so it doesn't run into the avatar */
+  .profile-info h2 {
+    font-size: 1.25rem;
+    margin: 0;
+    padding: 0;
   }
 }
 

@@ -62,7 +62,7 @@ const Contact = () => {
         <div className="contact-header">
           <h1>Contact</h1>
           <p>
-            Have a question or interested in commissioning a piece? I'd love to hear from you.
+            Have a question or share a feedback about my work? I'd love to hear from you.
           </p>
         </div>
 

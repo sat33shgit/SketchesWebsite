@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useState } from 'react'
 
 const Navbar = () => {
   const location = useLocation()
+  const [menuOpen, setMenuOpen] = useState(false)
   
   const isActive = (path) => {
     if (path === '/' && (location.pathname === '/' || location.pathname === '/gallery')) {
@@ -45,6 +47,24 @@ const Navbar = () => {
           </Link>
         </div>
 
+        {/* Mobile hamburger toggle (shown on small screens) */}
+        <button
+          className="hamburger"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
+
         {/* Right side icons */}
         <div className="social-links">
           {/* Search Icon */}
@@ -55,6 +75,15 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+
+      {/* Mobile menu (renders below header when open) */}
+      {menuOpen && (
+        <div className="mobile-menu" role="menu" aria-label="Main menu">
+          <Link to="/" className={isActive('/') ? 'active' : ''} onClick={() => setMenuOpen(false)}>Home</Link>
+          <Link to="/about" className={isActive('/about') ? 'active' : ''} onClick={() => setMenuOpen(false)}>About</Link>
+          <Link to="/contact" className={isActive('/contact') ? 'active' : ''} onClick={() => setMenuOpen(false)}>Contact</Link>
+        </div>
+      )}
     </nav>
   )
 }
