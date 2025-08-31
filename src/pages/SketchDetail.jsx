@@ -5,6 +5,7 @@ import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 import { parseRichText } from '../utils/richText'
 import LikeDislike from '../components/LikeDislike'
+import CommentCount from '../components/CommentCount'
 
 
 const SketchDetail = () => {
@@ -344,13 +345,25 @@ const SketchDetail = () => {
                     {/* ...existing code... */}
                   </div>
                 </div>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '1rem' }}>
-                  Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                  <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: 0 }}>
+                    Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                  <button onClick={() => {
+                    const el = document.getElementById('comments-section')
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      // focus for keyboard users
+                      el.focus({ preventScroll: true })
+                    }
+                  }} aria-label="View comments" title="View comments" style={{ background: 'transparent', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                    <CommentCount sketchId={id} />
+                  </button>
+                </div>
                 <div style={{ color: '#374151', lineHeight: 1.7 }}>
                   {parseRichText(sketch.description)}
                 </div>

@@ -73,7 +73,7 @@ const CommentsSection = ({ sketchId, sketchName }) => {
   };
 
   return (
-    <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '2rem', marginTop: '2rem' }}>
+    <div id="comments-section" tabIndex={-1} aria-label="Comments section" style={{ borderTop: '1px solid #e5e7eb', paddingTop: '2rem', marginTop: '2rem' }}>
       <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1f2937', marginBottom: '1rem' }}>Comments</h2>
       <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem' }}>
         <div style={{ marginBottom: '0.5rem' }}>
