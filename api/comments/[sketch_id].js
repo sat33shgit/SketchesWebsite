@@ -9,32 +9,7 @@ function stripTags(input) {
 export default async function handler(req, res) {
   const sketchId = req.query.sketchId;
 
-  if (req.method === 'POST') {
-    const { name, comment } = req.body;
-
-    // Sanitize and validate (robust)
-    const cleanName = stripTags(name || '').trim();
-    const cleanComment = stripTags(comment || '').trim();
-
-    if (
-      !cleanName ||
-      !cleanComment ||
-      cleanName.length > 100 ||
-      cleanComment.length > 1000 ||
-      /<|>|script|onerror|onload|javascript:/i.test(name) ||
-      /<|>|script|onerror|onload|javascript:/i.test(comment)
-    ) {
-      return res.status(400).json({ success: false, message: 'Please enter a valid name and comment. Special characters or unsafe content are not allowed.' });
-    }
-
-    if (!validator.isAscii(cleanName) || !validator.isAscii(cleanComment)) {
-      return res.status(400).json({ success: false, message: 'Input contains unsafe characters.' });
-    }
-
-    // ...existing logic to save the comment to DB...
-
-    return res.status(200).json({ success: true, message: 'Comment posted!' });
-  }
+    // Removed duplicate POST handler above. All POST logic handled below.
 
   console.log('API called:', {
     method: req.method,
