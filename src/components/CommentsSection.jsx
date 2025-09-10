@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify'
 import { sendNotificationEmail } from '../utils/emailService'
 
 const CommentsSection = ({ sketchId, sketchName }) => {
@@ -35,8 +36,31 @@ const CommentsSection = ({ sketchId, sketchName }) => {
     e.preventDefault();
     setError('');
     setSuccess('');
-    if (!form.name.trim() || !form.comment.trim()) {
-      setError('Name and comment are required.');
+    // Client-side validation & sanitization
+    const sanitized = {
+      name: DOMPurify.sanitize(form.name || '', { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }).trim(),
+      comment: DOMPurify.sanitize(form.comment || '', { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }).trim()
+    }
+
+    if (!sanitized.name || !sanitized.comment) {
+      setError('Please enter a valid name and comment. Special characters or unsafe content are not allowed.');
+      return;
+    }
+
+    // length limits
+    if (sanitized.name.length > 100) {
+      setError('Name cannot exceed 100 characters.');
+      return;
+    }
+    if (sanitized.comment.length > 1000) {
+      setError('Comment cannot exceed 1000 characters.');
+      return;
+    }
+
+    // block suspicious patterns
+    const suspicious = /<|>|script|onerror|onload|javascript:/i
+    if (suspicious.test(form.name) || suspicious.test(form.comment)) {
+      setError('Unsafe input detected. Please remove any scripts or HTML.');
       return;
     }
     setLoading(true);
@@ -44,12 +68,13 @@ const CommentsSection = ({ sketchId, sketchName }) => {
       const res = await fetch(`/api/comments/${sketchId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name, comment: form.comment })
+        // send sanitized values
+        body: JSON.stringify({ name: sanitized.name, comment: sanitized.comment })
       });
       if (!res.ok) throw new Error('Failed to post comment');
       // capture values for email notification before clearing form
-      const commenterName = form.name
-      const commenterComment = form.comment
+      const commenterName = sanitized.name
+      const commenterComment = sanitized.comment
       setForm({ name: '', comment: '' });
       setSuccess('Comment posted!');
       // send email notification (best-effort, do not block UI on failure)

@@ -1,5 +1,23 @@
 import { useState } from 'react'
 import { sendContactEmail } from '../utils/emailService'
+import DOMPurify from 'dompurify'
+
+function sanitizeInput(input) {
+  // Remove all HTML tags and attributes
+  return DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
+}
+
+function validateFields({ name, email, subject, message }) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!name || !email || !subject || !message) return false
+  if (!emailRegex.test(email)) return false
+  // Disallow angle brackets and suspicious patterns
+  const pattern = /<|>|script|onerror|onload|javascript:/i
+  if (pattern.test(name) || pattern.test(subject) || pattern.test(message)) return false
+  // Limit field lengths
+  if (name.length > 100 || subject.length > 100 || message.length > 1000) return false
+  return true
+}
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -21,12 +39,26 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Sanitize input
+    const sanitized = {
+      name: sanitizeInput(formData.name),
+      email: sanitizeInput(formData.email),
+      subject: sanitizeInput(formData.subject),
+      message: sanitizeInput(formData.message),
+    }
+
+    // Validate input
+    if (!validateFields(sanitized)) {
+      setSubmitStatus({ message: 'Invalid or unsafe input detected.', isError: true })
+      return
+    }
     
     setIsSubmitting(true)
     setSubmitStatus({ message: '', isError: false })
     
     try {
-      const result = await sendContactEmail(formData)
+      const result = await sendContactEmail(sanitized)
       
       if (result.success) {
         setSubmitStatus({ 
@@ -80,6 +112,7 @@ const Contact = () => {
                   id="name"
                   name="name"
                   required
+                  maxLength={100}
                   value={formData.name}
                   onChange={handleChange}
                 />
@@ -94,6 +127,7 @@ const Contact = () => {
                   id="email"
                   name="email"
                   required
+                  maxLength={100}
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -108,6 +142,7 @@ const Contact = () => {
                   id="subject"
                   name="subject"
                   required
+                  maxLength={100}
                   value={formData.subject}
                   onChange={handleChange}
                 />
@@ -122,6 +157,7 @@ const Contact = () => {
                   name="message"
                   required
                   rows={6}
+                  maxLength={1000}
                   value={formData.message}
                   onChange={handleChange}
                 />

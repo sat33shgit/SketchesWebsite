@@ -367,6 +367,8 @@ const SketchDetail = () => {
                 <div style={{ color: '#374151', lineHeight: 1.7 }}>
                   {parseRichText(sketch.description)}
                 </div>
+
+                {/* Reaction UI removed (reverted) */}
               </div>
 
               {/* Navigation controls removed from UI; keyboard and fullscreen navigation remain functional */}

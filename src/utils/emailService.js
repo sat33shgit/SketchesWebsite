@@ -15,9 +15,8 @@ export const sendContactEmail = async (formData) => {
         subject: formData.subject,
         message: formData.message,
         from_name: `${formData.name} <${formData.email}>`,
-        to_email: 'bsateeshk@gmail.com',
-        _subject: `Contact Form: ${formData.subject}`,
-        _template: 'table'
+  Subject: `Contact Form: ${formData.subject}`,
+  // message field removed (revert to previous state)
       })
     })
 
