@@ -173,8 +173,8 @@ VITE_EMAILJS_PUBLIC_KEY=your_public_key
 
 ## 🎯 Future Enhancements
 
-- **Database Integration**: Replace localStorage with persistent database
-- **User Comments**: Allow visitors to comment on sketches  
+**Database Integration**: Already using PostgreSQL for comments and ratings
+**User Comments**: Visitors can comment on sketches
 - **Search & Filter**: Advanced gallery filtering options
 - **Social Sharing**: Share individual sketches on social media
 - **Artist Blog**: Add blog section for artistic journey
