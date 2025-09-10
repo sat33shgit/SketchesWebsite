@@ -8,15 +8,15 @@ function sanitizeInput(input) {
 }
 
 function validateFields({ name, email, subject, message }) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!name || !email || !subject || !message) return false
-  if (!emailRegex.test(email)) return false
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!name || !email || !subject || !message) return false;
+  if (!emailRegex.test(email)) return false;
   // Disallow angle brackets and suspicious patterns
-  const pattern = /<|>|script|onerror|onload|javascript:/i
-  if (pattern.test(name) || pattern.test(subject) || pattern.test(message)) return false
+  const pattern = /<|>|script|onerror|onload|onclick|javascript:/i;
+  if (pattern.test(name) || pattern.test(subject) || pattern.test(message)) return false;
   // Limit field lengths
-  if (name.length > 100 || subject.length > 100 || message.length > 1000) return false
-  return true
+  if (name.length > 100 || subject.length > 100 || message.length > 1000) return false;
+  return true;
 }
 
 const Contact = () => {
