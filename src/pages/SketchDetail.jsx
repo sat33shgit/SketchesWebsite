@@ -370,9 +370,6 @@ const SketchDetail = () => {
                 </div>
                 {/* Smiley Like Picker */}
                 <div style={{ margin: '1.5rem 0' }}>
-                  <div style={{ background: '#fee2e2', color: '#b91c1c', padding: '0.5rem', borderRadius: '0.5rem', marginBottom: '0.5rem', fontWeight: 600 }}>
-                    [Debug] SmileyLike should be visible below this message
-                  </div>
                   <SmileyLike sketchId={id} />
                 </div>
               </div>

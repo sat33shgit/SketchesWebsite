@@ -58,12 +58,11 @@ const SmileyLike = ({ sketchId }) => {
     setLoading(false);
   };
 
-  console.log('SmileyLike rendered for sketchId:', sketchId);
   return (
-    <div style={{ display: 'inline-block', position: 'relative', border: '2px dashed red', padding: '0.5rem' }}>
+    <div style={{ display: 'inline-block', position: 'relative' }}>
       <button
         onClick={handleLikeClick}
-        style={{ background: liked ? '#dbeafe' : '#f3f4f6', borderRadius: '999px', padding: '0.5rem 1rem', fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', border: '2px solid #2563eb', color: liked ? '#2563eb' : '#374151', display: 'inline-flex', alignItems: 'center', gap: '0.75rem' }}
+        style={{ background: liked ? '#dbeafe' : '#f3f4f6', borderRadius: '999px', padding: '0.5rem 1rem', fontWeight: 500, cursor: loading ? 'not-allowed' : 'pointer', border: 'none', color: liked ? '#2563eb' : '#374151', display: 'inline-flex', alignItems: 'center', gap: '0.75rem' }}
         aria-label={liked ? 'Unlike this sketch' : 'Like this sketch'}
         disabled={loading}
       >
