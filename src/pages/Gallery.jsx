@@ -1,10 +1,31 @@
 import { Link } from 'react-router-dom'
 import { sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
-import LikeDislike from '../components/LikeDislike'
+import LikeCountBadge from '../components/LikeCountBadge'
+import CommentCountBadge from '../components/CommentCountBadge'
 import CommentCount from '../components/CommentCount'
 
+import { useEffect, useState } from 'react'
+
 const Gallery = () => {
+  const [likeCounts, setLikeCounts] = useState({})
+  const [commentCounts, setCommentCounts] = useState({})
+  useEffect(() => {
+    fetch('/api/comments/counts')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setCommentCounts(data.data)
+      })
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/sketches/likes')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setLikeCounts(data.data)
+      })
+  }, [])
+
   return (
     <div className="page-container">
       {/* Header */}
@@ -22,9 +43,10 @@ const Gallery = () => {
             key={sketch.id}
             to={`/sketch/${sketch.id}`}
             className="sketch-card"
+            style={{ position: 'relative' }}
           >
             {/* Image Container */}
-            <div className="sketch-image-container">
+            <div className="sketch-image-container" style={{ position: 'relative' }}>
               {sketch.imagePath ? (
                 <img
                   src={getAssetPath(sketch.imagePath)}
@@ -42,6 +64,9 @@ const Gallery = () => {
                 </svg>
                 <p>No Image Available</p>
               </div>
+              {/* Like and comment count badge overlays */}
+              <LikeCountBadge count={likeCounts[sketch.id] || 0} />
+              <CommentCountBadge count={commentCounts[sketch.id] || 0} />
             </div>
 
             {/* Content */}
@@ -56,10 +81,7 @@ const Gallery = () => {
                   day: 'numeric'
                 })}
               </p>
-              <div className="sketch-card-footer" style={{ alignItems: 'center', gap: '1rem' }}>
-                <CommentCount sketchId={sketch.id} />
-                <LikeDislike sketchId={sketch.id} size="small" showCounts={false} />
-              </div>
+              {/* Removed old comment count display from card footer */}
             </div>
           </Link>
         ))}
