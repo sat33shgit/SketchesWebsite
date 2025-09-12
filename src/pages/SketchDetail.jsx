@@ -334,16 +334,121 @@ const SketchDetail = () => {
 
           {/* Right: Details, navigation, comments (scrollable) */}
           <div className="split-view-details">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingTop: '0.5rem' }}>
               {/* Sketch Info */}
               <div>
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <h1 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#1f2937', flex: '1' }}>{sketch.title}</h1>
+                  <h1 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#1f2937', flex: '1', marginBottom: '0.5rem' }}>{sketch.title}</h1>
                   {/* Share Button */}
-                  <div style={{ position: 'relative', marginLeft: '1rem' }} className="share-menu-container">
-                    {/* ...existing code... */}
-                    {/* Share button and menu code unchanged */}
-                    {/* ...existing code... */}
+                  <div style={{ position: 'relative', marginLeft: '1rem', marginTop: '0.25rem' }} className="share-menu-container">
+                    <button
+                      onClick={toggleShareMenu}
+                      aria-label="Share"
+                      style={{
+                        background: '#fff',
+                        border: '1px solid #e5e7eb',
+                        cursor: 'pointer',
+                        fontSize: '1.1rem',
+                        color: '#6b7280',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        borderRadius: '999px',
+                        padding: '0.5rem 1.1rem',
+                        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                        transition: 'all 0.2s',
+                        fontWeight: 500
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = '#f3f4f6';
+                        e.currentTarget.style.borderColor = '#d1d5db';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = '#fff';
+                        e.currentTarget.style.borderColor = '#e5e7eb';
+                      }}
+                    >
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginRight: '0.5rem'}}>
+                        <path d="M8 17V14C8 12.8954 8.89543 12 10 12H19" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M15 7L20 12L15 17" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <span style={{ fontWeight: 500 }}>Share</span>
+                    </button>
+                    {showShareMenu && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '2.8rem',
+                        right: 0,
+                        background: '#fff',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '1rem',
+                        boxShadow: '0 6px 24px rgba(37,99,235,0.13)',
+                        padding: '1.1rem 1.2rem',
+                        zIndex: 20,
+                        minWidth: '340px',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gridTemplateRows: 'repeat(2, 1fr)',
+                        gap: '1.4rem 1.2rem',
+                        alignItems: 'center',
+                        justifyItems: 'center',
+                        animation: 'fadeIn 0.2s',
+                        fontSize: '1.05rem',
+                        textAlign: 'center'
+                      }}>
+                        <div>
+                          <button onClick={handleCopyURL} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
+                              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="7" width="14" height="17" rx="3" stroke="#222" strokeWidth="2.5"/><rect x="4" y="4" width="14" height="17" rx="3" stroke="#222" strokeWidth="2.5"/></svg>
+                            </span>
+                            <span style={{ fontSize: '0.95rem', color: '#222' }}>Copy link</span>
+                          </button>
+                          {showCopySuccess && (
+                            <span style={{ color: '#10b981', fontSize: '0.95rem', marginTop: '0.5rem', fontWeight: 500 }}>Link copied!</span>
+                          )}
+                        </div>
+                        <div>
+                          <button onClick={handleShareFacebook} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22.675 0h-21.35C.595 0 0 .592 0 1.326v21.348C0 23.408.595 24 1.326 24h11.495v-9.294H9.691v-3.622h3.13V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.797.143v3.24l-1.918.001c-1.504 0-1.797.715-1.797 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.325-.592 1.325-1.326V1.326C24 .592 23.405 0 22.675 0" fill="#1877F2"/><path d="M16.671 24v-9.294h3.12l.467-3.622h-3.587v-2.313c0-1.048.293-1.763 1.797-1.763l1.918-.001v-3.24c-.334-.044-1.472-.143-2.797-.143-2.766 0-4.659 1.688-4.659 4.788v2.313h-3.13v3.622h3.13V24h2.004z" fill="#fff"/></svg>
+                            </span>
+                            <span style={{ fontSize: '0.95rem', color: '#222' }}>Facebook</span>
+                          </button>
+                        </div>
+                        <div>
+                          <button onClick={handleShareWhatsApp} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.173.198-.298.298-.496.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.207-.242-.579-.487-.501-.669-.511-.173-.008-.372-.01-.571-.01-.198 0-.52.075-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.1 3.202 5.077 4.372.711.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.075-.124-.272-.198-.57-.347z" fill="#25D366"/><path d="M12.004 2.003c-5.523 0-9.997 4.474-9.997 9.997 0 1.762.462 3.487 1.338 4.997l-1.414 5.175 5.308-1.396c1.462.799 3.099 1.221 4.765 1.221 5.523 0 9.997-4.474 9.997-9.997s-4.474-9.997-9.997-9.997zm4.842 14.545c-.199.561-1.163 1.099-1.591 1.175-.408.075-.942.108-1.51-.118-.432-.136-1.107-.354-1.813-.653-3.003-1.172-4.956-4.072-5.104-4.271-.149-.198-1.213-1.612-1.213-3.074 0-1.463.768-2.182 1.04-2.479.272-.297.594-.372.792-.372.199 0 .398.002.571.01.182.01.427-.068.669.511.247.596.841 2.058.916 2.207.075.149.124.323.025.521-.1.198-.149.323-.298.496-.149.173-.313.387-.447.52-.148.148-.303.309-.13.606.173.298.77 1.271 1.653 2.059 1.135 1.013 2.093 1.326 2.39 1.475.297.148.471.123.644-.075.173-.198.743-.867.94-1.164.198-.298.397-.249.67-.15.272.1 1.733.818 2.03.967.297.149.495.223.57.347.075.125.075.719-.173 1.413z" fill="#25D366"/></svg>
+                            </span>
+                            <span style={{ fontSize: '0.95rem', color: '#222' }}>WhatsApp</span>
+                          </button>
+                        </div>
+                        <div>
+                          <button onClick={handleShareInstagram} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><radialGradient id="IGpaint0_radial" cx="0" cy="0" r="1" gradientTransform="translate(12 12) scale(12)"><stop stopColor="#FFD600"/><stop offset="0.5" stopColor="#FF6B00"/><stop offset="1" stopColor="#E1306C"/></radialGradient><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#IGpaint0_radial)"/><circle cx="12" cy="12" r="5" fill="#fff"/><circle cx="12" cy="12" r="3.5" fill="#E1306C"/><circle cx="16.5" cy="7.5" r="1" fill="#fff"/></svg>
+                            </span>
+                            <span style={{ fontSize: '0.95rem', color: '#222' }}>Instagram</span>
+                          </button>
+                        </div>
+                        <div>
+                          <button onClick={handleShareTwitter} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#000"/><path d="M17.53 7.47h-2.06l-2.47 3.53-2.47-3.53H8.47l2.97 4.24-3.13 4.29h2.06l2.63-3.76 2.63 3.76h2.06l-3.13-4.29 2.97-4.24z" fill="#fff"/></svg>
+                            </span>
+                            <span style={{ fontSize: '0.95rem', color: '#222' }}>X</span>
+                          </button>
+                        </div>
+                        <div>
+                          <button onClick={() => window.location.href = `mailto:?subject=Check%20out%20this%20sketch&body=${window.location.href}`} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="12" rx="4" fill="#EA4335"/><path d="M2 6l10 7 10-7" stroke="#fff" strokeWidth="2" strokeLinejoin="round"/></svg>
+                            </span>
+                            <span style={{ fontSize: '0.95rem', color: '#222' }}>Email</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
