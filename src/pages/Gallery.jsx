@@ -27,7 +27,7 @@ const Gallery = () => {
   }, [])
 
   return (
-    <div className="page-container">
+    <div className="page-container home-page">
       {/* Header */}
       <div className="gallery-header">
         <h1 className="gallery-title">Pencil Sketches</h1>

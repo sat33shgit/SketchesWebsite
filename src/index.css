@@ -198,6 +198,18 @@ nav {
   /* positioning handled at the top of the file via `header, nav { position: fixed; }` */
 }
 
+/* subtle full-width divider under the header for clearer separation */
+nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(0,0,0,0.04), rgba(0,0,0,0.02));
+  pointer-events: none;
+}
+
 .nav-container {
   max-width: 1280px;
   margin: 0 auto;
@@ -539,10 +551,32 @@ nav {
 /* Contact page styles */
 .contact-page {
   min-height: 100vh;
-  background: #f9fafb;
+  background: #ffffff; /* changed to white to match header */
   /* decreased further to reduce gap under header */
   /* minimal vertical padding so content appears close to header */
   padding: 0.5rem 0;
+}
+
+/* Home (Gallery) page background - match header white */
+.page-container.home-page {
+  /* keep inner container spacing but let outer .content handle full-bleed background */
+  background: transparent;
+  min-height: calc(100vh - var(--header-height));
+  padding-top: 1.5rem;
+}
+
+/* Apply full-bleed white background on the outer content when showing home or contact pages */
+.content:has(.home-page),
+.content:has(.contact-page) {
+  background: white;
+}
+
+/* Fallback for browsers without :has() support: apply white backgrounds directly to the containers */
+@supports not (selector(:has(*))) {
+  .page-container.home-page,
+  .contact-page {
+    background: white;
+  }
 }
 
   .contact-container {
