@@ -133,34 +133,51 @@ const CommentsSection = ({ sketchId, sketchName }) => {
           <p style={{ color: '#6b7280' }}>No comments yet. Be the first to comment!</p>
         ) : (
           comments.map(comment => {
-            // Helper to format date/time as HH:MM and DD-MMM-YYYY
+            // Helper to format date parts and compute relative age
             const formatDateTime = (ts) => {
-              if (!ts) return ''
+              if (!ts) return null
               const d = new Date(ts)
+              if (isNaN(d)) return null
               const pad = (n) => n.toString().padStart(2, '0')
-              const hours = pad(d.getHours())
-              const minutes = pad(d.getMinutes())
-              const time = `${hours}:${minutes}`
               const day = pad(d.getDate())
               const month = d.toLocaleString('en-US', { month: 'short' })
               const year = d.getFullYear()
               const date = `${day}-${month}-${year}`
-              return { time, date }
+              return { date, raw: d }
+            }
+
+            // full timestamp display removed per user request
+
+            const computeRelative = (dateObj) => {
+              if (!dateObj || !dateObj.raw) return ''
+              const now = new Date()
+              const then = dateObj.raw
+              // compute year diff first
+              const yearDiff = now.getFullYear() - then.getFullYear()
+              if (yearDiff > 0) return `${yearDiff}y`
+              // compute month diff
+              const monthDiff = (now.getFullYear() - then.getFullYear()) * 12 + (now.getMonth() - then.getMonth())
+              if (monthDiff > 0) return `${monthDiff}m`
+              // compute day diff
+              const msPerDay = 24 * 60 * 60 * 1000
+              const dayDiff = Math.floor((now - then) / msPerDay)
+              if (dayDiff > 0) return `${dayDiff}d`
+              // less than one day: compute hours
+              const msPerHour = 60 * 60 * 1000
+              const hourDiff = Math.floor((now - then) / msPerHour)
+              if (hourDiff >= 1) return `${hourDiff}h`
+              return 'today'
             }
 
             const created = comment.created_at ? formatDateTime(comment.created_at) : null
             const updated = comment.updated_at ? formatDateTime(comment.updated_at) : null
-            const showEdited = comment.updated_at && comment.created_at && (new Date(comment.updated_at).getTime() !== new Date(comment.created_at).getTime())
 
             return (
               <div key={comment.id} style={{ marginBottom: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
                 <div style={{ fontWeight: 600, color: '#374151', marginBottom: '0.25rem' }}>{comment.name}</div>
                 <div style={{ color: '#374151' }}>{comment.comment}</div>
                 <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                  {created ? `${created.date}` : ''}
-                  {showEdited && updated ? (
-                    <span style={{ marginLeft: '0.5rem', color: '#9ca3af', fontSize: '0.75rem' }}>(edited {updated.date})</span>
-                  ) : null}
+                  {created ? computeRelative(created) : ''}
                 </div>
               </div>
             )
