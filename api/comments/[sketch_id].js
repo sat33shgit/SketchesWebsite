@@ -38,7 +38,12 @@ export default async function handler(req, res) {
   if (method === 'GET') {
     // Fetch comments for a sketch
     try {
-      const { rows } = await sql`SELECT id, name, comment, created_at FROM comments WHERE sketch_id = ${sketch_id} ORDER BY created_at DESC`;
+      const { rows } = await sql`
+        SELECT id, name, comment, created_at, updated_at, visible
+        FROM comments
+        WHERE sketch_id = ${sketch_id} AND visible = 'Y'
+        ORDER BY created_at DESC
+      `;
       return res.status(200).json(rows);
     } catch (error) {
       console.error('GET comments error:', error);
@@ -51,7 +56,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Name and comment are required' });
     }
     try {
-      await sql`INSERT INTO comments (sketch_id, name, comment) VALUES (${sketch_id}, ${name}, ${comment})`;
+      await sql`
+        INSERT INTO comments (sketch_id, name, comment, visible, updated_at)
+        VALUES (${sketch_id}, ${name}, ${comment}, 'Y', CURRENT_TIMESTAMP)
+      `;
       return res.status(201).json({ message: 'Comment added' });
     } catch (error) {
       console.error('POST comment error:', error, 'Body:', body);

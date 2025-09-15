@@ -132,13 +132,39 @@ const CommentsSection = ({ sketchId, sketchName }) => {
         ) : comments.length === 0 ? (
           <p style={{ color: '#6b7280' }}>No comments yet. Be the first to comment!</p>
         ) : (
-          comments.map(comment => (
-            <div key={comment.id} style={{ marginBottom: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
-              <div style={{ fontWeight: 600, color: '#374151', marginBottom: '0.25rem' }}>{comment.name}</div>
-              <div style={{ color: '#374151' }}>{comment.comment}</div>
-              <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginTop: '0.25rem' }}>{comment.created_at ? new Date(comment.created_at).toLocaleString() : ''}</div>
-            </div>
-          ))
+          comments.map(comment => {
+            // Helper to format date/time as HH:MM and DD-MMM-YYYY
+            const formatDateTime = (ts) => {
+              if (!ts) return ''
+              const d = new Date(ts)
+              const pad = (n) => n.toString().padStart(2, '0')
+              const hours = pad(d.getHours())
+              const minutes = pad(d.getMinutes())
+              const time = `${hours}:${minutes}`
+              const day = pad(d.getDate())
+              const month = d.toLocaleString('en-US', { month: 'short' })
+              const year = d.getFullYear()
+              const date = `${day}-${month}-${year}`
+              return { time, date }
+            }
+
+            const created = comment.created_at ? formatDateTime(comment.created_at) : null
+            const updated = comment.updated_at ? formatDateTime(comment.updated_at) : null
+            const showEdited = comment.updated_at && comment.created_at && (new Date(comment.updated_at).getTime() !== new Date(comment.created_at).getTime())
+
+            return (
+              <div key={comment.id} style={{ marginBottom: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
+                <div style={{ fontWeight: 600, color: '#374151', marginBottom: '0.25rem' }}>{comment.name}</div>
+                <div style={{ color: '#374151' }}>{comment.comment}</div>
+                <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                  {created ? `${created.date}` : ''}
+                  {showEdited && updated ? (
+                    <span style={{ marginLeft: '0.5rem', color: '#9ca3af', fontSize: '0.75rem' }}>(edited {updated.date})</span>
+                  ) : null}
+                </div>
+              </div>
+            )
+          })
         )}
       </div>
     </div>
