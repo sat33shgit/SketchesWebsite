@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { sendContactEmail } from '../utils/emailService'
 import DOMPurify from 'dompurify'
+import useAnalytics from '../hooks/useAnalytics'
 
 function sanitizeInput(input) {
   // Remove all HTML tags and attributes
@@ -20,6 +21,9 @@ function validateFields({ name, email, subject, message }) {
 }
 
 const Contact = () => {
+  // Track page visit
+  useAnalytics('contact')
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',

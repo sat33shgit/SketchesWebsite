@@ -1,6 +1,10 @@
 import { getAssetPath } from '../utils/paths'
+import useAnalytics from '../hooks/useAnalytics'
 
 const About = () => {
+  // Track page visit
+  useAnalytics('about')
+  
   return (
     <div className="about-page">
       <div className="about-container">

@@ -4,12 +4,17 @@ import { getAssetPath } from '../utils/paths'
 import LikeCountBadge from '../components/LikeCountBadge'
 import CommentCountBadge from '../components/CommentCountBadge'
 import CommentCount from '../components/CommentCount'
+import useAnalytics from '../hooks/useAnalytics'
 
 import { useEffect, useState } from 'react'
 
 const Gallery = () => {
   const [likeCounts, setLikeCounts] = useState({})
   const [commentCounts, setCommentCounts] = useState({})
+  
+  // Track page visit
+  useAnalytics('home')
+  
   useEffect(() => {
     fetch('/api/comments/counts')
       .then(res => res.json())

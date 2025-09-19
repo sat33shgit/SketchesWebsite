@@ -7,12 +7,18 @@ import { parseRichText } from '../utils/richText'
 import LikeDislike from '../components/LikeDislike'
 import CommentCount from '../components/CommentCount'
 import SmileyLike from '../components/SmileyLike'
+import ViewCount from '../components/ViewCount'
+import useAnalytics from '../hooks/useAnalytics'
 
 
 const SketchDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const sketch = getSketchById(id)
+  
+  // Track sketch visit
+  useAnalytics('sketch', id)
+  
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
@@ -473,9 +479,10 @@ const SketchDetail = () => {
                 <div style={{ color: '#374151', lineHeight: 1.7 }}>
                   {parseRichText(sketch.description)}
                 </div>
-                {/* Smiley Like Picker */}
-                <div style={{ margin: '1.5rem 0' }}>
+                {/* Smiley Like Picker and View Count */}
+                <div style={{ margin: '1.5rem 0', display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
                   <SmileyLike sketchId={id} />
+                  <ViewCount sketchId={id} size="medium" />
                 </div>
               </div>
 
