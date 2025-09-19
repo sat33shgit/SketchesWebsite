@@ -8,12 +8,15 @@ const useAnalytics = (pageType, pageId = null) => {
     const trackVisit = async () => {
       try {
         // For development, you can enable/disable tracking by setting REACT_APP_ENABLE_ANALYTICS=true
-        const enableTracking = process.env.NODE_ENV === 'production' || process.env.REACT_APP_ENABLE_ANALYTICS === 'true'
+        // Enable tracking in development for testing
+        const enableTracking = true // Always enable for now
         
         if (!enableTracking) {
           console.log(`[Analytics] Would track: ${pageType}${pageId ? ` - ${pageId}` : ''}`)
           return
         }
+
+        console.log(`[Analytics] Tracking: ${pageType}${pageId ? ` - ${pageId}` : ''}`) // Debug log
 
         const response = await fetch('/api/analytics/track', {
           method: 'POST',
@@ -27,7 +30,9 @@ const useAnalytics = (pageType, pageId = null) => {
         })
 
         if (!response.ok) {
-          console.warn('Failed to track visit:', response.statusText)
+          console.warn('Failed to track visit:', response.status, response.statusText)
+        } else {
+          console.log(`[Analytics] Successfully tracked: ${pageType}${pageId ? ` - ${pageId}` : ''}`)
         }
       } catch (error) {
         console.warn('Error tracking visit:', error)
