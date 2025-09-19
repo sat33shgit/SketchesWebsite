@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { sendContactEmail } from '../utils/emailService'
 import DOMPurify from 'dompurify'
-import useAnalytics from '../hooks/useAnalytics'
+import useAnalytics from '../hooks/useAnalytics.js'
 
 function sanitizeInput(input) {
   // Remove all HTML tags and attributes
