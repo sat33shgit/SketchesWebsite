@@ -48,21 +48,21 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
     small: { 
       width: '28px', 
       height: '28px', 
-      fontSize: '12px',
+      fontSize: '14px', // Increased from 12px to 14px
       border: '2px solid #ffffff',
       shadow: '0 1px 3px rgba(0, 0, 0, 0.12)'
     },
     medium: { 
       width: '36px', 
       height: '36px', 
-      fontSize: '14px',
+      fontSize: '16px', // Increased from 14px to 16px
       border: '2px solid #ffffff',
       shadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
     },
     large: { 
       width: '44px', 
       height: '44px', 
-      fontSize: '18px',
+      fontSize: '20px', // Increased from 18px to 20px
       border: '3px solid #ffffff',
       shadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
     }
@@ -114,7 +114,9 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
         textAlign: 'center',
         lineHeight: '1',
         transform: 'translateY(0)', // Ensure no vertical offset
-        fontSize: 'inherit'
+        fontSize: 'inherit',
+        textTransform: 'uppercase', // Ensure capital letters at CSS level
+        fontWeight: 'bold'
       }}>
         {firstLetter}
       </span>
