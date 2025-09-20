@@ -73,7 +73,7 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
   
   return (
     <div 
-      className={`inline-flex items-center justify-center rounded-full font-bold ${className}`}
+      className={`inline-flex items-center justify-center font-bold ${className}`}
       style={{
         backgroundColor: colors.bg,
         color: colors.text,
@@ -88,7 +88,11 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
         position: 'relative',
         background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg}dd 100%)`,
         transition: 'all 0.2s ease-in-out',
-        cursor: 'default'
+        cursor: 'default',
+        borderRadius: '50%', // Explicitly force round shape
+        minWidth: sizeStyle.width, // Ensure it stays square for perfect circle
+        minHeight: sizeStyle.height,
+        overflow: 'hidden' // Ensure content stays within circle
       }}
       title={name || 'Anonymous'}
       onMouseEnter={(e) => {

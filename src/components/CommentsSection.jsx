@@ -174,14 +174,21 @@ const CommentsSection = ({ sketchId, sketchName }) => {
             const updated = comment.updated_at ? formatDateTime(comment.updated_at) : null
 
             return (
-              <div key={comment.id} style={{ marginBottom: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <div key={comment.id} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '1.5rem', gap: '0.75rem' }}>
+                {/* Avatar positioned outside on the left */}
+                <div style={{ flexShrink: 0, marginTop: '0.25rem' }}>
                   <UserAvatar name={comment.name} size="medium" />
-                  <div style={{ fontWeight: 600, color: '#374151', marginLeft: '0.75rem' }}>{comment.name}</div>
                 </div>
-                <div style={{ color: '#374151', marginLeft: '2.75rem' }}>{comment.comment}</div>
-                <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginTop: '0.25rem', marginLeft: '2.75rem' }}>
-                  {created ? computeRelative(created) : ''}
+                
+                {/* Comment content box */}
+                <div style={{ flex: 1, padding: '0.75rem', background: '#f9fafb', borderRadius: '0.75rem', border: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <div style={{ fontWeight: 600, color: '#374151' }}>{comment.name}</div>
+                    <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginLeft: '0.5rem' }}>
+                      {created ? computeRelative(created) : ''}
+                    </div>
+                  </div>
+                  <div style={{ color: '#374151', lineHeight: '1.5' }}>{comment.comment}</div>
                 </div>
               </div>
             )
