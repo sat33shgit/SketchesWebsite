@@ -11,38 +11,7 @@ export default async function handler(req, res) {
   try {
     const { pageType, timeframe = '30d' } = req.query;
 
-    let timeCondition = '';
-    switch (timeframe) {
-      case '7d':
-        timeCondition = "AND created_at >= NOW() - INTERVAL '7 days'";
-        break;
-      case '30d':
-        timeCondition = "AND created_at >= NOW() - INTERVAL '30 days'";
-        break;
-      case '90d':
-        timeCondition = "AND created_at >= NOW() - INTERVAL '90 days'";
-        break;
-      case 'all':
-        timeCondition = '';
-        break;
-      default:
-        timeCondition = "AND created_at >= NOW() - INTERVAL '30 days'";
-    }
-
-    // Get overall stats
-    const overallStats = await sql`
-      SELECT 
-        page_type,
-        COUNT(*) as visit_records,
-        SUM(visit_count) as total_visits,
-        COUNT(DISTINCT ip_hash) as unique_visitors
-      FROM page_visits 
-      WHERE 1=1 ${timeCondition ? sql.unsafe(timeCondition) : sql``}
-      ${pageType ? sql`AND page_type = ${pageType}` : sql``}
-      GROUP BY page_type
-      ORDER BY total_visits DESC
-    `;
-
+    // Simplified approach - just get all data for now
     // Get detailed stats by page
     const detailedStats = await sql`
       SELECT 
@@ -53,39 +22,20 @@ export default async function handler(req, res) {
         MAX(updated_at) as last_visit,
         MIN(created_at) as first_visit
       FROM page_visits 
-      WHERE 1=1 ${timeCondition ? sql.unsafe(timeCondition) : sql``}
-      ${pageType ? sql`AND page_type = ${pageType}` : sql``}
       GROUP BY page_type, page_id
       ORDER BY total_visits DESC
-      LIMIT 100
     `;
 
-    // Get top sketches specifically
-    const topSketches = await sql`
-      SELECT 
-        page_id as sketch_id,
-        SUM(visit_count) as total_visits,
-        COUNT(DISTINCT ip_hash) as unique_visitors,
-        MAX(updated_at) as last_visit
-      FROM page_visits 
-      WHERE page_type = 'sketch' 
-      ${timeCondition ? sql.unsafe(timeCondition) : sql``}
-      GROUP BY page_id
-      ORDER BY total_visits DESC
-      LIMIT 20
-    `;
-
-    // Get recent activity
-    const recentActivity = await sql`
+    // Get overall stats
+    const overallStats = await sql`
       SELECT 
         page_type,
-        page_id,
-        visit_count,
-        updated_at
+        COUNT(*) as visit_records,
+        SUM(visit_count) as total_visits,
+        COUNT(DISTINCT ip_hash) as unique_visitors
       FROM page_visits 
-      WHERE updated_at >= NOW() - INTERVAL '24 hours'
-      ORDER BY updated_at DESC
-      LIMIT 50
+      GROUP BY page_type
+      ORDER BY total_visits DESC
     `;
 
     res.status(200).json({
@@ -93,9 +43,7 @@ export default async function handler(req, res) {
       timeframe,
       data: {
         overall: overallStats.rows,
-        detailed: detailedStats.rows,
-        topSketches: topSketches.rows,
-        recentActivity: recentActivity.rows
+        detailed: detailedStats.rows
       }
     });
 
