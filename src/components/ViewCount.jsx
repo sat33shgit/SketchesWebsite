@@ -19,7 +19,7 @@ const ViewCount = ({ sketchId, size = 'small', className = '' }) => {
             )
             
             if (sketchData) {
-              const visits = parseInt(sketchData.total_visits) || 0
+              const visits = Number(sketchData.total_visits) || 0
               setViewCount(visits)
             } else {
               setViewCount(0)

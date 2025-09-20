@@ -17,8 +17,8 @@ export default async function handler(req, res) {
       SELECT 
         page_type,
         page_id,
-        SUM(visit_count) as total_visits,
-        COUNT(DISTINCT ip_hash) as unique_visitors,
+        SUM(visit_count)::int as total_visits,
+        COUNT(DISTINCT ip_hash)::int as unique_visitors,
         MAX(updated_at) as last_visit,
         MIN(created_at) as first_visit
       FROM page_visits 
@@ -30,9 +30,9 @@ export default async function handler(req, res) {
     const overallStats = await sql`
       SELECT 
         page_type,
-        COUNT(*) as visit_records,
-        SUM(visit_count) as total_visits,
-        COUNT(DISTINCT ip_hash) as unique_visitors
+        COUNT(*)::int as visit_records,
+        SUM(visit_count)::int as total_visits,
+        COUNT(DISTINCT ip_hash)::int as unique_visitors
       FROM page_visits 
       GROUP BY page_type
       ORDER BY total_visits DESC
