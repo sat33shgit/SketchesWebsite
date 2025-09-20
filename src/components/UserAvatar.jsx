@@ -73,7 +73,7 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
   
   return (
     <div 
-      className={`inline-flex items-center justify-center font-bold ${className}`}
+      className={`${className}`}
       style={{
         backgroundColor: colors.bg,
         color: colors.text,
@@ -83,16 +83,23 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
         flexShrink: 0,
         border: sizeStyle.border,
         boxShadow: sizeStyle.shadow,
-        lineHeight: '1',
         userSelect: 'none',
         position: 'relative',
         background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg}dd 100%)`,
         transition: 'all 0.2s ease-in-out',
         cursor: 'default',
-        borderRadius: '50%', // Explicitly force round shape
-        minWidth: sizeStyle.width, // Ensure it stays square for perfect circle
+        borderRadius: '50%',
+        minWidth: sizeStyle.width,
         minHeight: sizeStyle.height,
-        overflow: 'hidden' // Ensure content stays within circle
+        overflow: 'hidden',
+        // Perfect centering
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        lineHeight: '1',
+        fontWeight: 'bold',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
       }}
       title={name || 'Anonymous'}
       onMouseEnter={(e) => {
@@ -102,7 +109,15 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
         e.target.style.transform = 'scale(1)'
       }}
     >
-      {firstLetter}
+      <span style={{
+        display: 'block',
+        textAlign: 'center',
+        lineHeight: '1',
+        transform: 'translateY(0)', // Ensure no vertical offset
+        fontSize: 'inherit'
+      }}>
+        {firstLetter}
+      </span>
     </div>
   )
 }
