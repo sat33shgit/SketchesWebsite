@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify'
 import { sendNotificationEmail } from '../utils/emailService'
+import UserAvatar from './UserAvatar'
 
 const CommentsSection = ({ sketchId, sketchName }) => {
   const [comments, setComments] = useState([]);
@@ -174,9 +175,12 @@ const CommentsSection = ({ sketchId, sketchName }) => {
 
             return (
               <div key={comment.id} style={{ marginBottom: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '0.5rem' }}>
-                <div style={{ fontWeight: 600, color: '#374151', marginBottom: '0.25rem' }}>{comment.name}</div>
-                <div style={{ color: '#374151' }}>{comment.comment}</div>
-                <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <UserAvatar name={comment.name} size="medium" />
+                  <div style={{ fontWeight: 600, color: '#374151', marginLeft: '0.75rem' }}>{comment.name}</div>
+                </div>
+                <div style={{ color: '#374151', marginLeft: '2.75rem' }}>{comment.comment}</div>
+                <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginTop: '0.25rem', marginLeft: '2.75rem' }}>
                   {created ? computeRelative(created) : ''}
                 </div>
               </div>

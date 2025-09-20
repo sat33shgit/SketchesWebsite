@@ -75,50 +75,151 @@ app.get('/api/analytics/stats', async (req, res) => {
     }
 
     // Get overall stats
-    const overallStats = await sql`
-      SELECT 
-        page_type,
-        COUNT(*) as visit_records,
-        SUM(visit_count) as total_visits,
-        COUNT(DISTINCT ip_hash) as unique_visitors
-      FROM page_visits 
-      WHERE 1=1 ${timeCondition ? sql.unsafe(timeCondition) : sql``}
-      ${pageType ? sql`AND page_type = ${pageType}` : sql``}
-      GROUP BY page_type
-      ORDER BY total_visits DESC
-    `;
+    let overallStats;
+    if (pageType && timeCondition) {
+      overallStats = await sql.unsafe(`
+        SELECT 
+          page_type,
+          COUNT(*) as visit_records,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors
+        FROM page_visits 
+        WHERE 1=1 ${timeCondition}
+          AND page_type = '${pageType}'
+        GROUP BY page_type
+        ORDER BY total_visits DESC
+      `);
+    } else if (pageType) {
+      overallStats = await sql.unsafe(`
+        SELECT 
+          page_type,
+          COUNT(*) as visit_records,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors
+        FROM page_visits 
+        WHERE page_type = '${pageType}'
+        GROUP BY page_type
+        ORDER BY total_visits DESC
+      `);
+    } else if (timeCondition) {
+      overallStats = await sql.unsafe(`
+        SELECT 
+          page_type,
+          COUNT(*) as visit_records,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors
+        FROM page_visits 
+        WHERE 1=1 ${timeCondition}
+        GROUP BY page_type
+        ORDER BY total_visits DESC
+      `);
+    } else {
+      overallStats = await sql`
+        SELECT 
+          page_type,
+          COUNT(*) as visit_records,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors
+        FROM page_visits 
+        GROUP BY page_type
+        ORDER BY total_visits DESC
+      `;
+    }
 
     // Get detailed stats by page
-    const detailedStats = await sql`
-      SELECT 
-        page_type,
-        page_id,
-        SUM(visit_count) as total_visits,
-        COUNT(DISTINCT ip_hash) as unique_visitors,
-        MAX(updated_at) as last_visit,
-        MIN(created_at) as first_visit
-      FROM page_visits 
-      WHERE 1=1 ${timeCondition ? sql.unsafe(timeCondition) : sql``}
-      ${pageType ? sql`AND page_type = ${pageType}` : sql``}
-      GROUP BY page_type, page_id
-      ORDER BY total_visits DESC
-      LIMIT 100
-    `;
+    let detailedStats;
+    if (pageType && timeCondition) {
+      detailedStats = await sql.unsafe(`
+        SELECT 
+          page_type,
+          page_id,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors,
+          MAX(updated_at) as last_visit,
+          MIN(created_at) as first_visit
+        FROM page_visits 
+        WHERE 1=1 ${timeCondition}
+          AND page_type = '${pageType}'
+        GROUP BY page_type, page_id
+        ORDER BY total_visits DESC
+        LIMIT 100
+      `);
+    } else if (pageType) {
+      detailedStats = await sql.unsafe(`
+        SELECT 
+          page_type,
+          page_id,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors,
+          MAX(updated_at) as last_visit,
+          MIN(created_at) as first_visit
+        FROM page_visits 
+        WHERE page_type = '${pageType}'
+        GROUP BY page_type, page_id
+        ORDER BY total_visits DESC
+        LIMIT 100
+      `);
+    } else if (timeCondition) {
+      detailedStats = await sql.unsafe(`
+        SELECT 
+          page_type,
+          page_id,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors,
+          MAX(updated_at) as last_visit,
+          MIN(created_at) as first_visit
+        FROM page_visits 
+        WHERE 1=1 ${timeCondition}
+        GROUP BY page_type, page_id
+        ORDER BY total_visits DESC
+        LIMIT 100
+      `);
+    } else {
+      detailedStats = await sql`
+        SELECT 
+          page_type,
+          page_id,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors,
+          MAX(updated_at) as last_visit,
+          MIN(created_at) as first_visit
+        FROM page_visits 
+        GROUP BY page_type, page_id
+        ORDER BY total_visits DESC
+        LIMIT 100
+      `;
+    }
 
-    // Get top sketches specifically
-    const topSketches = await sql`
-      SELECT 
-        page_id as sketch_id,
-        SUM(visit_count) as total_visits,
-        COUNT(DISTINCT ip_hash) as unique_visitors,
-        MAX(updated_at) as last_visit
-      FROM page_visits 
-      WHERE page_type = 'sketch' 
-      ${timeCondition ? sql.unsafe(timeCondition) : sql``}
-      GROUP BY page_id
-      ORDER BY total_visits DESC
-      LIMIT 20
-    `;
+    // Get top sketches specifically  
+    let topSketches;
+    if (timeCondition) {
+      topSketches = await sql.unsafe(`
+        SELECT 
+          page_id as sketch_id,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors,
+          MAX(updated_at) as last_visit
+        FROM page_visits 
+        WHERE page_type = 'sketch' 
+        ${timeCondition}
+        GROUP BY page_id
+        ORDER BY total_visits DESC
+        LIMIT 20
+      `);
+    } else {
+      topSketches = await sql`
+        SELECT 
+          page_id as sketch_id,
+          SUM(visit_count) as total_visits,
+          COUNT(DISTINCT ip_hash) as unique_visitors,
+          MAX(updated_at) as last_visit
+        FROM page_visits 
+        WHERE page_type = 'sketch'
+        GROUP BY page_id
+        ORDER BY total_visits DESC
+        LIMIT 20
+      `;
+    }
 
     // Get recent activity
     const recentActivity = await sql`
