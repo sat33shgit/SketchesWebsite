@@ -8,35 +8,26 @@ const ViewCount = ({ sketchId, size = 'small', className = '' }) => {
     const fetchViewCount = async () => {
       try {
         setIsLoading(true)
-        console.log('[ViewCount] Fetching for sketchId:', sketchId)
         const response = await fetch('/api/analytics/stats?timeframe=all')
         if (response.ok) {
           const data = await response.json()
-          console.log('[ViewCount] API Response:', data)
           
           if (data.success && data.data && data.data.detailed) {
-            console.log('[ViewCount] Detailed data:', data.data.detailed)
             // Find the view count for this specific sketch
             const sketchData = data.data.detailed.find(
               item => item.page_type === 'sketch' && (item.page_id === String(sketchId) || item.page_id === sketchId)
             )
             
-            console.log('[ViewCount] Found sketch data:', sketchData, 'for sketchId:', sketchId)
-            
             if (sketchData) {
               const visits = parseInt(sketchData.total_visits) || 0
-              console.log('[ViewCount] Setting view count to:', visits)
               setViewCount(visits)
             } else {
-              console.log('[ViewCount] No data found for sketch:', sketchId)
               setViewCount(0)
             }
           } else {
-            console.log('[ViewCount] Invalid data structure:', data)
             setViewCount(0)
           }
         } else {
-          console.error('[ViewCount] API error:', response.status, response.statusText)
           setViewCount(0)
         }
       } catch (error) {

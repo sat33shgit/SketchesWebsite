@@ -30,11 +30,15 @@ export default async function handler(req, res) {
     const ipHash = crypto.createHash('sha256').update(clientIP + 'salt').digest('hex');
     const userAgentHash = crypto.createHash('sha256').update(userAgent + 'salt').digest('hex');
 
+    // For pages without page_id (home, about, contact), use the page_type as page_id
+    // This ensures the unique constraint works properly
+    const normalizedPageId = pageId || pageType;
+
     // Insert or update visit count
     // Using ON CONFLICT to increment visit_count if same visitor visits again
     await sql`
       INSERT INTO page_visits (page_type, page_id, visit_count, ip_hash, user_agent_hash, updated_at)
-      VALUES (${pageType}, ${pageId || null}, 1, ${ipHash}, ${userAgentHash}, CURRENT_TIMESTAMP)
+      VALUES (${pageType}, ${normalizedPageId}, 1, ${ipHash}, ${userAgentHash}, CURRENT_TIMESTAMP)
       ON CONFLICT (page_type, page_id, ip_hash, user_agent_hash)
       DO UPDATE SET 
         visit_count = page_visits.visit_count + 1,
