@@ -29,6 +29,8 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 
 ### User Experience  
 - **Sketch Detail Pages**: Individual pages with full descriptions and metadata
+- **User Avatar Comments**: Personalized circular avatars with first letter of commenter names
+- **Interactive Comments**: Comment system with real-time posting and display
 - **Artist Profile**: Professional about page with biography and artist statement
 - **Contact Integration**: EmailJS-powered contact form for commissions
 - **Mobile-First Design**: Fully responsive across all device sizes
@@ -79,7 +81,9 @@ src/
 │   ├── Navbar.jsx       # Navigation with mobile menu
 │   ├── Footer.jsx       # Site footer with copyright
 │   ├── LikeDislike.jsx  # Interactive rating component
-│   └── ViewCount.jsx    # View count display with analytics
+│   ├── ViewCount.jsx    # View count display with analytics
+│   ├── UserAvatar.jsx   # Circular avatar with user initials
+│   └── CommentsSection.jsx # Comment system with user avatars
 ├── pages/               # Main page components
 │   ├── Gallery.jsx      # Homepage with sketch grid
 │   ├── SketchDetail.jsx # Individual sketch pages
@@ -210,11 +214,28 @@ POSTGRES_URL=your_postgres_connection_string
 
 - **Advanced Analytics**: Detailed visitor statistics and popular content tracking
 - **Database Integration**: Enhanced PostgreSQL features for user management
-- **User Comments**: Expand commenting system across all pages
+- **Comment Moderation**: Admin panel for managing user comments
+- **User Profiles**: Extended user system with persistent profiles
+- **Comment Reactions**: Like/dislike system for individual comments
 - **Search & Filter**: Advanced gallery filtering options
 - **Social Sharing**: Share individual sketches on social media
 - **Artist Blog**: Add blog section for artistic journey
 - **E-commerce**: Sell prints and commission services
+
+## 💬 Comments System
+
+### Features
+- **User Avatars**: Automatically generated circular avatars with user initials
+- **Color Consistency**: Each user gets a consistent color based on their name
+- **Real-time Posting**: Instant comment submission and display
+- **Visual Layout**: Professional chat-like interface with avatars positioned outside comment boxes
+- **Email Notifications**: Automatic email alerts for new comments
+
+### Technical Implementation
+- **UserAvatar Component**: Generates colorful circular avatars (28px-44px) with perfect letter centering
+- **Hash-based Colors**: 20 different color combinations ensure visual variety
+- **Responsive Design**: Adapts beautifully across all device sizes
+- **API Integration**: RESTful endpoints for comment CRUD operations
 
 ## 📄 License
 

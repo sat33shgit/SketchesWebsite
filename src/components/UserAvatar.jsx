@@ -1,15 +1,22 @@
 import React from 'react'
 
+/**
+ * UserAvatar Component
+ * 
+ * Displays a circular avatar with the first letter of a user's name.
+ * Uses consistent color generation based on the name for visual consistency.
+ * 
+ * @param {string} name - The user's name
+ * @param {string} size - Avatar size: 'small', 'medium', or 'large'
+ * @param {string} className - Additional CSS classes
+ */
 const UserAvatar = ({ name, size = 'medium', className = '' }) => {
   // Get first letter of the name, fallback to '?'
   const firstLetter = name && name.trim() ? name.trim()[0].toUpperCase() : '?'
   
   // Generate a consistent color based on the name
   const getAvatarColor = (name) => {
-    if (!name) return {
-      bg: '#9ca3af',
-      text: '#ffffff'
-    }
+    if (!name) return { bg: '#9ca3af', text: '#ffffff' }
     
     // Simple hash function to generate consistent colors
     let hash = 0
@@ -17,7 +24,7 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
       hash = name.charCodeAt(i) + ((hash << 5) - hash)
     }
     
-    // Enhanced color palette with background and text colors for better contrast
+    // Color palette with high contrast combinations
     const colorPairs = [
       { bg: '#ef4444', text: '#ffffff' }, // red
       { bg: '#f97316', text: '#ffffff' }, // orange
@@ -44,82 +51,82 @@ const UserAvatar = ({ name, size = 'medium', className = '' }) => {
     return colorPairs[Math.abs(hash) % colorPairs.length]
   }
   
-  const sizeClasses = {
+  // Size configurations
+  const sizeConfigs = {
     small: { 
-      width: '28px', 
-      height: '28px', 
-      fontSize: '14px', // Increased from 12px to 14px
+      size: '28px', 
+      fontSize: '14px',
       border: '2px solid #ffffff',
       shadow: '0 1px 3px rgba(0, 0, 0, 0.12)'
     },
     medium: { 
-      width: '36px', 
-      height: '36px', 
-      fontSize: '16px', // Increased from 14px to 16px
+      size: '36px', 
+      fontSize: '16px',
       border: '2px solid #ffffff',
       shadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
     },
     large: { 
-      width: '44px', 
-      height: '44px', 
-      fontSize: '20px', // Increased from 18px to 20px
+      size: '44px', 
+      fontSize: '20px',
       border: '3px solid #ffffff',
       shadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
     }
   }
   
   const colors = getAvatarColor(name)
-  const sizeStyle = sizeClasses[size]
+  const config = sizeConfigs[size]
+  
+  const handleMouseEnter = (e) => {
+    e.target.style.transform = 'scale(1.05)'
+  }
+  
+  const handleMouseLeave = (e) => {
+    e.target.style.transform = 'scale(1)'
+  }
   
   return (
     <div 
-      className={`${className}`}
+      className={className}
       style={{
-        backgroundColor: colors.bg,
-        color: colors.text,
-        width: sizeStyle.width,
-        height: sizeStyle.height,
-        fontSize: sizeStyle.fontSize,
-        flexShrink: 0,
-        border: sizeStyle.border,
-        boxShadow: sizeStyle.shadow,
-        userSelect: 'none',
-        position: 'relative',
-        background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg}dd 100%)`,
-        transition: 'all 0.2s ease-in-out',
-        cursor: 'default',
+        // Dimensions and shape
+        width: config.size,
+        height: config.size,
         borderRadius: '50%',
-        minWidth: sizeStyle.width,
-        minHeight: sizeStyle.height,
-        overflow: 'hidden',
-        // Perfect centering
+        
+        // Colors and background
+        backgroundColor: colors.bg,
+        background: `linear-gradient(135deg, ${colors.bg} 0%, ${colors.bg}dd 100%)`,
+        color: colors.text,
+        
+        // Border and shadow
+        border: config.border,
+        boxShadow: config.shadow,
+        
+        // Layout and positioning
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        textAlign: 'center',
-        lineHeight: '1',
+        flexShrink: 0,
+        
+        // Typography
+        fontSize: config.fontSize,
         fontWeight: 'bold',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        textTransform: 'uppercase',
+        
+        // Interaction
+        cursor: 'default',
+        userSelect: 'none',
+        transition: 'all 0.2s ease-in-out',
+        
+        // Overflow
+        overflow: 'hidden'
       }}
       title={name || 'Anonymous'}
-      onMouseEnter={(e) => {
-        e.target.style.transform = 'scale(1.05)'
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.transform = 'scale(1)'
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      <span style={{
-        display: 'block',
-        textAlign: 'center',
-        lineHeight: '1',
-        transform: 'translateY(0)', // Ensure no vertical offset
-        fontSize: 'inherit',
-        textTransform: 'uppercase', // Ensure capital letters at CSS level
-        fontWeight: 'bold'
-      }}>
-        {firstLetter}
-      </span>
+      {firstLetter}
     </div>
   )
 }
