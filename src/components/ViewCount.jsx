@@ -20,9 +20,11 @@ const ViewCount = ({ sketchId, size = 'small', className = '' }) => {
             
             if (sketchData) {
               const visits = Number(sketchData.total_visits) || 0
-              setViewCount(visits)
+              // Add 1 to show the current visit count including the current page view
+              setViewCount(visits + 1)
             } else {
-              setViewCount(0)
+              // If no data found, this is the first visit
+              setViewCount(1)
             }
           } else {
             setViewCount(0)
