@@ -10,6 +10,7 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 ## ✅ Current Status
 - **✅ Fully deployed** on Vercel with automatic deployments
 - **✅ Cross-device like/dislike system** with localStorage fallback
+- **✅ View tracking system** with real-time analytics
 - **✅ Professional gallery** with optimized image loading
 - **✅ Individual sketch pages** with detailed views
 - **✅ About page** with artist information and profile
@@ -22,6 +23,7 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 ### Gallery & Artwork
 - **Interactive Gallery**: Grid layout with hover effects and image optimization
 - **Like/Dislike System**: Cross-device persistence for sketch ratings
+- **View Count Display**: Real-time view tracking with eye icon display
 - **Sketch Categories**: Organized artwork by themes (Cuteness, Portrait, etc.)
 - **High-Quality Images**: Optimized loading with fallback placeholders
 
@@ -31,11 +33,19 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 - **Contact Integration**: EmailJS-powered contact form for commissions
 - **Mobile-First Design**: Fully responsive across all device sizes
 
+### Analytics & Views System
+- **Real-time View Tracking**: Automatic page visit tracking for all sketches
+- **View Count Display**: Eye icon with current view count on each sketch page
+- **Privacy-Focused**: Uses hashed IP addresses for visitor tracking
+- **Database Analytics**: PostgreSQL backend for reliable data persistence
+- **Duplicate Prevention**: Smart handling of same-visitor multiple visits
+
 ### Technical Features
 - **Fast Loading**: Vite build system with optimized assets
+- **Analytics System**: PostgreSQL-based page visit tracking
 - **SEO Friendly**: Proper meta tags and semantic HTML structure
 - **Cross-Browser**: Compatible with all modern browsers
-- **API Ready**: Backend endpoints prepared for future database integration
+- **API Ready**: Backend endpoints for database integration
 
 ## 🛠️ Tech Stack
 
@@ -43,6 +53,7 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 - **Vite 4.5** - Lightning-fast build tool and development server  
 - **React Router 6** - Modern client-side routing
 - **Tailwind CSS 3** - Utility-first CSS framework
+- **PostgreSQL** - Database for analytics and view tracking
 - **Vercel** - Production hosting with serverless functions
 - **EmailJS** - Contact form integration
 - **JavaScript ES6+** - Modern JavaScript features
@@ -67,12 +78,15 @@ src/
 ├── components/           # Reusable UI components
 │   ├── Navbar.jsx       # Navigation with mobile menu
 │   ├── Footer.jsx       # Site footer with copyright
-│   └── LikeDislike.jsx  # Interactive rating component
+│   ├── LikeDislike.jsx  # Interactive rating component
+│   └── ViewCount.jsx    # View count display with analytics
 ├── pages/               # Main page components
 │   ├── Gallery.jsx      # Homepage with sketch grid
 │   ├── SketchDetail.jsx # Individual sketch pages
 │   ├── About.jsx        # Artist biography and statement
 │   └── Contact.jsx      # Contact form with EmailJS
+├── hooks/               # Custom React hooks
+│   └── useAnalytics.js  # Analytics tracking hook
 ├── data/                # Static data
 │   └── sketches.js      # Artwork data and utilities
 ├── utils/               # Helper functions
@@ -88,6 +102,9 @@ public/
 └── index.html          # HTML template
 
 api/                     # Vercel serverless functions
+├── analytics/           # Analytics tracking endpoints
+│   ├── track.js        # Page visit tracking API
+│   └── stats.js        # Analytics data retrieval API
 └── sketches/           # API endpoints for like/dislike system
 ```
 
@@ -124,6 +141,23 @@ But more than just the technical challenges, working on this meant a lot to me p
 - Node.js 18+ 
 - npm or yarn
 - Git
+- PostgreSQL database (for analytics)
+
+### Database Schema
+The analytics system uses PostgreSQL with the following table:
+```sql
+CREATE TABLE page_visits (
+  id SERIAL PRIMARY KEY,
+  page_type VARCHAR(50) NOT NULL,
+  page_id VARCHAR(50),
+  visit_count INTEGER DEFAULT 1,
+  ip_hash VARCHAR(255) NOT NULL,
+  user_agent_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(page_type, page_id, ip_hash, user_agent_hash)
+);
+```
 
 ### Local Development
 1. **Clone Repository**:
@@ -154,6 +188,7 @@ Create `.env` file for local development:
 VITE_EMAILJS_SERVICE_ID=your_service_id
 VITE_EMAILJS_TEMPLATE_ID=your_template_id  
 VITE_EMAILJS_PUBLIC_KEY=your_public_key
+POSTGRES_URL=your_postgres_connection_string
 ```
 
 ## 🔧 Configuration Files
@@ -173,8 +208,9 @@ VITE_EMAILJS_PUBLIC_KEY=your_public_key
 
 ## 🎯 Future Enhancements
 
-**Database Integration**: Already using PostgreSQL for comments and ratings
-**User Comments**: Visitors can comment on sketches
+- **Advanced Analytics**: Detailed visitor statistics and popular content tracking
+- **Database Integration**: Enhanced PostgreSQL features for user management
+- **User Comments**: Expand commenting system across all pages
 - **Search & Filter**: Advanced gallery filtering options
 - **Social Sharing**: Share individual sketches on social media
 - **Artist Blog**: Add blog section for artistic journey
