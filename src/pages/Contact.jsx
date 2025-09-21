@@ -69,6 +69,7 @@ const Contact = () => {
           message: result.message, 
           isError: false 
         })
+        
         setFormData({
           name: '',
           email: '',
@@ -83,7 +84,7 @@ const Contact = () => {
       }
     } catch (error) {
       setSubmitStatus({ 
-        message: 'Failed to send email. Please try again or contact me directly at bsateeshk@gmail.com', 
+        message: 'Failed to send message. Please try again or contact me directly at bsateeshk@gmail.com', 
         isError: true 
       })
     } finally {

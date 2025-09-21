@@ -17,17 +17,37 @@ const Gallery = () => {
   
   useEffect(() => {
     fetch('/api/comments/counts')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
         if (data.success) setCommentCounts(data.data)
+      })
+      .catch(error => {
+        console.error('Error fetching comment counts:', error);
+        // Set empty counts on error to prevent UI issues
+        setCommentCounts({});
       })
   }, [])
 
   useEffect(() => {
     fetch('/api/sketches/likes')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
         if (data.success) setLikeCounts(data.data)
+      })
+      .catch(error => {
+        console.error('Error fetching like counts:', error);
+        // Set empty counts on error to prevent UI issues
+        setLikeCounts({});
       })
   }, [])
 
