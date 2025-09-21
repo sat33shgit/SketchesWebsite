@@ -61,14 +61,26 @@ export default async function handler(req, res) {
     
     const userAgent = req.headers['user-agent'] || 'unknown';
 
-    // Save the contact message to database
+    // Get country from IP without storing IP
+    let country = 'Unknown';
+    try {
+      if (clientIP !== 'unknown') {
+        const geoResponse = await fetch(`http://ip-api.com/json/${clientIP}?fields=country`);
+        const geoData = await geoResponse.json();
+        country = geoData.country || 'Unknown';
+      }
+    } catch (geoError) {
+      console.log('Geolocation lookup failed:', geoError.message);
+    }
+
+    // Save the contact message to database (without IP address)
     const dbResult = await sql`
       INSERT INTO contact_messages (
         name, 
         email, 
         subject, 
         message, 
-        ip_address, 
+        country,
         user_agent,
         status,
         is_read,
@@ -78,7 +90,7 @@ export default async function handler(req, res) {
         ${cleanEmail.toLowerCase()}, 
         ${cleanSubject}, 
         ${cleanMessage}, 
-        ${clientIP},
+        ${country},
         ${userAgent},
         'new',
         false,

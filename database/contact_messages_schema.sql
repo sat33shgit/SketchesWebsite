@@ -7,7 +7,7 @@ CREATE TABLE contact_messages (
     email VARCHAR(255) NOT NULL,
     subject VARCHAR(200) NOT NULL,
     message TEXT NOT NULL,
-    ip_address INET,
+    country VARCHAR(100),
     user_agent TEXT,
     status VARCHAR(20) DEFAULT 'new',
     is_read BOOLEAN DEFAULT FALSE,
@@ -42,7 +42,7 @@ COMMENT ON COLUMN contact_messages.name IS 'Name of the person sending the messa
 COMMENT ON COLUMN contact_messages.email IS 'Email address of the sender';
 COMMENT ON COLUMN contact_messages.subject IS 'Subject line of the message (max 200 chars)';
 COMMENT ON COLUMN contact_messages.message IS 'Full message content (unlimited text)';
-COMMENT ON COLUMN contact_messages.ip_address IS 'IP address of the sender for tracking purposes';
+COMMENT ON COLUMN contact_messages.country IS 'Country of the sender (derived from IP, IP not stored)';
 COMMENT ON COLUMN contact_messages.user_agent IS 'Browser/device information for analytics';
 COMMENT ON COLUMN contact_messages.status IS 'Message status: new, replied, archived, spam';
 COMMENT ON COLUMN contact_messages.is_read IS 'Boolean flag indicating if message has been read';
