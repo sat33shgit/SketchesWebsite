@@ -103,10 +103,7 @@ export default async function handler(req, res) {
           email: cleanEmail,
           subject: `New Contact Form Message: ${cleanSubject}`,
           message: `Name: ${cleanName}\nEmail: ${cleanEmail}\nSubject: ${cleanSubject}\n\nMessage:\n${cleanMessage}`,
-          to_email: 'bsateeshk@gmail.com', // Your email address
           from_name: 'Website Contact Form',
-          reply_to: cleanEmail,
-          _template: 'table',
         }),
         timeout: 10000 // 10 second timeout for Vercel
       });

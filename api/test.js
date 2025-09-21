@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         email: 'test@example.com',
         subject: 'Vercel API Test',
         message: 'Testing if email works from Vercel serverless function',
-        to_email: 'bsateeshk@gmail.com'
+        from_name: 'Vercel Test'
       })
     });
 
