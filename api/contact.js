@@ -101,7 +101,7 @@ export default async function handler(req, res) {
           access_key: '92235cbf-7e66-4121-a028-ba50d463f041', // Test key - replace with your personal key from web3forms.com
           name: cleanName,
           email: cleanEmail,
-          subject: `New Contact Form Message: ${cleanSubject}`,
+          subject: `A new message from ${cleanName}`,
           message: `Name: ${cleanName}\nEmail: ${cleanEmail}\nSubject: ${cleanSubject}\n\nMessage:\n${cleanMessage}`,
           from_name: 'Website Contact Form',
         }),
