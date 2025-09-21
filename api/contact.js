@@ -6,7 +6,7 @@ function stripTags(input) {
 }
 
 export default async function handler(req, res) {
-  // Set CORS headers
+  // Set CORS headers for Vercel deployment
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -86,6 +86,47 @@ export default async function handler(req, res) {
       )
       RETURNING id, created_at
     `;
+
+    // Send email notification using Web3Forms
+    try {
+      // Use global fetch (available in Node.js 18+) for Vercel compatibility
+      const emailResponse = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'User-Agent': 'Vercel-Serverless-Function'
+        },
+        body: JSON.stringify({
+          access_key: '92235cbf-7e66-4121-a028-ba50d463f041', // Test key - replace with your personal key from web3forms.com
+          name: cleanName,
+          email: cleanEmail,
+          subject: `New Contact Form Message: ${cleanSubject}`,
+          message: `Name: ${cleanName}\nEmail: ${cleanEmail}\nSubject: ${cleanSubject}\n\nMessage:\n${cleanMessage}`,
+          to_email: 'bsateeshk@gmail.com', // Your email address
+          from_name: 'Website Contact Form',
+          reply_to: cleanEmail,
+          _template: 'table',
+        }),
+        timeout: 10000 // 10 second timeout for Vercel
+      });
+
+      if (!emailResponse.ok) {
+        throw new Error(`HTTP ${emailResponse.status}: ${emailResponse.statusText}`);
+      }
+
+      const emailResult = await emailResponse.json();
+      
+      if (!emailResult.success) {
+        console.warn('Email sending failed:', emailResult.message || 'Unknown error');
+        // Continue with success response even if email fails
+      } else {
+        console.log('Email sent successfully via Web3Forms');
+      }
+    } catch (emailError) {
+      console.error('Error sending email on Vercel:', emailError.message);
+      // Continue with success response even if email fails - user doesn't need to know
+    }
 
     // Return success response with expected format
     return res.status(200).json({ 
