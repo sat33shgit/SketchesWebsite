@@ -70,7 +70,8 @@ export default async function handler(req, res) {
         country = geoData.country || 'Unknown';
       }
     } catch (geoError) {
-      console.log('Geolocation lookup failed:', geoError.message);
+      // Geolocation lookup failed, continue with 'Unknown'
+      country = 'Unknown';
     }
 
     // Save the contact message to database (without IP address)
@@ -127,14 +128,10 @@ export default async function handler(req, res) {
       const emailResult = await emailResponse.json();
       
       if (!emailResult.success) {
-        console.warn('Email sending failed:', emailResult.message || 'Unknown error');
-        // Continue with success response even if email fails
-      } else {
-        console.log('Email sent successfully via Web3Forms');
+        // Email sending failed, continue with success response
       }
     } catch (emailError) {
-      console.error('Error sending email on Vercel:', emailError.message);
-      // Continue with success response even if email fails - user doesn't need to know
+      // Email sending failed, continue with success response
     }
 
     // Return success response with expected format

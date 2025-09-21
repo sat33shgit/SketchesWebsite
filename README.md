@@ -14,7 +14,8 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 - **✅ Professional gallery** with optimized image loading
 - **✅ Individual sketch pages** with detailed views
 - **✅ About page** with artist information and profile
-- **✅ Contact form** ready for inquiries (EmailJS integration)
+- **✅ Contact form** with database storage and email notifications
+- **✅ Privacy-compliant analytics** with country-level geolocation
 - **✅ Responsive design** optimized for all devices
 - **✅ Modern UI/UX** with smooth interactions and hover effects
 
@@ -32,7 +33,8 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 - **User Avatar Comments**: Personalized circular avatars with first letter of commenter names
 - **Interactive Comments**: Comment system with real-time posting and display
 - **Artist Profile**: Professional about page with biography and artist statement
-- **Contact Integration**: EmailJS-powered contact form for commissions
+- **Contact Database**: Full contact form with PostgreSQL storage and email notifications
+- **Privacy-Compliant Analytics**: Country-level geolocation without IP storage
 - **Mobile-First Design**: Fully responsive across all device sizes
 
 ### Analytics & Views System
@@ -41,6 +43,8 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 - **Privacy-Focused**: Uses hashed IP addresses for visitor tracking
 - **Database Analytics**: PostgreSQL backend for reliable data persistence
 - **Duplicate Prevention**: Smart handling of same-visitor multiple visits
+- **Contact Message Storage**: GDPR-compliant contact form data storage
+- **Geographic Analytics**: Country-level visitor insights without IP storage
 
 ### Technical Features
 - **Fast Loading**: Vite build system with optimized assets
@@ -55,9 +59,9 @@ A modern, responsive website showcasing pencil sketch artwork by Sateesh Kumar B
 - **Vite 4.5** - Lightning-fast build tool and development server  
 - **React Router 6** - Modern client-side routing
 - **Tailwind CSS 3** - Utility-first CSS framework
-- **PostgreSQL** - Database for analytics and view tracking
+- **PostgreSQL** - Database for analytics, view tracking, and contact messages
 - **Vercel** - Production hosting with serverless functions
-- **EmailJS** - Contact form integration
+- **Web3Forms** - Contact form email notifications
 - **JavaScript ES6+** - Modern JavaScript features
 
 ## 🚀 Deployment
@@ -106,10 +110,16 @@ public/
 └── index.html          # HTML template
 
 api/                     # Vercel serverless functions
+├── contact.js          # Contact form submission with database storage
+├── test.js             # API testing endpoint for debugging
 ├── analytics/           # Analytics tracking endpoints
 │   ├── track.js        # Page visit tracking API
 │   └── stats.js        # Analytics data retrieval API
 └── sketches/           # API endpoints for like/dislike system
+
+database/               # Database schemas and setup
+├── contact_messages_schema.sql # Contact form database schema
+└── analytics_schema.sql # Analytics database schema
 ```
 
 ## 🎨 Adding New Sketches
@@ -148,7 +158,9 @@ But more than just the technical challenges, working on this meant a lot to me p
 - PostgreSQL database (for analytics)
 
 ### Database Schema
-The analytics system uses PostgreSQL with the following table:
+The application uses PostgreSQL with the following tables:
+
+#### Analytics System
 ```sql
 CREATE TABLE page_visits (
   id SERIAL PRIMARY KEY,
@@ -160,6 +172,23 @@ CREATE TABLE page_visits (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(page_type, page_id, ip_hash, user_agent_hash)
+);
+```
+
+#### Contact Messages System
+```sql
+CREATE TABLE contact_messages (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  subject VARCHAR(200) NOT NULL,
+  message TEXT NOT NULL,
+  country VARCHAR(100),
+  user_agent TEXT,
+  status VARCHAR(20) DEFAULT 'new',
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
@@ -193,6 +222,7 @@ VITE_EMAILJS_SERVICE_ID=your_service_id
 VITE_EMAILJS_TEMPLATE_ID=your_template_id  
 VITE_EMAILJS_PUBLIC_KEY=your_public_key
 POSTGRES_URL=your_postgres_connection_string
+WEB3FORMS_ACCESS_KEY=your_web3forms_access_key
 ```
 
 ## 🔧 Configuration Files
@@ -212,6 +242,7 @@ POSTGRES_URL=your_postgres_connection_string
 
 ## 🎯 Future Enhancements
 
+- **Admin Dashboard**: Contact message management interface
 - **Advanced Analytics**: Detailed visitor statistics and popular content tracking
 - **Database Integration**: Enhanced PostgreSQL features for user management
 - **Comment Moderation**: Admin panel for managing user comments
@@ -236,6 +267,30 @@ POSTGRES_URL=your_postgres_connection_string
 - **Hash-based Colors**: 20 different color combinations ensure visual variety
 - **Responsive Design**: Adapts beautifully across all device sizes
 - **API Integration**: RESTful endpoints for comment CRUD operations
+
+## 📧 Contact System
+
+### Features
+- **Database Storage**: All contact messages stored in PostgreSQL database
+- **Email Notifications**: Automatic email alerts via Web3Forms integration
+- **Privacy Compliant**: GDPR-compliant data collection without IP storage
+- **Geographic Analytics**: Country-level visitor insights using real-time IP lookup
+- **Form Validation**: Comprehensive input sanitization and validation
+- **Error Handling**: Graceful fallbacks and user-friendly error messages
+
+### Privacy Features
+- **No IP Storage**: IP addresses used for country lookup but never stored
+- **Data Minimization**: Only essential contact information collected
+- **Transparent Processing**: Clear data handling practices
+- **User Rights**: Easy data access and deletion capabilities
+- **Secure Storage**: Encrypted database storage with proper access controls
+
+### Technical Implementation
+- **Serverless API**: Vercel serverless functions for scalable processing
+- **Real-time Geolocation**: IP-to-country conversion during request processing
+- **Database Integration**: PostgreSQL with proper indexing and constraints
+- **Email Service**: Web3Forms integration for reliable email delivery
+- **Input Sanitization**: XSS protection and SQL injection prevention
 
 ## 📄 License
 

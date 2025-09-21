@@ -61,8 +61,6 @@ const saveToLocalStorage = (sketchId, stats) => {
 
 // Get sketch statistics from Vercel API
 export const getSketchStats = async (sketchId) => {
-  console.log(`Getting stats for sketch ${sketchId}`)
-  
   try {
     const response = await fetch(`/api/sketches/${sketchId}/stats`)
     
@@ -85,24 +83,20 @@ export const getSketchStats = async (sketchId) => {
         
         // Save to localStorage for caching
         saveToLocalStorage(sketchId, stats)
-        console.log('API stats:', stats)
         return stats
       }
     }
   } catch (error) {
-    console.log('API unavailable, using localStorage:', error.message)
+    // API unavailable, fall back to localStorage
   }
   
   // Fallback to localStorage
   const localStats = getStatsFromLocalStorage(sketchId)
-  console.log('Local fallback stats:', localStats)
   return localStats
 }
 
 // Toggle like using Vercel API
 export const toggleLike = async (sketchId) => {
-  console.log(`Toggling like for sketch ${sketchId}`)
-  
   const deviceId = getDeviceId()
   const currentStats = getStatsFromLocalStorage(sketchId)
   const action = currentStats.userLiked ? 'unlike' : 'like'
