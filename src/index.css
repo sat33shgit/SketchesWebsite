@@ -1,0 +1,1640 @@
+:root {
+  --header-height: 64px;
+}
+
+body, #root {
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+header, nav {
+  flex: 0 0 auto;
+  height: var(--header-height);
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+/* Ensure page content is offset so it doesn't sit beneath the fixed header */
+.content {
+  padding-top: var(--header-height);
+}
+
+footer {
+  flex: 0 0 auto;
+  height: 48px;
+  z-index: 10;
+}
+
+.split-view-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+}
+/* Split view for SketchDetail */
+
+
+.split-view {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.split-view-container {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.split-view-content {
+  display: flex;
+  background: transparent;
+}
+
+
+.split-view-image {
+  flex: 1 1 50%;
+  max-width: 50vw;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: transparent;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+
+.split-view-details {
+  flex: 1 1 50%;
+  max-width: 50vw;
+  height: 100%;
+  overflow-y: auto;
+  padding-left: 1rem;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+@media (max-width: 1024px) {
+  .split-view-content {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+  .split-view-image {
+  max-width: 100%;
+  width: 100%;
+    height: auto;
+    padding-left: 0;
+    position: static;
+  }
+  .split-view-details {
+  max-width: 100%;
+  width: 100%;
+    height: auto;
+    padding-left: 0;
+  min-height: 0;
+  }
+}
+/* Complete CSS for all pages - no Tailwind dependencies */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* App layout */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f9fafb;
+}
+
+/* Override background for sketch detail page */
+.app:has(.sketch-detail-page),
+.app:has(.about-page) {
+  background-color: transparent;
+}
+
+.content {
+  flex: 1;
+  /* preserve header offset so content doesn't get hidden under the fixed header */
+  padding-top: var(--header-height);
+}
+
+/* Apply padding only to non-sketch-detail and non-about pages */
+.content:not(:has(.sketch-detail-page)):not(:has(.about-page)) {
+  /* include header height in page padding so top spacing is consistent; reduce bottom gap by 50% */
+  padding-top: calc(var(--header-height) + 1.5rem);
+  padding-bottom: 0.75rem;
+}
+
+/* For browsers that don't support :has(), use a fallback */
+@supports not (selector(:has(*))) {
+  .content {
+    /* fallback: include header height and a smaller bottom gap */
+    padding-top: calc(var(--header-height) + 1.5rem);
+    padding-bottom: 0.75rem;
+  }
+  
+  .content .sketch-detail-page,
+  .content .about-page {
+    margin: -3rem 0;
+  }
+  
+  .app {
+    background-color: #f9fafb;
+  }
+  
+  .content:has(.sketch-detail-page),
+  .content:has(.about-page),
+  .sketch-detail-page .app,
+  .about-page .app {
+    background-color: transparent;
+  }
+}
+
+/* Navigation */
+nav {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* positioning handled at the top of the file via `header, nav { position: fixed; }` */
+}
+
+/* subtle full-width divider under the header for clearer separation */
+nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(0,0,0,0.04), rgba(0,0,0,0.02));
+  pointer-events: none;
+}
+
+.nav-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: var(--header-height);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: #1f2937;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: #1f2937;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+/* Hide hamburger and mobile menu by default (desktop) */
+.hamburger {
+  display: none;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #6b7280;
+  font-weight: 500;
+  transition: color 0.2s;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #1f2937;
+  border-bottom-color: #1f2937;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.social-links a,
+.social-links button {
+  color: #9ca3af;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.social-links a:hover,
+.social-links button:hover {
+  color: #2563eb;
+}
+
+/* Page containers */
+.page-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.page-container-full {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Gallery styles */
+.gallery-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.gallery-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.gallery-description {
+  font-size: 1.125rem;
+  color: #6b7280;
+  max-width: 768px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Sketch cards */
+.sketch-card {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.sketch-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.sketch-image-container {
+  width: 100%;
+  height: 300px;
+  background: #f3f4f6;
+  position: relative;
+  overflow: hidden;
+}
+
+.sketch-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.sketch-card:hover .sketch-image {
+  transform: scale(1.05);
+}
+
+.no-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.no-image-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1rem;
+}
+
+/* Card content */
+.sketch-card-content {
+  padding: 1.5rem;
+}
+
+.sketch-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.sketch-date {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+}
+
+.sketch-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sketch-category {
+  background: #f3f4f6;
+  color: #1f2937;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+/* About page styles */
+.about-page {
+  min-height: 100vh;
+  background: white;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.about-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.about-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .about-content {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.about-profile {
+  position: sticky;
+  top: 2rem;
+}
+
+.profile-image {
+  width: 256px;
+  height: 256px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+@media (min-width: 1024px) {
+  .profile-image {
+    margin: 0;
+  }
+}
+
+.profile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .profile-info {
+    text-align: left;
+  }
+}
+
+.profile-info h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.profile-info p {
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.about-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.about-text p {
+  font-size: 1.125rem;
+  color: #374151;
+  line-height: 1.7;
+}
+
+.artist-statement {
+  background: #f9fafb;
+  padding: 2rem;
+  border-radius: 0.5rem;
+}
+
+.artist-statement h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.artist-statement p {
+  color: #374151;
+  line-height: 1.7;
+}
+
+/* Contact page styles */
+.contact-page {
+  min-height: 100vh;
+  background: #ffffff; /* changed to white to match header */
+  /* decreased further to reduce gap under header */
+  /* minimal vertical padding so content appears close to header */
+  padding: 0.5rem 0;
+}
+
+/* Home (Gallery) page background - match header white */
+.page-container.home-page {
+  /* keep inner container spacing but let outer .content handle full-bleed background */
+  background: transparent;
+  min-height: calc(100vh - var(--header-height));
+  padding-top: 1.5rem;
+}
+
+/* Apply full-bleed white background on the outer content when showing home or contact pages */
+.content:has(.home-page),
+.content:has(.contact-page) {
+  background: white;
+}
+
+/* Fallback for browsers without :has() support: apply white backgrounds directly to the containers */
+@supports not (selector(:has(*))) {
+  .page-container.home-page,
+  .contact-page {
+    background: white;
+  }
+}
+
+  .contact-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  /* remove extra top padding; keep horizontal padding */
+  padding: 0 1rem;
+}
+
+  .contact-header {
+  text-align: center;
+  /* tighten spacing so the heading sits nearer the header */
+  margin: 0.25rem 0 0.75rem 0;
+}
+
+.contact-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.contact-header p {
+  font-size: 1.125rem;
+  color: #6b7280;
+  max-width: 512px;
+  margin: 0 auto;
+}
+
+.contact-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .contact-content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.contact-form,
+.contact-info-card {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.contact-form h2,
+.contact-info-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group textarea {
+  resize: none;
+  min-height: 150px;
+}
+
+.submit-button {
+  width: 100%;
+  background: #3b82f6;
+  color: white;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.submit-button:hover {
+  background: #2563eb;
+}
+
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status-message {
+  padding: 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
+
+.status-message.success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.status-message.error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.contact-item svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #3b82f6;
+  margin-top: 0.25rem;
+}
+
+.contact-item-content p:first-child {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.contact-item-content p:last-child,
+.contact-item-content a {
+  color: #6b7280;
+  text-decoration: none;
+}
+
+.contact-item-content a:hover {
+  color: #3b82f6;
+}
+
+.social-media {
+  margin-top: 2rem;
+}
+
+.social-media h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.social-links-contact {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-links-contact a {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: transform 0.2s;
+}
+
+.social-links-contact a:hover {
+  transform: scale(1.1);
+}
+
+.social-links-contact a.facebook {
+  background: #3b82f6;
+}
+
+.social-links-contact a.facebook:hover {
+  background: #2563eb;
+}
+
+.social-links-contact a.instagram {
+  background: #ec4899;
+}
+
+.social-links-contact a.instagram:hover {
+  background: #db2777;
+}
+
+/* Sketch Detail page styles */
+.sketch-detail-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.sketch-detail-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  background: transparent;
+}
+
+.breadcrumb {
+  display: none;
+  margin-bottom: 2rem;
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  backdrop-filter: blur(8px);
+  position: relative;
+}
+
+.breadcrumb a {
+  color: #3b82f6;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.breadcrumb a:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.breadcrumb span {
+  color: #6b7280;
+  margin: 0 0.5rem;
+}
+
+.sketch-detail-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .sketch-detail-content {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.sketch-image-section {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.sketch-detail-image {
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: block;
+}
+
+.sketch-detail-image:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.sketch-info {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  padding: 2.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.sketch-info h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.sketch-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.sketch-description {
+  margin-bottom: 2rem;
+}
+
+.sketch-description h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.sketch-description p {
+  line-height: 1.7;
+  color: #374151;
+}
+
+/* Enhanced share button styling */
+.share-menu-container button {
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-radius: 0.5rem;
+}
+
+.share-menu-container button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation section styling */
+.sketch-navigation-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  margin-top: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.sketch-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: 500;
+}
+
+.sketch-nav-link:hover {
+  color: #374151;
+}
+
+.sketch-nav-disabled {
+  color: #d1d5db;
+  font-weight: 400;
+}
+
+.sketch-nav-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  background: rgba(243, 244, 246, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.sketch-nav-counter span:nth-child(2) {
+  color: #9ca3af;
+}
+
+/* Responsive design for navigation section */
+@media (max-width: 768px) {
+  .sketch-navigation-section {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .sketch-nav-counter {
+    order: -1;
+  }
+  
+  .sketch-nav-link {
+    justify-content: center;
+  }
+}
+
+/* Enhanced navigation info styling */
+.sketch-detail-content .flex.items-center.justify-between {
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+/* Like/Dislike section enhancement */
+.pt-4.border-t {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Enhanced mobile responsiveness for details page */
+@media (max-width: 767px) {
+  .sketch-detail-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .sketch-info {
+    padding: 1.5rem;
+  }
+  
+  .sketch-info h1 {
+    font-size: 1.875rem;
+  }
+  
+  .sketch-detail-content {
+    gap: 2rem;
+  }
+}
+
+/* Footer */
+footer {
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Utility classes */
+.hidden {
+  display: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+
+/* Rich text content */
+.rich-text-content p {
+  margin-bottom: 1rem;
+}
+
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text-content strong {
+  font-weight: 600;
+}
+
+.rich-text-content em {
+  font-style: italic;
+}
+
+/* Mobile padding fixes: ensure content has a small right padding so text/images don't get truncated */
+@media (max-width: 767px) {
+  .page-container,
+  .page-container-full {
+    padding-left: 0.5rem;
+    padding-right: 0.75rem;
+  }
+
+  .sketch-detail-container {
+    padding-left: 0.5rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Ensure main content doesn't overflow viewport width on mobile */
+  .content {
+    padding-right: 0.5rem;
+  }
+
+  /* Small image/container adjustments to avoid edge clipping */
+  .sketch-image-container,
+  .sketch-detail-image,
+  .split-view-image {
+    padding-right: 0.25rem;
+  }
+}
+
+/* Additional mobile safety rules to avoid right-side truncation */
+@media (max-width: 767px) {
+  .sketch-detail-container,
+  .page-container,
+  .page-container-full,
+  .content,
+  .sketch-info {
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    overflow-x: hidden;
+  }
+
+  /* Ensure rich text wraps and long words don't overflow */
+  .sketch-description,
+  .rich-text-content,
+  .sketch-meta {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Images must never exceed container width */
+  .sketch-detail-image,
+  .sketch-image-container img,
+  .sketch-image {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 767px) {
+  /* Hide full nav links on mobile; show hamburger instead */
+  .nav-links {
+    display: none;
+  }
+
+  .nav-container {
+    padding: 0 0.5rem;
+  }
+
+  /* Hamburger button */
+  .hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #374151;
+  }
+
+  .mobile-menu {
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding: 0.5rem 1rem 1rem 1rem;
+  }
+
+  .mobile-menu a {
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+  }
+
+  .mobile-menu a.active,
+  .mobile-menu a:hover {
+    color: #1f2937;
+    background: #f3f4f6;
+  }
+  
+  .gallery-title {
+    font-size: 1.875rem;
+  }
+  
+  .gallery-description {
+    font-size: 1rem;
+  }
+  
+  .page-container {
+    padding: 0 0.5rem;
+  }
+  
+  .gallery-grid {
+    gap: 1.5rem;
+  }
+  
+  .sketch-image-container {
+    height: 250px;
+  }
+  
+  .sketch-card-content {
+    padding: 1rem;
+  }
+  
+  .about-header h1,
+  .contact-header h1 {
+    font-size: 2rem;
+  }
+  
+  .about-container,
+  .contact-container {
+    /* reduce large mobile top padding further (approximately half of previous) */
+    padding: 1.375rem 1rem 2rem 1rem;
+  }
+
+  /* About page: prevent avatar overlapping text on small screens */
+  .about-profile {
+    position: static !important; /* disable sticky behavior on mobile */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem; /* space before the about text */
+  }
+
+  .profile-image {
+  width: 160px;
+  height: 160px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
+
+  .profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .profile-info {
+    text-align: center;
+    margin-top: 0.25rem;
+    padding-top: 0.25rem;
+    line-height: 1.1;
+  }
+
+  .about-text {
+    margin-top: 0.75rem;
+    clear: both;
+  }
+
+  /* Reduce name size on small screens so it doesn't run into the avatar */
+  .profile-info h2 {
+    font-size: 1.25rem;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Override any conflicting styles */
+* {
+  box-sizing: border-box !important;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Fullscreen Modal */
+.fullscreen-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fullscreen-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s;
+}
+
+.fullscreen-close-btn:hover {
+  color: #d1d5db;
+}
+
+.fullscreen-minimize-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s;
+}
+
+.fullscreen-minimize-btn:hover {
+  color: #d1d5db;
+}
+
+.fullscreen-zoom-controls {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.fullscreen-zoom-btn {
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: color 0.2s;
+}
+
+.fullscreen-zoom-btn:hover:not(:disabled) {
+  color: #d1d5db;
+}
+
+.fullscreen-zoom-btn:disabled {
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.fullscreen-zoom-level {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
+
+.fullscreen-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.fullscreen-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  cursor: grab;
+  transition: transform 0.1s ease-out;
+}
+
+.fullscreen-image.dragging {
+  cursor: grabbing;
+}
+
+.fullscreen-nav {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.fullscreen-nav-btn {
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  transform: scale(1);
+}
+
+.fullscreen-nav-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.fullscreen-nav-btn.next {
+  margin-left: auto;
+}
+
+.fullscreen-info {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  color: white;
+  z-index: 10;
+}
+
+.fullscreen-details {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  z-index: 10;
+  text-align: right;
+}
+
+.fullscreen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+
+/* Sketch cards */
+.sketch-card {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.sketch-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.sketch-image-container {
+  width: 100%;
+  height: 300px;
+  background: #f3f4f6;
+  position: relative;
+  overflow: hidden;
+}
+
+.sketch-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.sketch-card:hover .sketch-image {
+  transform: scale(1.05);
+}
+
+.no-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.no-image-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1rem;
+}
+
+/* Card content */
+.sketch-card-content {
+  padding: 1.5rem;
+}
+
+.sketch-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.sketch-date {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+}
+
+.sketch-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sketch-category {
+  background: #f3f4f6;
+  color: #1f2937;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+/* Mobile responsive */
+@media (max-width: 767px) {
+  nav .nav-links {
+    display: none;
+  }
+  
+  nav .nav-container {
+    padding: 0 0.5rem;
+  }
+  
+  .gallery-title {
+    font-size: 1.875rem;
+  }
+  
+  .gallery-description {
+    font-size: 1rem;
+  }
+  
+  .page-container {
+    padding: 0 0.5rem;
+  }
+  
+  .gallery-grid {
+    gap: 1.5rem;
+  }
+  
+  .sketch-image-container {
+    height: 250px;
+  }
+  
+  .sketch-card-content {
+    padding: 1rem;
+  }
+}
+
+/* Utility classes */
+.hidden {
+  display: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+/* Override any conflicting styles */
+* {
+  box-sizing: border-box !important;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Rich text content */
+.rich-text-content p {
+  margin-bottom: 1rem;
+}
+
+.rich-text-content p:last-child {
+  margin-bottom: 0;
+}
+
+.rich-text-content strong {
+  font-weight: 600;
+}
+
+.rich-text-content em {
+  font-style: italic;
+}
