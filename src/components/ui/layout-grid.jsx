@@ -30,7 +30,7 @@ export function LayoutGrid({ cards = [] }) {
             <img
               src={card.thumbnail}
               alt="thumb"
-              className="w-full h-56 md:h-64 object-cover rounded-lg cursor-pointer"
+              className="w-full h-56 md:h-64 object-cover rounded cursor-pointer"
               onClick={() => handleSelect(card)}
             />
             <div className="absolute inset-0 bg-black bg-opacity-30 p-6 flex items-end pointer-events-none">
@@ -51,7 +51,7 @@ export function LayoutGrid({ cards = [] }) {
         >
           <div className="relative w-11/12 md:w-3/5 lg:w-2/4">
             <div
-              className="rounded-lg overflow-hidden shadow-2xl bg-black bg-center bg-cover"
+              className="rounded overflow-hidden shadow-2xl bg-black bg-center bg-cover"
               style={{ backgroundImage: `url('${selected.thumbnail}')` }}
             >
               <div className="bg-gradient-to-b from-transparent to-black/80 p-8 md:p-12">

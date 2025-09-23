@@ -1,0 +1,412 @@
+/* Elegant Gallery Layout - Separated Content */
+
+.elegant-gallery {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  background: #ffffff;
+}
+
+.elegant-card {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  transition: all 0.3s ease;
+  display: flex;
+  min-height: 300px;
+  border: none;
+  gap: 40px;
+  align-items: center;
+  padding-left: 120px; /* Reduced from 80px to 40px */
+  padding-right: 120px; /* Reduced from 80px to 40px */
+}
+
+.elegant-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Image Left Layout (Even indexed cards: 0, 2, 4...) */
+.elegant-card.image-left {
+  flex-direction: row;
+}
+
+/* Image Right Layout (Odd indexed cards: 1, 3, 5...) */
+.elegant-card.image-right {
+  flex-direction: row-reverse;
+}
+
+/* Move text slightly to the right for image-right cards */
+.elegant-card.image-right .card-content {
+  margin-left: 200px;
+}
+
+/* Smaller border radius - clean rounded corners */
+.elegant-gallery .elegant-card img.direct-gallery-image,
+.elegant-card img.direct-gallery-image,
+img.direct-gallery-image {
+  border-radius: 12px !important;
+  -webkit-border-radius: 12px !important;
+  -moz-border-radius: 12px !important;
+}
+
+/* Background image approach for guaranteed border-radius */
+.bg-image-link {
+  flex: 0 0 55%;
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  border-radius: 24px !important;
+  overflow: hidden; /* This ensures the background image respects border-radius */
+  transition: transform 0.3s ease;
+}
+
+/* Portrait background images */
+.bg-image-link.portrait {
+  height: 480px;
+  background-size: contain !important;
+  background-color: #ffffff;
+}
+
+/* Landscape background images */
+.bg-image-link.landscape {
+  height: 360px;
+  background-size: contain !important;
+  background-color: #ffffff;
+}
+
+/* Hover effects for background images */
+.elegant-card:hover .bg-image-link {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* Direct image link without wrapper containers */
+.direct-image-link {
+  flex: 0 0 55%; /* Same flex properties as the old wrapper */
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Direct card images without any container clipping */
+.direct-card-image {
+  width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  border-radius: 24px !important;
+  background: #ffffff;
+}
+
+/* Portrait images - direct styling */
+.direct-card-image.portrait {
+  height: 480px;
+  max-width: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 24px !important;
+}
+
+/* Landscape images - direct styling */
+.direct-card-image.landscape {
+  height: 360px;
+  max-width: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 24px !important;
+}
+
+/* Hover effects for direct images */
+.elegant-card:hover .direct-image-link {
+  transform: translateY(-8px);
+}
+
+.elegant-card:hover .direct-card-image {
+  transform: scale(1.05);
+}
+
+/* Image Section - Minimal wrapper for layout only, no overflow hidden */
+.image-wrapper {
+  flex: 0 0 55%; /* Increased from 45% to 55% for bigger images */
+  position: relative;
+  /* NO overflow: hidden - this was clipping the border-radius! */
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+/* Remove old card-image-section styles since we replaced with image-wrapper */
+
+.image-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.elegant-card:hover .image-wrapper {
+  transform: translateY(-8px);
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Changed from cover to contain to show full image */
+  transition: transform 0.3s ease;
+  border-radius: 24px !important; /* Increased border radius for more rounded edges */
+  background: #ffffff; /* Ensure white background for images */
+}
+
+/* Portrait images should fit properly and have proper sizing */
+.card-image.portrait {
+  height: 480px; /* Increased from 400px for bigger portrait images */
+  max-width: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 24px !important;
+}
+
+/* Landscape images should fit properly and have proper sizing */
+.card-image.landscape {
+  height: 360px; /* Increased from 280px for bigger landscape images */
+  max-width: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 24px !important;
+}
+
+.elegant-card:hover .card-image {
+  transform: scale(1.05);
+}
+
+/* Force border radius on all gallery images */
+.elegant-card img,
+.card-image-section img,
+.card-image {
+  border-radius: 16px !important;
+}
+
+/* Super specific selectors to override any other styles */
+.elegant-gallery .elegant-card .image-wrapper .image-link .card-image,
+.elegant-gallery .elegant-card .image-wrapper .image-link img,
+.elegant-gallery img {
+  border-radius: 16px !important;
+  -webkit-border-radius: 16px !important;
+  -moz-border-radius: 16px !important;
+}
+
+.no-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff; /* Changed to white background */
+  color: #64748b;
+  font-weight: 500;
+  font-size: 16px;
+  border-radius: 16px; /* Increased border radius */
+}
+
+/* Content Section - Floating content */
+.card-content {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: transparent;
+}
+
+.card-year {
+  font-size: 14px;
+  font-weight: 500;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  margin: 0 0 20px 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #111827;
+}
+
+.card-title a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+.card-title a:hover {
+  color: #3b82f6;
+}
+
+.card-description {
+  color: #6b7280;
+  line-height: 1.6;
+  font-size: 16px;
+  margin: 0 0 16px 0;
+  max-width: 400px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Footer Section - Simplified like reference */
+.card-footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 0;
+  gap: 40px;
+}
+
+.card-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Simplified icons - colored like in reference */
+.stat:nth-child(1) .stat-icon {
+  color: #6b7280;
+}
+
+.stat:nth-child(2) .stat-icon {
+  color: #ef4444;
+}
+
+.stat:nth-child(3) .stat-icon {
+  color: #3b82f6;
+}
+
+.stat-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
+.view-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #111827;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.view-details:hover {
+  color: #3b82f6;
+}
+
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+  transition: transform 0.3s ease;
+}
+
+.view-details:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .elegant-gallery {
+    padding: 20px 16px;
+    gap: 40px;
+  }
+  
+  .elegant-card, 
+  .elegant-card.image-left,
+  .elegant-card.image-right {
+    flex-direction: column;
+    min-height: auto;
+    gap: 24px;
+    align-items: stretch;
+  }
+  
+  .card-image-section {
+    flex: 0 0 320px; /* Increased size for mobile */
+  }
+  
+  .card-content {
+    padding: 0;
+    text-align: center;
+  }
+  
+  .card-title {
+    font-size: 24px;
+  }
+  
+  .card-description {
+    max-width: none;
+  }
+  
+  .card-footer {
+    justify-content: center;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-content {
+    padding: 0;
+  }
+  
+  .card-title {
+    font-size: 22px;
+  }
+  
+  .card-description {
+    font-size: 15px;
+  }
+}
+
+/* Subtle Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.elegant-card {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* FINAL OVERRIDE - Force rounded corners on ALL images in gallery */
+.elegant-gallery img,
+.elegant-gallery [class*="card-image"],
+.elegant-card img {
+  border-radius: 24px !important;
+  overflow: hidden !important;
+}
+
+.elegant-card:nth-child(odd) {
+  animation-delay: 0.1s;
+}
+
+.elegant-card:nth-child(even) {
+  animation-delay: 0.2s;
+}

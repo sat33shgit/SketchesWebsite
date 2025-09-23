@@ -126,7 +126,7 @@ footer {
 html, body {
   height: 100%;
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #f9fafb;
+  background-color: #ffffff;
   color: #1f2937;
   overflow-x: hidden;
   scroll-behavior: smooth;
@@ -143,7 +143,7 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f9fafb;
+  background-color: #ffffff;
 }
 
 /* Override background for sketch detail page */
@@ -318,6 +318,7 @@ nav::after {
   font-weight: 700;
   color: #1f2937;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .gallery-description {
@@ -326,6 +327,75 @@ nav::after {
   max-width: 768px;
   margin: 0 auto;
   line-height: 1.6;
+}
+
+/* Force center alignment for gallery page title */
+.min-h-screen h1,
+.gallery-page h1 {
+  text-align: center !important;
+}
+
+/* Orientation-based image display */
+.image-container-portrait {
+  aspect-ratio: 3/4;
+  max-height: 700px; /* Increased from 600px */
+  background: #ffffff;
+  border-radius: 16px; /* More rounded edges */
+}
+
+.image-container-landscape {
+  aspect-ratio: 4/3;
+  max-height: 550px; /* Increased from 450px */
+  background: #ffffff;
+  border-radius: 16px; /* More rounded edges */
+}
+
+.image-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 16px;
+}
+
+.image-landscape {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 16px;
+}
+
+/* Gallery card image containers with orientation */
+.card-image-section.portrait {
+  aspect-ratio: 3/4;
+  max-height: 480px; /* Increased from 400px */
+  background: #ffffff;
+}
+
+.card-image-section.landscape {
+  aspect-ratio: 4/3;
+  max-height: 380px; /* Increased from 320px */
+  background: #ffffff;
+}
+
+/* Sketch detail page orientations */
+.sketch-detail-image.portrait {
+  max-width: 700px; /* Increased from 600px */
+  max-height: 85vh; /* Increased from 80vh */
+  aspect-ratio: 3/4;
+  object-fit: contain;
+  border-radius: 16px; /* More rounded edges */
+  background: #ffffff;
+}
+
+.sketch-detail-image.landscape {
+  max-width: 95%;
+  max-height: 80vh; /* Increased from 70vh */
+  aspect-ratio: 4/3;
+  object-fit: contain;
+  border-radius: 16px; /* More rounded edges */
+  background: #ffffff;
 }
 
 .gallery-grid {
@@ -349,7 +419,7 @@ nav::after {
 /* Sketch cards */
 .sketch-card {
   background: white;
-  border-radius: 0.5rem;
+  border-radius: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -365,8 +435,9 @@ nav::after {
 
 .sketch-image-container {
   width: 100%;
-  height: 300px;
-  background: #f3f4f6;
+  height: 400px;
+  background: white;
+  border-radius: 16px;
   position: relative;
   overflow: hidden;
 }
@@ -375,6 +446,7 @@ nav::after {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 16px;
   transition: transform 0.3s;
 }
 
@@ -531,7 +603,7 @@ nav::after {
 }
 
 .artist-statement {
-  background: #f9fafb;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 0.5rem;
 }
@@ -859,13 +931,14 @@ nav::after {
 .sketch-detail-image {
   width: 100%;
   height: auto;
-  max-height: 80vh;
+  max-height: 85vh; /* Increased from 80vh */
   object-fit: contain;
-  border-radius: 0.75rem;
+  border-radius: 16px; /* Increased from 0.375rem for more rounded edges */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   display: block;
+  background: #ffffff; /* Ensure white background */
 }
 
 .sketch-detail-image:hover {
@@ -876,7 +949,7 @@ nav::after {
 .sketch-info {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   padding: 2.5rem;
-  border-radius: 0.75rem;
+  border-radius: 16px; /* Increased from 0.375rem for more rounded edges */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
 }
@@ -932,7 +1005,7 @@ nav::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
   padding: 1.5rem;
   border-radius: 0.75rem;
   border: 1px solid #e5e7eb;
@@ -996,7 +1069,7 @@ nav::after {
 
 /* Enhanced navigation info styling */
 .sketch-detail-content .flex.items-center.justify-between {
-  background: #f9fafb;
+  background: #ffffff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   border: 1px solid #e5e7eb;
@@ -1004,7 +1077,7 @@ nav::after {
 
 /* Like/Dislike section enhancement */
 .pt-4.border-t {
-  background: #f8fafc;
+  background: #ffffff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   margin-top: 1rem;
@@ -1217,7 +1290,7 @@ footer {
   }
   
   .sketch-image-container {
-    height: 250px;
+    height: 320px;
   }
   
   .sketch-card-content {
@@ -1289,6 +1362,7 @@ footer {
 img {
   max-width: 100%;
   height: auto;
+  border-radius: 16px;
 }
 
 /* Animations */
@@ -1302,6 +1376,58 @@ img {
 }
 
 /* Fullscreen Modal */
+/* Fullscreen image orientation handling */
+.fullscreen-image.portrait {
+  max-width: 75% !important; /* Increased from 70% */
+  max-height: 90% !important;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 16px; /* More rounded edges */
+}
+
+.fullscreen-image.landscape {
+  max-width: 95% !important;
+  max-height: 85% !important; /* Increased from 80% */
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 16px; /* More rounded edges */
+}
+
+/* Mobile responsive orientations */
+@media (max-width: 768px) {
+  .card-image-section.portrait {
+    height: 380px; /* Increased from 320px */
+  }
+  
+  .card-image-section.landscape {
+    height: 280px; /* Increased from 240px */
+  }
+  
+  .sketch-detail-image.portrait {
+    max-width: 100%;
+    max-height: 65vh; /* Increased from 60vh */
+    border-radius: 12px; /* Slightly less rounded on mobile */
+  }
+  
+  .sketch-detail-image.landscape {
+    max-width: 100%;
+    max-height: 55vh; /* Increased from 50vh */
+    border-radius: 12px; /* Slightly less rounded on mobile */
+  }
+  
+  .fullscreen-image.portrait {
+    max-width: 90% !important;
+    max-height: 85% !important; /* Increased from 80% */
+    border-radius: 12px;
+  }
+  
+  .fullscreen-image.landscape {
+    max-width: 95% !important;
+    max-height: 75% !important; /* Increased from 70% */
+    border-radius: 12px;
+  }
+}
+
 .fullscreen-modal {
   position: fixed;
   top: 0;
@@ -1477,7 +1603,7 @@ img {
 /* Sketch cards */
 .sketch-card {
   background: white;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -1493,8 +1619,9 @@ img {
 
 .sketch-image-container {
   width: 100%;
-  height: 300px;
-  background: #f3f4f6;
+  height: 400px;
+  background: white;
+  border-radius: 16px;
   position: relative;
   overflow: hidden;
 }
@@ -1503,6 +1630,7 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 16px;
   transition: transform 0.3s;
 }
 
@@ -1587,7 +1715,7 @@ img {
   }
   
   .sketch-image-container {
-    height: 250px;
+    height: 320px;
   }
   
   .sketch-card-content {
@@ -1620,6 +1748,7 @@ img {
 img {
   max-width: 100%;
   height: auto;
+  border-radius: 16px;
 }
 
 /* Rich text content */

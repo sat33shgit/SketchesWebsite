@@ -316,7 +316,7 @@ const SketchDetail = () => {
                   <img
                     src={getAssetPath(sketch.imagePath)}
                     alt={sketch.title}
-                    className="sketch-detail-image"
+                    className={`sketch-detail-image ${sketch.orientation || 'portrait'}`}
                     onClick={openFullscreen}
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -599,11 +599,11 @@ const SketchDetail = () => {
               <img
                 src={getAssetPath(sketch.imagePath)}
                 alt={sketch.title}
-                className={`fullscreen-image ${isDragging ? 'dragging' : ''}`}
+                className={`fullscreen-image ${sketch.orientation || 'portrait'} ${isDragging ? 'dragging' : ''}`}
                 style={{
                   transform: `scale(${zoomLevel}) translate(${imagePosition.x / zoomLevel}px, ${imagePosition.y / zoomLevel}px)`,
-                  maxWidth: zoomLevel === 1 ? '90%' : 'none',
-                  maxHeight: zoomLevel === 1 ? '90%' : 'none',
+                  maxWidth: zoomLevel === 1 ? (sketch.orientation === 'landscape' ? '95%' : '90%') : 'none',
+                  maxHeight: zoomLevel === 1 ? (sketch.orientation === 'landscape' ? '85%' : '90%') : 'none',
                   marginTop: '32px', // Add space from the top
                 }}
                 onClick={zoomLevel === 1 ? closeFullscreen : undefined}

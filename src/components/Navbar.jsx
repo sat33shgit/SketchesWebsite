@@ -31,7 +31,7 @@ const Navbar = () => {
             to="/"
             className={isActive('/') ? 'active' : ''}
           >
-            Home
+            Gallery
           </Link>
           <Link
             to="/about"
@@ -79,7 +79,7 @@ const Navbar = () => {
       {/* Mobile menu (renders below header when open) */}
       {menuOpen && (
         <div className="mobile-menu" role="menu" aria-label="Main menu">
-          <Link to="/" className={isActive('/') ? 'active' : ''} onClick={() => setMenuOpen(false)}>Home</Link>
+          <Link to="/" className={isActive('/') ? 'active' : ''} onClick={() => setMenuOpen(false)}>Gallery</Link>
           <Link to="/about" className={isActive('/about') ? 'active' : ''} onClick={() => setMenuOpen(false)}>About</Link>
           <Link to="/contact" className={isActive('/contact') ? 'active' : ''} onClick={() => setMenuOpen(false)}>Contact</Link>
         </div>

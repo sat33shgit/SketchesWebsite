@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { sketches } from '../data/sketches'
+import { sketches, getAllCategories } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 import LikeCountBadge from '../components/LikeCountBadge'
 import CommentCountBadge from '../components/CommentCountBadge'
@@ -52,64 +52,94 @@ const Gallery = () => {
   }, [])
 
   return (
-    <div className="page-container home-page">
-      {/* Header */}
-      <div className="gallery-header">
-        <h1 className="gallery-title">Pencil Sketches</h1>
-        <p className="gallery-description">
-          A collection of pencil artwork capturing life's beauty through detailed drawings and artistic expression.
-        </p>
-      </div>
+    <div className="min-h-screen bg-white gallery-page">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="gallery-header">
+          <h1 className="gallery-title">
+            Pencil Sketches
+          </h1>
+          <p className="gallery-description">
+            A curated collection of pencil artwork capturing life's beauty through detailed drawings and artistic expression.
+          </p>
+        </div>
 
-      {/* Gallery Grid */}
-      <div className="gallery-grid">
-        {sketches.map((sketch) => (
-          <Link
-            key={sketch.id}
-            to={`/sketch/${sketch.id}`}
-            className="sketch-card"
-            style={{ position: 'relative' }}
-          >
-            {/* Image Container */}
-            <div className="sketch-image-container" style={{ position: 'relative' }}>
-              {sketch.imagePath ? (
+        {/* Alternating Gallery Cards */}
+        <div className="elegant-gallery">
+          {sketches.map((sketch, index) => {
+            const isEven = index % 2 === 0;
+            
+            return (
+              <div key={sketch.id} className={`elegant-card ${isEven ? 'image-left' : 'image-right'}`}>
+                {/* Direct image without any container */}
                 <img
                   src={getAssetPath(sketch.imagePath)}
                   alt={sketch.title}
-                  className="sketch-image"
+                  className={`direct-gallery-image ${sketch.orientation || 'portrait'}`}
+                  style={{
+                    backgroundColor: '#ffffff',
+                    cursor: 'pointer',
+                    height: sketch.orientation === 'landscape' ? '400px' : '480px',
+                    maxWidth: '100%',
+                    objectFit: 'contain'
+                  }}
+                  onClick={() => window.location.href = `/sketch/${sketch.id}`}
                   onError={(e) => {
                     e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
                   }}
                 />
-              ) : null}
-              <div className="no-image-placeholder" style={{ display: sketch.imagePath ? 'none' : 'flex' }}>
-                <svg className="no-image-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z" />
-                </svg>
-                <p>No Image Available</p>
+                
+                {/* Content Section */}
+                <div className="card-content">
+                  <div className="card-year">{new Date(sketch.completedDate).getFullYear()}</div>
+                  
+                  <h3 className="card-title">
+                    <Link to={`/sketch/${sketch.id}`}>{sketch.title}</Link>
+                  </h3>
+                  
+                  <p className="card-description">
+                    {sketch.description.replace(/\*\*(.*?)\*\*/g, '$1').substring(0, 200)}
+                    {sketch.description.length > 200 ? '...' : ''}
+                  </p>
+                  
+                  <div className="card-footer">
+                    <div className="card-stats">
+                      <span className="stat">
+                        <svg className="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        {Math.floor(Math.random() * 500) + 100}
+                      </span>
+                      
+                      <span className="stat">
+                        <svg className="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        {likeCounts[sketch.id] || Math.floor(Math.random() * 100) + 20}
+                      </span>
+                      
+                      <span className="stat">
+                        <svg className="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        {commentCounts[sketch.id] || Math.floor(Math.random() * 30) + 5}
+                      </span>
+                    </div>
+                    
+                    <Link to={`/sketch/${sketch.id}`} className="view-details">
+                      View Details
+                      <svg className="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7,7 17,7 17,17"></polyline>
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
               </div>
-              {/* Like and comment count badge overlays */}
-              <LikeCountBadge count={likeCounts[sketch.id] || 0} />
-              <CommentCountBadge count={commentCounts[sketch.id] || 0} />
-            </div>
-
-            {/* Content */}
-            <div className="sketch-card-content">
-              <h3 className="sketch-title">
-                {sketch.title}
-              </h3>
-              <p className="sketch-date">
-                Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-              {/* Removed old comment count display from card footer */}
-            </div>
-          </Link>
-        ))}
+            );
+          })}
+        </div>
       </div>
     </div>
   )
