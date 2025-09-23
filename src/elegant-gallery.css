@@ -1,4 +1,26 @@
-/* Elegant Gallery Layout - Separated Content */
+/* Elegant Gallery Styles */
+
+.elegant-card {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  transition: all 0.3s ease;
+  display: flex;
+  min-height: 300px;
+  border: none;
+  gap: 40px;
+  align-items: center;
+  padding-left: 40px; /* Reduced from 80px to 40px */
+  padding-right: 120px; /* Reduced from 80px to 40px */
+}
+
+.elegant-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Enhanced Gallery Layout - Clean and Separated Content */
 
 .elegant-gallery {
   max-width: 1400px;
@@ -45,6 +67,17 @@
   margin-left: 200px;
 }
 
+/* Simple zoom hover effect for gallery images - contained within frame */
+.elegant-card img.direct-gallery-image {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  transform-origin: center center; /* Zoom from center */
+}
+
+.elegant-card:hover img.direct-gallery-image {
+  transform: scale(1.03);
+}
+
 /* Smaller border radius - clean rounded corners */
 .elegant-gallery .elegant-card img.direct-gallery-image,
 .elegant-card img.direct-gallery-image,
@@ -62,7 +95,7 @@ img.direct-gallery-image {
   cursor: pointer;
   position: relative;
   border-radius: 24px !important;
-  overflow: hidden; /* This ensures the background image respects border-radius */
+  overflow: hidden; /* This ensures the background image respects border-radius AND contains zoom */
   transition: transform 0.3s ease;
 }
 
@@ -82,7 +115,7 @@ img.direct-gallery-image {
 
 /* Hover effects for background images */
 .elegant-card:hover .bg-image-link {
-  transform: translateY(-8px) scale(1.02);
+  transform: scale(1.1);
 }
 
 /* Direct image link without wrapper containers */
@@ -92,6 +125,8 @@ img.direct-gallery-image {
   text-decoration: none;
   cursor: pointer;
   position: relative;
+  overflow: hidden; /* Contain the zoom effect within bounds */
+  border-radius: 24px !important; /* Apply border radius to container */
 }
 
 /* Direct card images without any container clipping */
@@ -101,6 +136,7 @@ img.direct-gallery-image {
   transition: transform 0.3s ease;
   border-radius: 24px !important;
   background: #ffffff;
+  transform-origin: center center; /* Zoom from center */
 }
 
 /* Portrait images - direct styling */
@@ -123,20 +159,21 @@ img.direct-gallery-image {
 
 /* Hover effects for direct images */
 .elegant-card:hover .direct-image-link {
-  transform: translateY(-8px);
+  transform: none;
 }
 
 .elegant-card:hover .direct-card-image {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
-/* Image Section - Minimal wrapper for layout only, no overflow hidden */
+/* Image Section - Minimal wrapper for layout only, with overflow hidden for contained zoom */
 .image-wrapper {
   flex: 0 0 55%; /* Increased from 45% to 55% for bigger images */
   position: relative;
-  /* NO overflow: hidden - this was clipping the border-radius! */
+  overflow: hidden; /* Hide overflow to contain zoom effect */
   background: transparent;
   transition: all 0.3s ease;
+  border-radius: 24px !important; /* Apply border radius to container */
 }
 
 /* Remove old card-image-section styles since we replaced with image-wrapper */
@@ -150,7 +187,7 @@ img.direct-gallery-image {
 }
 
 .elegant-card:hover .image-wrapper {
-  transform: translateY(-8px);
+  transform: none;
 }
 
 .card-image {
@@ -160,6 +197,7 @@ img.direct-gallery-image {
   transition: transform 0.3s ease;
   border-radius: 24px !important; /* Increased border radius for more rounded edges */
   background: #ffffff; /* Ensure white background for images */
+  transform-origin: center center; /* Zoom from center */
 }
 
 /* Portrait images should fit properly and have proper sizing */
@@ -181,7 +219,7 @@ img.direct-gallery-image {
 }
 
 .elegant-card:hover .card-image {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 /* Force border radius on all gallery images */
