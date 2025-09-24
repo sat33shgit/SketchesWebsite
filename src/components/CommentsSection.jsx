@@ -99,39 +99,52 @@ const CommentsSection = ({ sketchId, sketchName }) => {
   };
 
   return (
-    <div id="comments-section" tabIndex={-1} aria-label="Comments section" style={{ borderTop: '1px solid #e5e7eb', paddingTop: '2rem', marginTop: '2rem' }}>
-      <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1f2937', marginBottom: '1rem' }}>Comments</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem' }}>
-        <div style={{ marginBottom: '0.5rem' }}>
+    <div id="comments-section" tabIndex={-1} aria-label="Comments section" className="discussion-section">
+      {/* Discussion Header */}
+      <div className="discussion-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="discussion-icon">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <h2 className="discussion-title">Discussion ({comments.length})</h2>
+      </div>
+      
+      {/* Comment Form */}
+      <form onSubmit={handleSubmit} className="comment-form">
+        <div className="form-group">
           <input
             name="name"
             value={form.name}
             onChange={handleChange}
-            placeholder="Name*"
-            style={{ width: '100%', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid #d1d5db' }}
+            placeholder="Your name"
+            className="name-input"
             required
           />
         </div>
-        <textarea
-          name="comment"
-          value={form.comment}
-          onChange={handleChange}
-          placeholder="Add a comment...*"
-          rows={3}
-          style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #d1d5db', resize: 'vertical', marginBottom: '0.5rem' }}
-          required
-        />
-        <button type="submit" disabled={loading} style={{ background: '#3b82f6', color: 'white', border: 'none', borderRadius: '0.5rem', padding: '0.5rem 1.25rem', fontWeight: 500, cursor: 'pointer' }}>
-          {loading ? 'Posting...' : 'Post'}
+        <div className="form-group">
+          <textarea
+            name="comment"
+            value={form.comment}
+            onChange={handleChange}
+            placeholder="Share your thoughts about this artwork..."
+            rows={4}
+            className="comment-textarea"
+            required
+          />
+        </div>
+        <button type="submit" disabled={loading} className="post-comment-btn">
+          {loading ? 'Posting...' : 'Post Comment'}
         </button>
-        {error && <div style={{ color: 'red', marginTop: '0.5rem' }}>{error}</div>}
-        {success && <div style={{ color: 'green', marginTop: '0.5rem' }}>{success}</div>}
+        
+        {error && <div className="error-message">{error}</div>}
+        {success && <div className="success-message">{success}</div>}
       </form>
-      <div>
+      
+      {/* Comments List */}
+      <div className="comments-list">
         {loading && comments.length === 0 ? (
-          <p style={{ color: '#6b7280' }}>Loading comments...</p>
+          <p className="loading-message">Loading comments...</p>
         ) : comments.length === 0 ? (
-          <p style={{ color: '#6b7280' }}>No comments yet. Be the first to comment!</p>
+          <p className="no-comments-message">No comments yet. Be the first to comment!</p>
         ) : (
           comments.map(comment => {
             // Helper to format date parts and compute relative age
@@ -147,48 +160,46 @@ const CommentsSection = ({ sketchId, sketchName }) => {
               return { date, raw: d }
             }
 
-            // full timestamp display removed per user request
-
             const computeRelative = (dateObj) => {
               if (!dateObj || !dateObj.raw) return ''
               const now = new Date()
               const then = dateObj.raw
               // compute year diff first
               const yearDiff = now.getFullYear() - then.getFullYear()
-              if (yearDiff > 0) return `${yearDiff}y`
+              if (yearDiff > 0) return `${yearDiff}y ago`
               // compute month diff
               const monthDiff = (now.getFullYear() - then.getFullYear()) * 12 + (now.getMonth() - then.getMonth())
-              if (monthDiff > 0) return `${monthDiff}m`
+              if (monthDiff > 0) return `${monthDiff}m ago`
               // compute day diff
               const msPerDay = 24 * 60 * 60 * 1000
               const dayDiff = Math.floor((now - then) / msPerDay)
-              if (dayDiff > 0) return `${dayDiff}d`
+              if (dayDiff > 6) return `${Math.floor(dayDiff / 7)}w ago`
+              if (dayDiff > 0) return `${dayDiff}d ago`
               // less than one day: compute hours
               const msPerHour = 60 * 60 * 1000
               const hourDiff = Math.floor((now - then) / msPerHour)
-              if (hourDiff >= 1) return `${hourDiff}h`
-              return 'today'
+              if (hourDiff >= 1) return `${hourDiff}h ago`
+              return 'just now'
             }
 
             const created = comment.created_at ? formatDateTime(comment.created_at) : null
-            const updated = comment.updated_at ? formatDateTime(comment.updated_at) : null
 
             return (
-              <div key={comment.id} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '1.5rem', gap: '0.75rem' }}>
-                {/* Avatar positioned outside on the left */}
-                <div style={{ flexShrink: 0, marginTop: '0.25rem' }}>
+              <div key={comment.id} className="comment-item">
+                {/* Avatar */}
+                <div className="comment-avatar">
                   <UserAvatar name={comment.name} size="medium" />
                 </div>
                 
-                {/* Comment content box */}
-                <div style={{ flex: 1, padding: '0.75rem', background: '#f9fafb', borderRadius: '0.75rem', border: '1px solid #e5e7eb' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <div style={{ fontWeight: 600, color: '#374151' }}>{comment.name}</div>
-                    <div style={{ color: '#9ca3af', fontSize: '0.8rem', marginLeft: '0.5rem' }}>
+                {/* Comment content */}
+                <div className="comment-content">
+                  <div className="comment-header">
+                    <span className="comment-author">{comment.name}</span>
+                    <span className="comment-timestamp">
                       {created ? computeRelative(created) : ''}
-                    </div>
+                    </span>
                   </div>
-                  <div style={{ color: '#374151', lineHeight: '1.5' }}>{comment.comment}</div>
+                  <div className="comment-text">{comment.comment}</div>
                 </div>
               </div>
             )
