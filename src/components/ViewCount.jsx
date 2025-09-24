@@ -51,20 +51,10 @@ const ViewCount = ({ sketchId, size = 'small', className = '' }) => {
     large: 'w-6 h-6'
   }
 
-  const buttonSizeClasses = {
-    small: 'p-1',
-    medium: 'p-2',
-    large: 'p-2'
-  }
-
-  const textSizeClasses = {
-    small: 'text-xs',
-    medium: 'text-sm',
-    large: 'text-base'
-  }
+  // keep sizeClasses for the svg sizing and allow passing a custom className on the root span
 
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#374151', fontSize: '0.95rem', fontWeight: 500 }}>
+    <span className={className} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#374151', fontSize: '0.95rem', fontWeight: 500 }}>
       <svg 
         className={sizeClasses[size]} 
         fill="none" 
@@ -91,7 +81,7 @@ const ViewCount = ({ sketchId, size = 'small', className = '' }) => {
       <span style={{ color: '#2563eb', fontWeight: 600 }}>
         {isLoading ? '...' : viewCount}
       </span>
-      <span>Views</span>
+  <span style={{ color: '#000000' }}>Views</span>
     </span>
   )
 }

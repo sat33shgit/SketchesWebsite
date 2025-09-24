@@ -24,13 +24,13 @@ const CommentCount = ({ sketchId, showIcon = true, size = 'small' }) => {
   }, [sketchId])
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#6b7280', fontSize: '0.875rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#2563eb', fontSize: '0.875rem' }}>
       {showIcon && (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#9ca3af' }}>
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#2563eb' }}>
+          <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V7z" />
         </svg>
       )}
-      <span aria-live="polite" style={{ fontSize: size === 'large' ? '1.25rem' : '0.875rem', fontWeight: size === 'large' ? 600 : 500 }}>{loading ? '...' : (count != null ? count : '-')}</span>
+  <span aria-live="polite" style={{ fontSize: '0.95rem', fontWeight: size === 'large' ? 600 : 500, color: '#2563eb' }}>{loading ? '...' : (count != null ? count : '-')}</span>
     </div>
   )
 }

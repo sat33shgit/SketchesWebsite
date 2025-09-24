@@ -101,11 +101,11 @@ const CommentsSection = ({ sketchId, sketchName }) => {
   return (
     <div id="comments-section" tabIndex={-1} aria-label="Comments section" className="discussion-section">
       {/* Discussion Header */}
-      <div className="discussion-header">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="discussion-icon">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      <div className="discussion-header" style={{ color: '#000000' }}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="discussion-icon" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" style={{ color: '#000000' }}>
+          <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V7z" />
         </svg>
-        <h2 className="discussion-title">Discussion ({comments.length})</h2>
+        <h2 className="discussion-title" style={{ color: '#000000' }}>Comments ({comments.length})</h2>
       </div>
       
       {/* Comment Form */}
@@ -128,6 +128,7 @@ const CommentsSection = ({ sketchId, sketchName }) => {
             placeholder="Share your thoughts about this artwork..."
             rows={4}
             className="comment-textarea"
+            style={{ height: '100px', minHeight: '50px' }}
             required
           />
         </div>
