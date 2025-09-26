@@ -434,19 +434,17 @@ const SketchDetail = () => {
           <div className="single-view-image">
             {sketch.imagePath ? (
               <div className="image-center">
-                <div className="image-wrapper">
-                    <img
-                      src={getAssetPath(sketch.imagePath)}
-                      alt={sketch.title}
-                      className={`sketch-detail-image ${sketch.orientation || 'portrait'}`}
-                      onClick={openFullscreen}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                    
-                </div>
+                <img
+                  src={getAssetPath(sketch.imagePath)}
+                  alt={sketch.title}
+                  className={`sketch-detail-image ${sketch.orientation || 'portrait'}`}
+                  onClick={openFullscreen}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    const fallback = e.target.nextSibling;
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
               </div>
             ) : (
               <div style={{ width: '100%', height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f9fafb', borderRadius: '16px' }}>

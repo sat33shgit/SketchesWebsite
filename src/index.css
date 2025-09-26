@@ -1199,34 +1199,28 @@ nav::after {
   padding: 0 !important;
   margin: 0 !important;
   box-shadow: none !important;
+  overflow: hidden; /* clip rounded corners and remove white side areas */
 }
 
 /* Centralized wrapper that enforces rounded corners for the normal (non-fullscreen) image */
-.single-view-image .image-wrapper {
-  display: inline-block;
-  border-radius: 24px !important;
-  overflow: visible !important;
-  max-width: 1140px; /* increased to ~1.5× (was 760px) so detail image displays larger */
-  width: auto !important;
-  line-height: 0; /* remove inline-block whitespace and prevent extra height */
-  vertical-align: middle;
-}
 
-/* Make sure wrapper itself doesn't have padding/background that shows as a rounded block */
-.single-view-image .image-wrapper {
-  background: transparent !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  outline: none !important;
-}
-
-.single-view-image .image-wrapper img.sketch-detail-image {
+/* Apply image display rules directly to the inline-centered image (wrapper removed) */
+.image-center > img.sketch-detail-image {
   display: block !important;
   width: 100% !important;
   height: auto !important;
   box-shadow: none !important;
-  /* the wrapper provides rounding; avoid double-radius on the img itself */
-  border-radius: 0 !important;
+  border-radius: 12px !important; /* reduced edge radius */
+  background: transparent !important;
+  box-sizing: border-box;
+}
+
+/* Don't show the red border in fullscreen mode */
+.fullscreen-modal .fullscreen-image,
+.fullscreen-image-container .fullscreen-image,
+.fullscreen-modal .fullscreen-image-container img,
+.fullscreen-image-container img.fullscreen-image {
+  border: none !important;
 }
 
 /* Ensure the immediate center container centers the wrapper reliably */
@@ -1239,6 +1233,7 @@ nav::after {
 
 /* Hover overlay shown on the normal (non-fullscreen) image */
 .image-wrapper {
+  /* legacy selector kept for other components; no positioning needed for detail page image (we removed the wrapper) */
   position: relative;
 }
 
@@ -1246,8 +1241,8 @@ nav::after {
 
 /* Slight responsive tweak: allow a wider max on large screens */
 @media (min-width: 1200px) {
-  .single-view-image .image-wrapper {
-    max-width: 1380px; /* increased to ~1.5× (was 920px) for very large screens */
+  .image-center > img.sketch-detail-image {
+    max-width: 1380px; /* allow larger display on very large screens */
   }
 }
 
@@ -1323,13 +1318,34 @@ nav::after {
 .stats-sidebar {
   background: #ffffff;
   /* slightly darker border for better contrast */
-  border: 1px solid #e5e7eb;
+  border: 1px solid #ffffff; /* slightly darker so the outline is more visible */
   border-radius: 12px;
   padding: 1.5rem;
   height: fit-content;
   position: sticky;
   top: 2rem;
 }
+
+/* Keep the engagement card's border but remove only the drop shadow so it looks flat */
+.stats-sidebar .stats-card.engagement-card {
+  box-shadow: none !important;
+}
+
+/* Make the engagement card's thin border a bit darker to improve visibility */
+.stats-sidebar .stats-card.engagement-card {
+  border-color: #d1d5db !important; /* darker than #e5e7eb */
+  border-style: solid !important;
+  border-width: 0.5px !important;
+}
+
+/* Also darken the border for the sketch details card (Medium / Time / Paper) so it's more visible */
+.stats-sidebar .stats-card.sketch-details-card {
+  border-color: #d1d5db !important;
+  border-style: solid !important;
+  border-width: 0.5px !important;
+  box-shadow: none !important;
+}
+
 
 .action-buttons {
   margin-bottom: 2rem;
@@ -1727,7 +1743,7 @@ nav::after {
   height: auto;
   max-height: 85vh; /* Increased from 80vh */
   object-fit: contain;
-  border-radius: 24px; /* rounder edges */
+  border-radius: 12px; /* reduced edge radius */
   box-shadow: none;
   cursor: pointer;
   transition: transform 0.2s;
@@ -1739,7 +1755,7 @@ nav::after {
 
 /* Ensure the image container clips the image so border-radius is visible */
 .single-view-image {
-  border-radius: 24px !important;
+  border-radius: 12px !important;
   overflow: visible !important;
   /* ensure the container and image align and clip properly */
   display: block;
@@ -1751,18 +1767,18 @@ nav::after {
   display: block !important;
   width: 100% !important;
   height: auto !important;
-  -webkit-border-radius: 24px !important;
-  -moz-border-radius: 24px !important;
-  border-radius: 24px !important;
+  -webkit-border-radius: 12px !important;
+  -moz-border-radius: 12px !important;
+  border-radius: 12px !important;
   overflow: hidden !important;
-  -webkit-clip-path: inset(0 round 24px) !important;
-  clip-path: inset(0 round 24px) !important;
+  -webkit-clip-path: inset(0 round 12px) !important;
+  clip-path: inset(0 round 12px) !important;
 }
 
 /* Stronger fallback in case a later global img rule overrides rounding */
 .sketch-detail-content .single-view-image > img,
 .sketch-detail-content .single-view-image .sketch-detail-image {
-  border-radius: 24px !important;
+  border-radius: 12px !important;
 }
 
 .sketch-info {
@@ -1871,16 +1887,7 @@ nav::after {
 
 /* Responsive design for navigation section */
 @media (max-width: 768px) {
-  .sketch-navigation-section {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .sketch-nav-counter {
-    order: -1;
-  }
-  
+  /* Responsive adjustments for navigation on small screens */
   .sketch-nav-link {
     justify-content: center;
   }
@@ -2036,37 +2043,23 @@ footer {
 
 /* Let the detail image occupy more layout space (not clipped) on medium+ screens */
 @media (min-width: 768px) {
-  .single-view-image .image-wrapper img.sketch-detail-image {
-    width: 150% !important; /* image takes 150% of its container width */
-    max-width: none !important;
-    height: auto !important;
-  }
-
-  /* Allow the wrapper/container to grow with the image so it isn't clipped */
-  .single-view-image .image-wrapper {
-    max-width: none !important;
+  /* On desktop make the image fill the view area; crop sides if necessary to avoid white bars */
+  .image-center > img.sketch-detail-image {
     width: auto !important;
-    display: block !important;
+    height: 85vh !important; /* fill vertical view */
+    object-fit: cover !important; /* crop to fill the area */
+    max-width: none !important;
+    position: static !important;
+    transform: none !important; /* no scaling */
     margin-left: auto !important;
     margin-right: auto !important;
   }
 
   .single-view-image {
-    overflow: visible !important;
+    overflow: hidden !important; /* clip scaled image edges */
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-  }
-
-  /* Ensure the enlarged image is horizontally centered even when wider than its container */
-  .single-view-image .image-wrapper {
-    position: relative !important;
-  }
-
-  .single-view-image .image-wrapper img.sketch-detail-image {
-    position: relative !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
   }
 }
 

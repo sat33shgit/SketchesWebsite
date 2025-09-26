@@ -166,15 +166,7 @@ img.direct-gallery-image {
   transform: scale(1.1);
 }
 
-/* Image Section - Minimal wrapper for layout only, with overflow hidden for contained zoom */
-.image-wrapper {
-  flex: 0 0 55%; /* Increased from 45% to 55% for bigger images */
-  position: relative;
-  overflow: hidden; /* Hide overflow to contain zoom effect */
-  background: transparent;
-  transition: all 0.3s ease;
-  border-radius: 8px !important; /* Apply border radius to container */
-}
+/* Note: .image-wrapper concept removed for detail-page; gallery uses .card-image and .image-link instead */
 
 /* Remove old card-image-section styles since we replaced with image-wrapper */
 
@@ -186,7 +178,7 @@ img.direct-gallery-image {
   cursor: pointer;
 }
 
-.elegant-card:hover .image-wrapper {
+.elegant-card:hover .card-image {
   transform: none;
 }
 
@@ -230,8 +222,8 @@ img.direct-gallery-image {
 }
 
 /* Super specific selectors to override any other styles */
-.elegant-gallery .elegant-card .image-wrapper .image-link .card-image,
-.elegant-gallery .elegant-card .image-wrapper .image-link img,
+.elegant-gallery .elegant-card .image-link .card-image,
+.elegant-gallery .elegant-card .image-link img,
 .elegant-gallery img {
   border-radius: 8px !important;
   -webkit-border-radius: 8px !important;
