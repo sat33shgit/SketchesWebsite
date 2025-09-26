@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const { deviceId, action } = req.body || {}
 
   if (!deviceId) {
-    console.warn('Missing deviceId in request body for like toggle:', { id, body: req.body })
+    console.warn('Missing deviceId in request body for like toggle:', id)
     return res.status(400).json({ error: 'Device ID is required' })
   }
 
@@ -19,12 +19,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Debug: log incoming body for easier reproduction of 500 errors
-    console.log('LIKE endpoint called:', { id, body: req.body })
-    // For dev, update a simple JSON store under data/likes.json
-    const fs = require('fs')
-    const path = require('path')
-    const storePath = path.join(process.cwd(), 'data', 'likes.json')
+  // For dev, update a simple JSON store under data/likes.json
+  // Use dynamic imports so this handler works in ESM environments where
+  // `require` may not be defined (e.g. when Vite or Node ESM loader is used).
+  const fs = await import('fs')
+  const path = await import('path')
+  const storePath = path.join(process.cwd(), 'data', 'likes.json')
 
     let store = {}
     try {
@@ -94,9 +94,9 @@ export default async function handler(req, res) {
     }
 
     res.status(200).json(response)
-  } catch (error) {
-    console.error('Error toggling like:', error)
-    // Include error message in response during development to aid debugging
+    } catch (error) {
+    console.error('Error toggling like:', error && (error.message || error))
+    // Return a generic error message to clients; avoid leaking stack traces in responses
     res.status(500).json({ 
       success: false, 
       error: 'Failed to toggle like',
