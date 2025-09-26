@@ -1950,6 +1950,23 @@ footer {
   100% { background-position: -200% 0; }
 }
 
+/* Clickable like badge in detail sidebar */
+.clickable-like {
+  border-radius: 12px;
+  padding: 6px 8px;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.clickable-like:hover {
+  cursor: pointer;
+  background: rgba(243,244,246,0.6);
+  transform: translateY(-2px);
+}
+
+.clickable-like:active {
+  transform: translateY(0);
+}
+
 .flex {
   display: flex;
 }

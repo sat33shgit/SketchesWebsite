@@ -5,6 +5,7 @@ import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 import { parseRichText } from '../utils/richText'
 import LikeDislike from '../components/LikeDislike'
+import { toggleLike } from '../utils/vercelDatabase'
 import CommentCount from '../components/CommentCount'
 import ViewCount from '../components/ViewCount'
 import useAnalytics from '../hooks/useAnalytics'
@@ -485,7 +486,31 @@ const SketchDetail = () => {
                 >
                   {/* Top row: Likes only */}
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-                    <div className="like-count" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div
+                      className="like-count clickable-like"
+                      style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                      onClick={async (e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        // optimistic update
+                        const prev = detailLikeCount ?? 0
+                        setDetailLikeCount(prev + 1)
+                        try {
+                          const res = await toggleLike(id)
+                          // res.likes is authoritative
+                          if (res && typeof res.likes !== 'undefined') {
+                            setDetailLikeCount(Number(res.likes) || 0)
+                          }
+                        } catch (err) {
+                          console.error('Error toggling like from detail:', err)
+                          // revert optimistic
+                          setDetailLikeCount(prev)
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click() }}
+                    >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
