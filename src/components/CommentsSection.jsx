@@ -165,22 +165,36 @@ const CommentsSection = ({ sketchId, sketchName }) => {
               if (!dateObj || !dateObj.raw) return ''
               const now = new Date()
               const then = dateObj.raw
-              // compute year diff first
+              const diffMs = now - then
+
+              // Years
               const yearDiff = now.getFullYear() - then.getFullYear()
               if (yearDiff > 0) return `${yearDiff}y ago`
-              // compute month diff
+
+              // Months
               const monthDiff = (now.getFullYear() - then.getFullYear()) * 12 + (now.getMonth() - then.getMonth())
-              if (monthDiff > 0) return `${monthDiff}m ago`
-              // compute day diff
+              if (monthDiff > 0) return `${monthDiff}mo ago`
+
+              // Days
               const msPerDay = 24 * 60 * 60 * 1000
-              const dayDiff = Math.floor((now - then) / msPerDay)
+              const dayDiff = Math.floor(diffMs / msPerDay)
               if (dayDiff > 6) return `${Math.floor(dayDiff / 7)}w ago`
               if (dayDiff > 0) return `${dayDiff}d ago`
-              // less than one day: compute hours
+
+              // Hours
               const msPerHour = 60 * 60 * 1000
-              const hourDiff = Math.floor((now - then) / msPerHour)
+              const hourDiff = Math.floor(diffMs / msPerHour)
               if (hourDiff >= 1) return `${hourDiff}h ago`
-              return 'just now'
+
+              // Minutes
+              const msPerMinute = 60 * 1000
+              const minuteDiff = Math.floor(diffMs / msPerMinute)
+              // Under 5 minutes -> 'Just now'
+              if (minuteDiff < 5) return 'Just now'
+              // 5-59 minutes -> 'Xm ago'
+              if (minuteDiff < 60) return `${minuteDiff}m ago`
+
+              return 'Just now'
             }
 
             const created = comment.created_at ? formatDateTime(comment.created_at) : null
