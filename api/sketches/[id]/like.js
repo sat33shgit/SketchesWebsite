@@ -38,7 +38,12 @@ export default async function handler(req, res) {
 
       if (fs.existsSync(storePath)) {
         const raw = fs.readFileSync(storePath, 'utf8')
-        store = raw ? JSON.parse(raw) : {}
+        try {
+          store = raw ? JSON.parse(raw) : {}
+        } catch (parseErr) {
+          console.error('Failed to parse likes.json, resetting store. parseErr:', parseErr && parseErr.message)
+          store = {}
+        }
       } else {
         store = {}
       }
@@ -48,6 +53,9 @@ export default async function handler(req, res) {
     }
 
     const current = store[id] || { likes: 0, dislikes: 0, likedBy: [], dislikedBy: [] }
+    // Ensure arrays exist to avoid .includes failures
+    current.likedBy = Array.isArray(current.likedBy) ? current.likedBy : []
+    current.dislikedBy = Array.isArray(current.dislikedBy) ? current.dislikedBy : []
 
     // Simplified device tracking: record deviceId in likedBy/dislikedBy arrays
     if (action === 'like') {
