@@ -1,3 +1,5 @@
+import { sql } from '@vercel/postgres'
+
 // API endpoint to toggle like for a sketch
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -18,13 +20,54 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, error: 'Invalid action. Expected "like" or "unlike"' })
   }
 
+  // First try to persist the like in Postgres (sketch_reactions). If Postgres
+  // isn't available or the operation fails, fall back to the local JSON store.
   try {
-  // For dev, update a simple JSON store under data/likes.json
-  // Use dynamic imports so this handler works in ESM environments where
-  // `require` may not be defined (e.g. when Vite or Node ESM loader is used).
-  const fs = await import('fs')
-  const path = await import('path')
-  const storePath = path.join(process.cwd(), 'data', 'likes.json')
+    // Use SQL-backed sketch_reactions table: increment/decrement count.
+    if (action === 'like') {
+      await sql`
+        INSERT INTO sketch_reactions (sketch_id, smiley_type, count)
+        VALUES (${id}, 'like', 1)
+        ON CONFLICT (sketch_id, smiley_type)
+        DO UPDATE SET count = sketch_reactions.count + 1, updated_at = NOW();
+      `
+    } else if (action === 'unlike') {
+      await sql`
+        UPDATE sketch_reactions
+        SET count = GREATEST(count - 1, 0), updated_at = NOW()
+        WHERE sketch_id = ${id} AND smiley_type = 'like';
+      `
+    }
+
+    // Fetch updated count for confirmation
+    const { rows } = await sql`
+      SELECT count FROM sketch_reactions WHERE sketch_id = ${id} AND smiley_type = 'like'
+    `
+    const updatedCount = rows.length > 0 ? rows[0].count : 0
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        sketchId: id,
+        likes: updatedCount,
+        dislikes: 0,
+        userLiked: action === 'like',
+        userDisliked: false
+      }
+    })
+  } catch (dbError) {
+    // If DB isn't available, fall back to local JSON store (dev mode)
+    console.warn('Postgres error in like handler, falling back to file store:', dbError && dbError.message)
+  }
+
+  // Fallback path: file-based store under data/likes.json
+  try {
+    // For dev, update a simple JSON store under data/likes.json
+    // Use dynamic imports so this handler works in ESM environments where
+    // `require` may not be defined (e.g. when Vite or Node ESM loader is used).
+    const fs = await import('fs')
+    const path = await import('path')
+    const storePath = path.join(process.cwd(), 'data', 'likes.json')
 
     let store = {}
     try {
@@ -93,11 +136,11 @@ export default async function handler(req, res) {
       }
     }
 
-    res.status(200).json(response)
-    } catch (error) {
-    console.error('Error toggling like:', error && (error.message || error))
+    return res.status(200).json(response)
+  } catch (error) {
+    console.error('Error toggling like (file fallback):', error && (error.message || error))
     // Return a generic error message to clients; avoid leaking stack traces in responses
-    res.status(500).json({ 
+    return res.status(500).json({ 
       success: false, 
       error: 'Failed to toggle like',
       message: error && error.message
