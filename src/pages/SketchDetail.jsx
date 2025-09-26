@@ -5,7 +5,7 @@ import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 import { parseRichText } from '../utils/richText'
 import LikeDislike from '../components/LikeDislike'
-import { toggleLike } from '../utils/vercelDatabase'
+import { toggleLike, getSketchStats } from '../utils/vercelDatabase'
 import CommentCount from '../components/CommentCount'
 import ViewCount from '../components/ViewCount'
 import useAnalytics from '../hooks/useAnalytics'
@@ -315,34 +315,26 @@ const SketchDetail = () => {
     }
   }, [isFullscreen])
 
-  // Fetch like counts for this sketch to display accurate number in sidebar
+  // Fetch authoritative stats for this sketch (likes + whether user has liked)
   useEffect(() => {
     let cancelled = false
-    const fetchLikes = async () => {
+    const loadStats = async () => {
       try {
         setDetailLikeLoading(true)
-        const res = await fetch('/api/sketches/likes')
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const data = await res.json()
-        if (!cancelled) {
-            if (data.success && data.data) {
-              // data.data is a mapping of sketch_id -> count
-              const val = data.data[id]
-              const parsed = Number(val)
-              setDetailLikeCount(Number.isNaN(parsed) ? 0 : parsed)
-            } else {
-              setDetailLikeCount(0)
-            }
+        const stats = await getSketchStats(id)
+        if (!cancelled && stats) {
+          setDetailLikeCount(Number(stats.likes) || 0)
+          setDetailLiked(Boolean(stats.userLiked))
         }
       } catch (err) {
-        console.error('Error fetching like count for detail:', err)
+        console.error('Error fetching sketch stats:', err)
         if (!cancelled) setDetailLikeCount(0)
       } finally {
         if (!cancelled) setDetailLikeLoading(false)
       }
     }
 
-    if (id) fetchLikes()
+    if (id) loadStats()
     return () => { cancelled = true }
   }, [id])
 
@@ -509,39 +501,19 @@ const SketchDetail = () => {
                       onClick={async (e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        const prev = detailLikeCount ?? 0
-
-                        if (!detailLiked) {
-                          // first click -> optimistic random increment
-                          const inc = Math.floor(Math.random() * 5) + 1 // 1..5
-                          setDetailLikeCount(prev + inc)
-                          setDetailLiked(true)
-                          try {
-                            const res = await toggleLike(id)
-                            if (res && typeof res.likes !== 'undefined') {
-                              setDetailLikeCount(Number(res.likes) || 0)
-                            }
-                          } catch (err) {
-                            console.error('Error toggling like from detail:', err)
-                            // revert optimistic
-                            setDetailLikeCount(prev)
-                            setDetailLiked(false)
+                        // Use server-authoritative approach: always call API and update UI from response
+                        try {
+                          setDetailLikeLoading(true)
+                          const res = await toggleLike(id)
+                          if (res) {
+                            // toggleLike returns newStats { likes, dislikes, userLiked, userDisliked }
+                            setDetailLikeCount(Number(res.likes) || 0)
+                            setDetailLiked(Boolean(res.userLiked))
                           }
-                        } else {
-                          // second click -> unlike, decrement by 1
-                          setDetailLikeCount(Math.max(0, prev - 1))
-                          setDetailLiked(false)
-                          try {
-                            const res = await toggleLike(id)
-                            if (res && typeof res.likes !== 'undefined') {
-                              setDetailLikeCount(Number(res.likes) || 0)
-                            }
-                          } catch (err) {
-                            console.error('Error toggling like from detail (unlike):', err)
-                            // revert
-                            setDetailLikeCount(prev)
-                            setDetailLiked(true)
-                          }
+                        } catch (err) {
+                          console.error('Error toggling like from detail:', err)
+                        } finally {
+                          setDetailLikeLoading(false)
                         }
                       }}
                       role="button"
