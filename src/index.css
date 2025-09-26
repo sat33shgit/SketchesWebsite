@@ -318,8 +318,9 @@ nav::after {
 }
 
 .comment-author {
-  margin-bottom: 1rem;
-  text-align: center;
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.95rem;
 }
 
 .comment-timestamp {
@@ -1480,26 +1481,7 @@ nav::after {
   min-width: 0; /* Allows text to wrap properly */
 }
 
-.comment-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-  width: 100%;
-}
 
-.comment-author {
-  font-weight: 600;
-  color: #111827;
-  font-size: 0.95rem;
-}
-
-.comment-timestamp {
-  margin-left: auto;
-  color: #9ca3af;
-  font-size: 0.85rem;
-  font-weight: 400;
-}
 
 .comment-text {
   color: #6b7280;
