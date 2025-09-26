@@ -545,7 +545,7 @@ const SketchDetail = () => {
                     </svg>
                     <div style={{ color: '#6b7280', fontSize: '0.95rem', display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <span style={{ fontWeight: 600 }}><CommentCount sketchId={id} showIcon={false} size="large" /></span>
-                      <span style={{ fontWeight: 400 }}>Comments</span>
+                      <span style={{ fontWeight: 400, color: '#000000' }}>Comments</span>
                     </div>
                   </div>
                 </div>
