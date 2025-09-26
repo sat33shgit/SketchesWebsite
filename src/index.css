@@ -1043,7 +1043,61 @@ nav::after {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #ffffff;
+  /* ensure the container itself doesn't provide a visible background or padding that would show around the rounded wrapper */
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Centralized wrapper that enforces rounded corners for the normal (non-fullscreen) image */
+.single-view-image .image-wrapper {
+  display: inline-block;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  max-width: 760px; /* wrapper will shrink to fit the image up to this width */
+  width: auto !important;
+  line-height: 0; /* remove inline-block whitespace and prevent extra height */
+  vertical-align: middle;
+}
+
+/* Make sure wrapper itself doesn't have padding/background that shows as a rounded block */
+.single-view-image .image-wrapper {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+}
+
+.single-view-image .image-wrapper img.sketch-detail-image {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  box-shadow: none !important;
+  /* the wrapper provides rounding; avoid double-radius on the img itself */
+  border-radius: 0 !important;
+}
+
+/* Ensure the immediate center container centers the wrapper reliably */
+.image-center {
+  width: 100%;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Hover overlay shown on the normal (non-fullscreen) image */
+.image-wrapper {
+  position: relative;
+}
+
+/* overlay removed: no hover overlay in normal view */
+
+/* Slight responsive tweak: allow a wider max on large screens */
+@media (min-width: 1200px) {
+  .single-view-image .image-wrapper {
+    max-width: 920px;
+  }
 }
 
 .single-view-details {
@@ -1291,7 +1345,7 @@ nav::after {
 }
 
 .form-group:last-of-type {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .name-input {
@@ -1520,17 +1574,44 @@ nav::after {
   height: auto;
   max-height: 85vh; /* Increased from 80vh */
   object-fit: contain;
-  border-radius: 16px; /* Increased from 0.375rem for more rounded edges */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 24px; /* rounder edges */
+  box-shadow: none;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
   display: block;
-  background: #ffffff; /* Ensure white background */
+  background: transparent; /* remove background so container clipping shows rounded corners */
 }
 
 .sketch-detail-image:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Ensure the image container clips the image so border-radius is visible */
+.single-view-image {
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  /* ensure the container and image align and clip properly */
+  display: block;
+}
+
+/* Force the image to inherit the container's rounding and be block-level so clipping works */
+.single-view-image > img,
+.single-view-image .sketch-detail-image {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  -webkit-border-radius: 24px !important;
+  -moz-border-radius: 24px !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  -webkit-clip-path: inset(0 round 24px) !important;
+  clip-path: inset(0 round 24px) !important;
+}
+
+/* Stronger fallback in case a later global img rule overrides rounding */
+.sketch-detail-content .single-view-image > img,
+.sketch-detail-content .single-view-image .sketch-detail-image {
+  border-radius: 24px !important;
 }
 
 .sketch-info {
@@ -1946,10 +2027,12 @@ footer {
   box-sizing: border-box !important;
 }
 
+/* Keep img defaults minimal so our wrapper controls rounding. Remove global radius to avoid unwanted background showing behind the wrapper. */
 img {
   max-width: 100%;
   height: auto;
-  border-radius: 16px;
+  border-radius: 0; /* don't force a radius here; wrapper handles clipping */
+  background: transparent;
 }
 
 /* Animations */
@@ -1969,7 +2052,7 @@ img {
   max-height: 90% !important;
   object-fit: contain;
   background: #ffffff;
-  border-radius: 16px; /* More rounded edges */
+  border-radius: 0 !important; /* remove rounding in fullscreen */
 }
 
 .fullscreen-image.landscape {
@@ -1977,7 +2060,7 @@ img {
   max-height: 85% !important; /* Increased from 80% */
   object-fit: contain;
   background: #ffffff;
-  border-radius: 16px; /* More rounded edges */
+  border-radius: 0 !important; /* remove rounding in fullscreen */
 }
 
 /* Mobile responsive orientations */
@@ -2110,7 +2193,8 @@ img {
   display: flex;
   margin-bottom: 1.5rem;
   justify-content: center;
-  overflow: hidden;
+  /* Do not clip corners in fullscreen modal so the image can show square corners */
+  overflow: visible !important;
 }
 
 .fullscreen-image {
@@ -2119,6 +2203,7 @@ img {
   object-fit: contain;
   cursor: grab;
   transition: transform 0.1s ease-out;
+  border-radius: 0 !important; /* ensure no rounding in fullscreen */
 }
 
 .fullscreen-image.dragging {
@@ -2332,10 +2417,12 @@ img {
   box-sizing: border-box !important;
 }
 
+/* Keep img defaults minimal so our wrapper controls rounding. Remove global radius to avoid unwanted background showing behind the wrapper. */
 img {
   max-width: 100%;
   height: auto;
-  border-radius: 16px;
+  border-radius: 0; /* don't force a radius here; wrapper handles clipping */
+  background: transparent;
 }
 
 /* Rich text content */

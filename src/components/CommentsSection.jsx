@@ -128,7 +128,7 @@ const CommentsSection = ({ sketchId, sketchName }) => {
             placeholder="Share your thoughts about this artwork..."
             rows={4}
             className="comment-textarea"
-            style={{ height: '100px', minHeight: '50px' }}
+            style={{ height: '80px', minHeight: '30px' }}
             required
           />
         </div>
