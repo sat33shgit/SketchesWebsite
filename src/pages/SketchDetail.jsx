@@ -25,6 +25,8 @@ const SketchDetail = () => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [showCopySuccess, setShowCopySuccess] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
+  const [detailLikeCount, setDetailLikeCount] = useState(null)
+  const [detailLikeLoading, setDetailLikeLoading] = useState(true)
   
   // Comments functionality disabled for now
   // const [comments] = useState([])
@@ -295,6 +297,36 @@ const SketchDetail = () => {
     }
   }, [isFullscreen])
 
+  // Fetch like counts for this sketch to display accurate number in sidebar
+  useEffect(() => {
+    let cancelled = false
+    const fetchLikes = async () => {
+      try {
+        setDetailLikeLoading(true)
+        const res = await fetch('/api/sketches/likes')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = await res.json()
+        if (!cancelled) {
+          if (data.success && data.data) {
+            // data.data is a mapping of sketch_id -> count
+            const val = data.data[id]
+            setDetailLikeCount(Number(val) ?? 0)
+          } else {
+            setDetailLikeCount(0)
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching like count for detail:', err)
+        if (!cancelled) setDetailLikeCount(0)
+      } finally {
+        if (!cancelled) setDetailLikeLoading(false)
+      }
+    }
+
+    if (id) fetchLikes()
+    return () => { cancelled = true }
+  }, [id])
+
 
   return (
     <div className="sketch-detail-page single-view">
@@ -456,7 +488,9 @@ const SketchDetail = () => {
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
-                      <span>45</span>
+                      <span>
+                        {detailLikeLoading ? <span className="stat-shimmer" aria-hidden="true"></span> : (detailLikeCount ?? 0)}
+                      </span>
                     </div>
                   </div>
                   
