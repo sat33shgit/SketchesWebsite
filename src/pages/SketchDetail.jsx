@@ -443,7 +443,8 @@ const SketchDetail = () => {
                   className="stats-card engagement-card"
                   style={{
                     backgroundColor: 'white',
-                    borderRadius: '8px',
+                    borderRadius: '8px', 
+                    border: '0.5px solid #e5e7eb',
                     padding: '16px',
                     marginBottom: '16px',
                     boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
@@ -482,6 +483,7 @@ const SketchDetail = () => {
                   style={{
                     backgroundColor: 'white',
                     borderRadius: '8px',
+                    border: '0.5px solid #e5e7eb',
                     padding: '16px',
                     boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
                   }}
