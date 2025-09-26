@@ -19,6 +19,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Debug: log incoming body for easier reproduction of 500 errors
+    console.log('LIKE endpoint called:', { id, body: req.body })
     // For dev, update a simple JSON store under data/likes.json
     const fs = require('fs')
     const path = require('path')
