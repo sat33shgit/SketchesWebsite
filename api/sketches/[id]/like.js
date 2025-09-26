@@ -11,6 +11,11 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Device ID is required' })
   }
 
+  // Validate action
+  if (!action || (action !== 'like' && action !== 'unlike')) {
+    return res.status(400).json({ success: false, error: 'Invalid action. Expected "like" or "unlike"' })
+  }
+
   try {
     // For dev, update a simple JSON store under data/likes.json
     const fs = require('fs')
@@ -19,9 +24,18 @@ export default async function handler(req, res) {
 
     let store = {}
     try {
-      store = JSON.parse(fs.readFileSync(storePath, 'utf8'))
+      // ensure data directory exists
+      const dir = path.dirname(storePath)
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+
+      if (fs.existsSync(storePath)) {
+        const raw = fs.readFileSync(storePath, 'utf8')
+        store = raw ? JSON.parse(raw) : {}
+      } else {
+        store = {}
+      }
     } catch (err) {
-      // if missing or invalid, start with empty
+      console.warn('Could not read likes store, starting with empty store:', err && err.message)
       store = {}
     }
 
@@ -42,9 +56,17 @@ export default async function handler(req, res) {
       }
     }
 
-    // write back
+    // write back (guarded)
     store[id] = current
-    fs.writeFileSync(storePath, JSON.stringify(store, null, 2), 'utf8')
+    try {
+      // write atomically: write to tmp then rename
+      const tmpPath = storePath + '.tmp'
+      fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), 'utf8')
+      fs.renameSync(tmpPath, storePath)
+    } catch (writeErr) {
+      console.error('Warning: failed to persist likes store:', writeErr && writeErr.message)
+      // continue — return the updated stats in memory so client can proceed
+    }
 
     const response = {
       success: true,
