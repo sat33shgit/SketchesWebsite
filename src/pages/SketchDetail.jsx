@@ -28,6 +28,23 @@ const SketchDetail = () => {
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [detailLikeCount, setDetailLikeCount] = useState(null)
   const [detailLikeLoading, setDetailLikeLoading] = useState(true)
+  const [detailLiked, setDetailLiked] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem(`user_liked_${id}`) === 'true'
+    } catch (e) {
+      return false
+    }
+  })
+
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`user_liked_${id}`, detailLiked ? 'true' : 'false')
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [detailLiked, id])
   
   // Comments functionality disabled for now
   // const [comments] = useState([])
@@ -487,24 +504,44 @@ const SketchDetail = () => {
                   {/* Top row: Likes only */}
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
                     <div
-                      className="like-count clickable-like"
+                      className={`like-count clickable-like ${detailLiked ? 'liked' : ''}`}
                       style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
                       onClick={async (e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        // optimistic update
                         const prev = detailLikeCount ?? 0
-                        setDetailLikeCount(prev + 1)
-                        try {
-                          const res = await toggleLike(id)
-                          // res.likes is authoritative
-                          if (res && typeof res.likes !== 'undefined') {
-                            setDetailLikeCount(Number(res.likes) || 0)
+
+                        if (!detailLiked) {
+                          // first click -> optimistic random increment
+                          const inc = Math.floor(Math.random() * 5) + 1 // 1..5
+                          setDetailLikeCount(prev + inc)
+                          setDetailLiked(true)
+                          try {
+                            const res = await toggleLike(id)
+                            if (res && typeof res.likes !== 'undefined') {
+                              setDetailLikeCount(Number(res.likes) || 0)
+                            }
+                          } catch (err) {
+                            console.error('Error toggling like from detail:', err)
+                            // revert optimistic
+                            setDetailLikeCount(prev)
+                            setDetailLiked(false)
                           }
-                        } catch (err) {
-                          console.error('Error toggling like from detail:', err)
-                          // revert optimistic
-                          setDetailLikeCount(prev)
+                        } else {
+                          // second click -> unlike, decrement by 1
+                          setDetailLikeCount(Math.max(0, prev - 1))
+                          setDetailLiked(false)
+                          try {
+                            const res = await toggleLike(id)
+                            if (res && typeof res.likes !== 'undefined') {
+                              setDetailLikeCount(Number(res.likes) || 0)
+                            }
+                          } catch (err) {
+                            console.error('Error toggling like from detail (unlike):', err)
+                            // revert
+                            setDetailLikeCount(prev)
+                            setDetailLiked(true)
+                          }
                         }
                       }}
                       role="button"

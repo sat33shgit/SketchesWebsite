@@ -1954,17 +1954,30 @@ footer {
 .clickable-like {
   border-radius: 12px;
   padding: 6px 8px;
-  transition: transform 0.12s ease, background-color 0.12s ease;
+  transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease;
 }
 
 .clickable-like:hover {
   cursor: pointer;
   background: rgba(243,244,246,0.6);
   transform: translateY(-2px);
+  color: #b91c1c; /* darker red on hover */
 }
 
 .clickable-like:active {
   transform: translateY(0);
+}
+
+/* When liked: change color and make it stand out */
+.clickable-like.liked {
+  color: #dc2626; /* red */
+  font-weight: 600;
+}
+
+/* Active/focus styles for accessibility */
+.clickable-like:active, .clickable-like:focus {
+  outline: none;
+  transform: translateY(1px);
 }
 
 .flex {
