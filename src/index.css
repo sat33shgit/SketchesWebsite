@@ -537,6 +537,15 @@ nav::after {
   gap: 3rem;
 }
 
+/* Make each section in the About page appear as a rounded card (like Contact page) */
+.about-content > * {
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  box-shadow: none;
+}
+
 @media (min-width: 1024px) {
   .about-content {
     grid-template-columns: 1fr 2fr;
@@ -548,6 +557,54 @@ nav::after {
   top: 2rem;
 }
 
+/* Make the profile card shrink-wrap and center text under the image */
+.about-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.profile-info {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Make About page sections look like contact cards: rounded border, no heavy shadow */
+.about-content > * {
+  background: #ffffff;
+  border: 1px solid #e5e7eb; /* match contact card borders */
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: none; /* remove shadow so border is clean */
+}
+
+/* Shrink-wrap the profile card so the border only covers the content area and center it in the grid cell */
+.about-profile {
+  /* allow the profile card to size to its content */
+  display: inline-block;
+  width: auto;
+  justify-self: center; /* center inside the grid column */
+  align-self: start;
+  position: relative; /* keep sticky behavior working when present */
+}
+
+/* Center profile text beneath the image */
+.about-profile .profile-info,
+.about-profile .profile-image {
+  text-align: center;
+}
+
+/* Ensure the profile-info headings are centered when the profile card is shrink-wrapped */
+.about-profile .profile-info h2,
+.about-profile .profile-info p {
+  margin: 0;
+}
+
 .profile-image {
   width: 256px;
   height: 256px;
@@ -555,6 +612,35 @@ nav::after {
   border-radius: 50%;
   overflow: hidden;
   background: #e5e7eb;
+}
+
+/* Make the profile area shrink-wrap its contents and center-align text */
+.about-profile {
+  position: sticky;
+  top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 320px; /* prevent the border spanning full column */
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.profile-info {
+  text-align: center;
+}
+
+/* Artist statement card styling: match contact card look */
+.artist-statement-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 @media (min-width: 1024px) {
@@ -601,12 +687,32 @@ nav::after {
   font-size: 1.125rem;
   color: #374151;
   line-height: 1.7;
+  margin: 0 0 1rem 0; /* normalize paragraph spacing inside the about card */
+}
+
+/* Avoid extra gap at the bottom of the about card by removing bottom margin on the last paragraph */
+.about-text > div:last-child p {
+  margin-bottom: 0;
 }
 
 .artist-statement {
   background: #ffffff;
   padding: 2rem;
   border-radius: 0.5rem;
+}
+
+/* Card style for the artist statement when used on the about page */
+.artist-statement-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.artist-statement-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
 }
 
 .artist-statement h3 {
@@ -617,8 +723,13 @@ nav::after {
 }
 
 .artist-statement p {
+  /* match the main about paragraphs */
+  font-size: 1.125rem;
   color: #374151;
   line-height: 1.7;
+  margin: 0 0 1rem 0;
+  font-family: inherit;
+  font-weight: 400;
 }
 
 /* Contact page styles */
@@ -731,6 +842,26 @@ nav::after {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.artist-statement-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: none;
+}
+
+@media (min-width: 1024px) {
+  .artist-statement-card {
+    grid-column: 2 / span 1; /* force into right column */
+    margin-top: 0; /* align under the other content */
+  }
+}
+
+@media (max-width: 1023px) {
+  .artist-statement-card {
+    grid-column: 1 / -1; /* full width on smaller screens */
+  }
+}
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
