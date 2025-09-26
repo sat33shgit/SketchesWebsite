@@ -24,9 +24,13 @@ export default async function handler(req, res) {
 
     let store = {}
     try {
-      // ensure data directory exists
+      // ensure data directory exists (guarded)
       const dir = path.dirname(storePath)
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+      try {
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+      } catch (mkdirErr) {
+        console.warn('Could not create data directory (maybe read-only env):', mkdirErr && mkdirErr.message)
+      }
 
       if (fs.existsSync(storePath)) {
         const raw = fs.readFileSync(storePath, 'utf8')
@@ -59,12 +63,10 @@ export default async function handler(req, res) {
     // write back (guarded)
     store[id] = current
     try {
-      // write atomically: write to tmp then rename
-      const tmpPath = storePath + '.tmp'
-      fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), 'utf8')
-      fs.renameSync(tmpPath, storePath)
+      // Attempt to write store (may fail in serverless/read-only env)
+      fs.writeFileSync(storePath, JSON.stringify(store, null, 2), 'utf8')
     } catch (writeErr) {
-      console.error('Warning: failed to persist likes store:', writeErr && writeErr.message)
+      console.error('Warning: failed to persist likes store (write failed):', writeErr && writeErr.message)
       // continue — return the updated stats in memory so client can proceed
     }
 
@@ -82,9 +84,11 @@ export default async function handler(req, res) {
     res.status(200).json(response)
   } catch (error) {
     console.error('Error toggling like:', error)
+    // Include error message in response during development to aid debugging
     res.status(500).json({ 
       success: false, 
-      error: 'Failed to toggle like' 
+      error: 'Failed to toggle like',
+      message: error && error.message
     })
   }
 }
