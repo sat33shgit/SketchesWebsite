@@ -82,9 +82,9 @@
 .elegant-gallery .elegant-card img.direct-gallery-image,
 .elegant-card img.direct-gallery-image,
 img.direct-gallery-image {
-  border-radius: 12px !important;
-  -webkit-border-radius: 12px !important;
-  -moz-border-radius: 12px !important;
+  border-radius: 8px !important;
+  -webkit-border-radius: 8px !important;
+  -moz-border-radius: 8px !important;
 }
 
 /* Background image approach for guaranteed border-radius */
@@ -94,7 +94,7 @@ img.direct-gallery-image {
   text-decoration: none;
   cursor: pointer;
   position: relative;
-  border-radius: 24px !important;
+  border-radius: 8px !important;
   overflow: hidden; /* This ensures the background image respects border-radius AND contains zoom */
   transition: transform 0.3s ease;
 }
@@ -126,7 +126,7 @@ img.direct-gallery-image {
   cursor: pointer;
   position: relative;
   overflow: hidden; /* Contain the zoom effect within bounds */
-  border-radius: 24px !important; /* Apply border radius to container */
+  border-radius: 8px !important; /* Apply border radius to container */
 }
 
 /* Direct card images without any container clipping */
@@ -134,7 +134,7 @@ img.direct-gallery-image {
   width: 100%;
   object-fit: contain;
   transition: transform 0.3s ease;
-  border-radius: 24px !important;
+  border-radius: 8px !important;
   background: #ffffff;
   transform-origin: center center; /* Zoom from center */
 }
@@ -145,7 +145,7 @@ img.direct-gallery-image {
   max-width: 100%;
   object-fit: contain;
   background: #ffffff;
-  border-radius: 24px !important;
+  border-radius: 8px !important;
 }
 
 /* Landscape images - direct styling */
@@ -173,7 +173,7 @@ img.direct-gallery-image {
   overflow: hidden; /* Hide overflow to contain zoom effect */
   background: transparent;
   transition: all 0.3s ease;
-  border-radius: 24px !important; /* Apply border radius to container */
+  border-radius: 8px !important; /* Apply border radius to container */
 }
 
 /* Remove old card-image-section styles since we replaced with image-wrapper */
@@ -195,7 +195,7 @@ img.direct-gallery-image {
   height: 100%;
   object-fit: contain; /* Changed from cover to contain to show full image */
   transition: transform 0.3s ease;
-  border-radius: 24px !important; /* Increased border radius for more rounded edges */
+  border-radius: 8px !important; /* Increased border radius for more rounded edges */
   background: #ffffff; /* Ensure white background for images */
   transform-origin: center center; /* Zoom from center */
 }
@@ -206,7 +206,7 @@ img.direct-gallery-image {
   max-width: 100%;
   object-fit: contain;
   background: #ffffff;
-  border-radius: 24px !important;
+  border-radius: 8px !important;
 }
 
 /* Landscape images should fit properly and have proper sizing */
@@ -215,7 +215,7 @@ img.direct-gallery-image {
   max-width: 100%;
   object-fit: contain;
   background: #ffffff;
-  border-radius: 24px !important;
+  border-radius: 8px !important;
 }
 
 .elegant-card:hover .card-image {
@@ -226,16 +226,16 @@ img.direct-gallery-image {
 .elegant-card img,
 .card-image-section img,
 .card-image {
-  border-radius: 16px !important;
+  border-radius: 8px !important;
 }
 
 /* Super specific selectors to override any other styles */
 .elegant-gallery .elegant-card .image-wrapper .image-link .card-image,
 .elegant-gallery .elegant-card .image-wrapper .image-link img,
 .elegant-gallery img {
-  border-radius: 16px !important;
-  -webkit-border-radius: 16px !important;
-  -moz-border-radius: 16px !important;
+  border-radius: 8px !important;
+  -webkit-border-radius: 8px !important;
+  -moz-border-radius: 8px !important;
 }
 
 .no-image-placeholder {
@@ -248,7 +248,7 @@ img.direct-gallery-image {
   color: #64748b;
   font-weight: 500;
   font-size: 16px;
-  border-radius: 16px; /* Increased border radius */
+  border-radius: 8px; /* Increased border radius */
 }
 
 /* Content Section - Floating content */

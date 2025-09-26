@@ -227,12 +227,19 @@ const SketchDetail = () => {
   }
 
   const handleWheel = (e) => {
+    // Only handle wheel when fullscreen is active
+    if (!isFullscreen) return
     e.preventDefault()
-    if (e.deltaY < 0) {
-      zoomIn()
-    } else {
-      zoomOut()
-    }
+
+    // Use a smooth factor based on the wheel delta so small rolls give small zoom changes
+    const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1
+
+    setZoomLevel((prev) => {
+      const next = Math.min(5, Math.max(0.5, prev * factor))
+      // When returning to 1x reset pan so image recenters
+      if (next === 1) setImagePosition({ x: 0, y: 0 })
+      return next
+    })
   }
 
   const handleKeyDown = useCallback((e) => {
@@ -733,6 +740,7 @@ const SketchDetail = () => {
               <div 
                 className="fullscreen-overlay"
                 onClick={closeFullscreen}
+                onWheel={handleWheel}
                 aria-label="Click to close fullscreen view"
               />
             )}
