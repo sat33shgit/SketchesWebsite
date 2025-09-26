@@ -307,13 +307,14 @@ const SketchDetail = () => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const data = await res.json()
         if (!cancelled) {
-          if (data.success && data.data) {
-            // data.data is a mapping of sketch_id -> count
-            const val = data.data[id]
-            setDetailLikeCount(Number(val) ?? 0)
-          } else {
-            setDetailLikeCount(0)
-          }
+            if (data.success && data.data) {
+              // data.data is a mapping of sketch_id -> count
+              const val = data.data[id]
+              const parsed = Number(val)
+              setDetailLikeCount(Number.isNaN(parsed) ? 0 : parsed)
+            } else {
+              setDetailLikeCount(0)
+            }
         }
       } catch (err) {
         console.error('Error fetching like count for detail:', err)
