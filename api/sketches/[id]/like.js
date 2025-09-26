@@ -12,22 +12,48 @@ export default async function handler(req, res) {
   }
 
   try {
-    // In production, this would use Vercel Postgres
-    // For now, we'll simulate database operations
-    
-    // This is a simplified version - in production you'd:
-    // 1. Connect to Vercel Postgres
-    // 2. Use transactions for atomic operations
-    // 3. Store real data persistently
-    
+    // For dev, update a simple JSON store under data/likes.json
+    const fs = require('fs')
+    const path = require('path')
+    const storePath = path.join(process.cwd(), 'data', 'likes.json')
+
+    let store = {}
+    try {
+      store = JSON.parse(fs.readFileSync(storePath, 'utf8'))
+    } catch (err) {
+      // if missing or invalid, start with empty
+      store = {}
+    }
+
+    const current = store[id] || { likes: 0, dislikes: 0, likedBy: [], dislikedBy: [] }
+
+    // Simplified device tracking: record deviceId in likedBy/dislikedBy arrays
+    if (action === 'like') {
+      if (!current.likedBy.includes(deviceId)) {
+        current.likes = (current.likes || 0) + 1
+        current.likedBy = current.likedBy.concat([deviceId])
+      }
+      // ensure device isn't in dislikedBy
+      current.dislikedBy = (current.dislikedBy || []).filter(d => d !== deviceId)
+    } else if (action === 'unlike') {
+      if (current.likedBy && current.likedBy.includes(deviceId)) {
+        current.likes = Math.max(0, (current.likes || 0) - 1)
+        current.likedBy = current.likedBy.filter(d => d !== deviceId)
+      }
+    }
+
+    // write back
+    store[id] = current
+    fs.writeFileSync(storePath, JSON.stringify(store, null, 2), 'utf8')
+
     const response = {
       success: true,
       data: {
         sketchId: id,
-        likes: action === 'like' ? Math.floor(Math.random() * 50) + 10 : Math.floor(Math.random() * 50) + 10,
-        dislikes: Math.floor(Math.random() * 10) + 1,
-        userLiked: action === 'like',
-        userDisliked: false
+        likes: current.likes,
+        dislikes: current.dislikes || 0,
+        userLiked: current.likedBy && current.likedBy.includes(deviceId),
+        userDisliked: current.dislikedBy && current.dislikedBy.includes(deviceId)
       }
     }
 

@@ -1,0 +1,14 @@
+{
+  "1": { "likes": 15, "dislikes": 2, "likedBy": [], "dislikedBy": [] },
+  "2": { "likes": 12, "dislikes": 1, "likedBy": [], "dislikedBy": [] },
+  "3": { "likes": 8, "dislikes": 3, "likedBy": [], "dislikedBy": [] },
+  "4": { "likes": 20, "dislikes": 1, "likedBy": [], "dislikedBy": [] },
+  "5": { "likes": 18, "dislikes": 2, "likedBy": [], "dislikedBy": [] },
+  "6": { "likes": 14, "dislikes": 4, "likedBy": [], "dislikedBy": [] },
+  "7": { "likes": 22, "dislikes": 1, "likedBy": [], "dislikedBy": [] },
+  "8": { "likes": 16, "dislikes": 3, "likedBy": [], "dislikedBy": [] },
+  "9": { "likes": 19, "dislikes": 2, "likedBy": [], "dislikedBy": [] },
+  "10": { "likes": 13, "dislikes": 2, "likedBy": [], "dislikedBy": [] },
+  "11": { "likes": 17, "dislikes": 1, "likedBy": [], "dislikedBy": [] },
+  "12": { "likes": 11, "dislikes": 3, "likedBy": [], "dislikedBy": [] }
+}
