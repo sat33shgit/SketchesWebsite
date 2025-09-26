@@ -1453,11 +1453,26 @@ nav::after {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
+  background: #ffffff; /* card background */
+  border: 1px solid rgba(15, 23, 42, 0.06); /* subtle border */
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
 }
 
 .comment-avatar {
   flex-shrink: 0;
-  margin-top: 0.125rem;
+  margin: 0.125rem 0 0 0; /* small top offset to center visually */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
 }
 
 .comment-content {
@@ -1469,26 +1484,29 @@ nav::after {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  width: 100%;
 }
 
 .comment-author {
   font-weight: 600;
   color: #111827;
-  font-size: 0.875rem;
+  font-size: 0.95rem;
 }
 
 .comment-timestamp {
+  margin-left: auto;
   color: #9ca3af;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 400;
 }
 
 .comment-text {
-  color: #4b5563;
-  font-size: 0.875rem;
+  color: #6b7280;
+  font-size: 0.95rem;
   line-height: 1.6;
   word-wrap: break-word;
+  margin-top: 0.25rem;
 }
 
 @media (max-width: 640px) {
