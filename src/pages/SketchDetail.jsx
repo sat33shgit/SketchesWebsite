@@ -498,22 +498,26 @@ const SketchDetail = () => {
                     <div
                       className={`like-count clickable-like ${detailLiked ? 'liked' : ''}`}
                       style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-                      onClick={async (e) => {
+                      onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        // Use server-authoritative approach: always call API and update UI from response
-                        try {
-                          setDetailLikeLoading(true)
-                          const res = await toggleLike(id)
-                          if (res) {
-                            // toggleLike returns newStats { likes, dislikes, userLiked, userDisliked }
-                            setDetailLikeCount(Number(res.likes) || 0)
-                            setDetailLiked(Boolean(res.userLiked))
-                          }
-                        } catch (err) {
-                          console.error('Error toggling like from detail:', err)
-                        } finally {
-                          setDetailLikeLoading(false)
+                        // Optimistic UI: update immediately, then call API. No fallback or revert.
+                        const prev = detailLikeCount ?? 0
+                        if (!detailLiked) {
+                          // First click: increment UI count by 1 and mark liked
+                          setDetailLikeCount(prev + 1)
+                          setDetailLiked(true)
+                          // Fire-and-forget API call
+                          toggleLike(id).catch((err) => {
+                            console.error('toggleLike API error (optimistic):', err)
+                          })
+                        } else {
+                          // Second click: decrement UI count by 1 and unmark liked
+                          setDetailLikeCount(Math.max(0, prev - 1))
+                          setDetailLiked(false)
+                          toggleLike(id).catch((err) => {
+                            console.error('toggleLike API error (optimistic):', err)
+                          })
                         }
                       }}
                       role="button"
