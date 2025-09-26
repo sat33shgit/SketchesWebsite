@@ -1984,14 +1984,39 @@ footer {
   color: #b91c1c; /* darker red on hover */
 }
 
+/* When the user clicks, we temporarily apply a black color state via the `clicked-black` class */
+.clickable-like.clicked-black,
+.like-count.clicked-black {
+  background: #000000 !important;
+  border-color: #000000 !important;
+  color: #ffffff !important; /* white text on black background */
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.clickable-like.clicked-black svg,
+.like-count.clicked-black svg {
+  stroke: #ffffff !important; /* white icon */
+  fill: none;
+}
+
 .clickable-like:active {
   transform: translateY(0);
 }
 
 /* When liked: change color and make it stand out */
-.clickable-like.liked {
-  color: #dc2626; /* red */
+.clickable-like.liked,
+.like-count.liked {
+  background: #000000 !important; /* black background when liked */
+  border-color: #000000 !important;
+  color: #ffffff !important; /* white text */
   font-weight: 600;
+}
+
+/* Heart icon: filled red when liked */
+.clickable-like.liked svg,
+.like-count.liked svg {
+  stroke: #ef4444 !important;
+  fill: #ef4444 !important;
 }
 
 /* Active/focus styles for accessibility */

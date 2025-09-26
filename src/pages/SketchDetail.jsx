@@ -36,15 +36,13 @@ const SketchDetail = () => {
     }
   })
 
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(`user_liked_${id}`, detailLiked ? 'true' : 'false')
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, [detailLiked, id])
+  // NOTE: do NOT sync `detailLiked` automatically to localStorage here.
+  // The API helper `toggleLike` reads the previous value from localStorage to
+  // decide whether the action should be 'like' or 'unlike'. Writing to
+  // localStorage prematurely (e.g. during an optimistic update) causes the
+  // API helper to see the new state and flip the action, producing reversed
+  // behavior. Instead, rely on `toggleLike` (and `getSketchStats`) to
+  // persist authoritative state to localStorage.
   
   // Comments functionality disabled for now
   // const [comments] = useState([])
@@ -503,33 +501,47 @@ const SketchDetail = () => {
                     <div
                       className={`like-count clickable-like ${detailLiked ? 'liked' : ''}`}
                       style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        // Optimistic UI: update immediately, then call API. No fallback or revert.
+
                         const prev = detailLikeCount ?? 0
+
+                        // If currently not liked -> set liked
                         if (!detailLiked) {
-                          // First click: increment UI count by 1 and mark liked
-                          setDetailLikeCount(prev + 1)
+                          // Optimistic update: set UI to liked state (black bg + white text), increment count
                           setDetailLiked(true)
-                          // Fire-and-forget API call
-                          toggleLike(id).catch((err) => {
-                            console.error('toggleLike API error (optimistic):', err)
-                          })
+                          setDetailLikeCount(prev + 1)
+
+                          // Call API to persist like; do NOT update localStorage here because
+                          // toggleLike reads the previous state from localStorage to decide
+                          // whether to 'like' or 'unlike'. Writing localStorage prematurely
+                          // causes the action to be reversed.
+                          try {
+                            const newStats = await toggleLike(id)
+                            if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
+                          } catch (err) {
+                            console.error('Error toggling like:', err)
+                          }
+
                         } else {
-                          // Second click: decrement UI count by 1 and unmark liked
-                          setDetailLikeCount(Math.max(0, prev - 1))
+                          // Currently liked -> un-like
                           setDetailLiked(false)
-                          toggleLike(id).catch((err) => {
-                            console.error('toggleLike API error (optimistic):', err)
-                          })
+                          setDetailLikeCount(Math.max(0, prev - 1))
+
+                          try {
+                            const newStats = await toggleLike(id)
+                            if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
+                          } catch (err) {
+                            console.error('Error toggling like:', err)
+                          }
                         }
                       }}
                       role="button"
                       tabIndex={0}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click() }}
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill={detailLiked ? '#ef4444' : 'none'}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                       <span>
