@@ -5,9 +5,11 @@ export default async function handler(req, res) {
   }
 
   const { id } = req.query
-  const { deviceId, action } = req.body
+  // Be defensive: req.body may be undefined in some environments or proxies.
+  const { deviceId, action } = req.body || {}
 
   if (!deviceId) {
+    console.warn('Missing deviceId in request body for like toggle:', { id, body: req.body })
     return res.status(400).json({ error: 'Device ID is required' })
   }
 

@@ -5,9 +5,10 @@ export default async function handler(req, res) {
   }
 
   const { id } = req.query
-  const { deviceId, action } = req.body
+  const { deviceId, action } = req.body || {}
 
   if (!deviceId) {
+    console.warn('Missing deviceId in request body for dislike toggle:', { id, body: req.body })
     return res.status(400).json({ error: 'Device ID is required' })
   }
 
