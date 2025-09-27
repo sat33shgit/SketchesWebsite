@@ -4,7 +4,24 @@ import { sql } from '@vercel/postgres'
 // individual serverless functions (keeps <=12 functions for Hobby plan).
 export default async function handler(req, res) {
   const rawSlug = req.query && req.query.slug
-  const slug = rawSlug ? (Array.isArray(rawSlug) ? rawSlug : [rawSlug]) : []
+  let slug = rawSlug ? (Array.isArray(rawSlug) ? rawSlug : [rawSlug]) : []
+
+  // Some runtimes (or proxied requests) do not populate req.query.slug for
+  // catch-all routes. As a fallback, parse the path from req.url and extract
+  // segments after the "sketches" segment so requests like
+  // `/api/sketches/11` or `/api/sketches/11/stats` still resolve correctly.
+  if ((!slug || slug.length === 0) && req.url) {
+    try {
+      const path = String(req.url).split('?')[0]
+      const parts = path.split('/').filter(Boolean)
+      const idx = parts.findIndex(p => p === 'sketches')
+      if (idx >= 0) {
+        slug = parts.slice(idx + 1)
+      }
+    } catch (e) {
+      // ignore and keep slug as-is
+    }
+  }
 
   // Helper: get sketch id when present
   const sketchId = slug.length > 0 ? slug[0] : null
