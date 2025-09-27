@@ -46,6 +46,7 @@ const SketchDetail = () => {
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [aboutComments, setAboutComments] = useState([])
   const [showCopySuccess, setShowCopySuccess] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [detailLikeCount, setDetailLikeCount] = useState(null)
@@ -365,6 +366,26 @@ const SketchDetail = () => {
     return () => { cancelled = true }
   }, [id])
 
+  // Fetch visible comments for this sketch and display their comment text under "About This Piece"
+  useEffect(() => {
+    let cancelled = false
+    const loadComments = async () => {
+      if (!id) return
+      try {
+        const res = await fetch(`/api/comments/${encodeURIComponent(id)}`)
+        if (!res.ok) return
+        const data = await res.json()
+        if (!cancelled && Array.isArray(data)) {
+          setAboutComments(data)
+        }
+      } catch (err) {
+        console.warn('Failed to load comments for sketch detail:', err && err.message)
+      }
+    }
+    loadComments()
+    return () => { cancelled = true }
+  }, [id])
+
 
   return (
     <div className="sketch-detail-page single-view">
@@ -448,9 +469,18 @@ const SketchDetail = () => {
           
           {/* Description */}
           <div className="sketch-description">
-            A detailed pencil study focusing on facial expressions and shading techniques. This piece explores the 
-            interplay of light and shadow on human features, capturing subtle emotions through careful 
-            attention to detail.
+            {parseRichText(sketch.description)}
+
+            {/* Render visible comments (comment text only) under About This Piece */}
+            {aboutComments && aboutComments.length > 0 && (
+              <div className="about-comments" style={{ marginTop: '1rem' }}>
+                {aboutComments.map(c => (
+                  <div key={c.id} className="about-comment" style={{ marginBottom: '0.75rem', color: '#374151' }}>
+                    {c.comment}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
