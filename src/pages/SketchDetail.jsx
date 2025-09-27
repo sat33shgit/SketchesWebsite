@@ -519,7 +519,19 @@ const SketchDetail = () => {
                           // causes the action to be reversed.
                           try {
                             const newStats = await toggleLike(id)
-                            if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
+                            // Try to reconcile with authoritative stats after toggle
+                            try {
+                              const fresh = await getSketchStats(id)
+                              if (fresh && typeof fresh.likes === 'number') {
+                                setDetailLikeCount(Number(fresh.likes))
+                                setDetailLiked(Boolean(fresh.userLiked))
+                              } else if (newStats && typeof newStats.likes === 'number') {
+                                setDetailLikeCount(newStats.likes)
+                              }
+                            } catch (fetchErr) {
+                              // If stats fetch fails, fall back to returned newStats
+                              if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
+                            }
                           } catch (err) {
                             console.error('Error toggling like:', err)
                           }
@@ -531,7 +543,17 @@ const SketchDetail = () => {
 
                           try {
                             const newStats = await toggleLike(id)
-                            if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
+                            try {
+                              const fresh = await getSketchStats(id)
+                              if (fresh && typeof fresh.likes === 'number') {
+                                setDetailLikeCount(Number(fresh.likes))
+                                setDetailLiked(Boolean(fresh.userLiked))
+                              } else if (newStats && typeof newStats.likes === 'number') {
+                                setDetailLikeCount(newStats.likes)
+                              }
+                            } catch (fetchErr) {
+                              if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
+                            }
                           } catch (err) {
                             console.error('Error toggling like:', err)
                           }

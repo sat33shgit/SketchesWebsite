@@ -111,7 +111,7 @@ const Gallery = () => {
             const isEven = index % 2 === 0;
             
             return (
-              <div key={sketch.id} className={`elegant-card ${isEven ? 'image-left' : 'image-right'}`}>
+              <div key={sketch.id} className={`elegant-card ${isEven ? 'image-left' : 'image-right'} ${sketch.orientation || 'portrait'}`}>
                 {/* Direct image without any container */}
                 <img
                   src={getAssetPath(sketch.imagePath)}
