@@ -43,14 +43,16 @@ export default async function handler(req, res) {
       if (!sub && req.method === 'GET') {
         try {
           const { rows } = await sql`
-            SELECT id, title, sketch_description AS description, image_path, orientation, completed_date, category
-            FROM sketches WHERE id = ${sketchId}
+            SELECT sketch_id AS id, sketch_name AS title, sketch_description AS description, NULL AS image_path, NULL AS orientation, sketch_completed_date AS completed_date, NULL AS category
+            FROM sketches WHERE sketch_id = ${sketchId}
           `
           if (rows && rows.length) {
             const r = rows[0]
-            const completedDate = r.completed_date
-              ? (r.completed_date instanceof Date ? r.completed_date.toISOString().split('T')[0] : String(r.completed_date))
-              : null
+            // unify completed date handling from either column
+            let completedDate = null
+            const rawDate = r.completed_date ?? r.sketch_completed_date
+            if (rawDate) completedDate = (rawDate instanceof Date) ? rawDate.toISOString().split('T')[0] : String(rawDate)
+
             const sketch = {
               id: r.id,
               title: r.title,

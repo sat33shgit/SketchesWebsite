@@ -14,11 +14,13 @@ import useAnalytics from '../hooks/useAnalytics'
 const SketchDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  // Local fallback data — prefer DB by default. We'll fetch authoritative data and
-  // only use the local file if the API call fails or returns nothing.
+  // Local fallback metadata (title/image) for immediate UI skeleton only.
+  // IMPORTANT: do not display local description text — always fetch the authoritative
+  // description from the API (DB-backed) and render whatever the DB returns
   const localSketch = getSketchById(id)
-  // Use local data immediately for a stable UI, then overwrite with DB result if available
-  const [sketch, setSketch] = useState(localSketch)
+  // If we have local metadata, initialize with description=null so the UI waits
+  // for DB-provided description rather than showing local markdown/plain text.
+  const [sketch, setSketch] = useState(localSketch ? { ...localSketch, description: null } : null)
   
   // Track sketch visit
   useAnalytics('sketch', id)
@@ -39,16 +41,16 @@ const SketchDetail = () => {
 
           if (!cancelled && dbSketch) {
             console.info(`SketchDetail: using API sketch for id=${id}`)
-            setSketch(dbSketch)
+            // Always use the API-provided description (may be markdown or plain text)
+            setSketch(prev => ({ ...(prev || {}), ...dbSketch }))
             return
           }
         }
+        // If API returned non-ok or missing sketch, do not overwrite local metadata's description.
+        if (!cancelled) console.warn(`SketchDetail: API returned no sketch for id=${id}`)
       } catch (err) {
         console.warn('Could not fetch sketch details from API:', err && err.message)
       }
-
-      // If we get here we keep localSketch; log for visibility
-      if (!cancelled) console.info(`SketchDetail: using local fallback for id=${id}`)
     }
     if (id) load()
     return () => { cancelled = true }

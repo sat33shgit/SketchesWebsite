@@ -192,14 +192,13 @@ app.get('/api/sketches/:id', async (req, res) => {
   const sketchId = req.params.id;
   try {
     const { rows } = await sql`
-      SELECT id, title, sketch_description AS description, image_path, orientation, completed_date, category
-      FROM sketches WHERE id = ${sketchId}
+      SELECT sketch_id AS id, sketch_name AS title, sketch_description AS description, NULL AS image_path, NULL AS orientation, sketch_completed_date AS completed_date, NULL AS category
+      FROM sketches WHERE sketch_id = ${sketchId}
     `;
     if (rows && rows.length) {
       const r = rows[0];
-      const completedDate = r.completed_date
-        ? (r.completed_date instanceof Date ? r.completed_date.toISOString().split('T')[0] : String(r.completed_date))
-        : null;
+      const rawDate = r.completed_date ?? r.sketch_completed_date
+      const completedDate = rawDate ? ((rawDate instanceof Date) ? rawDate.toISOString().split('T')[0] : String(rawDate)) : null
       const sketch = {
         id: r.id,
         title: r.title,
