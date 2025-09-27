@@ -44,52 +44,9 @@ export const sendContactEmail = async (formData) => {
   }
 }
 
-// Original Web3Forms implementation as fallback
-const sendContactEmailWeb3Forms = async (formData) => {
-  try {
-    const response = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        access_key: '92235cbf-7e66-4121-a028-ba50d463f041', // Public test key
-        name: formData.name,
-        email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
-        from_name: `${formData.name} <${formData.email}>`,
-        Subject: `Contact Form: ${formData.subject}`,
-      })
-    })
-
-    const result = await response.json()
-
-    if (result.success) {
-      return { success: true, message: 'Thank you for your message! I will get back to you soon.' }
-    } else {
-      throw new Error(result.message || 'Failed to send email')
-    }
-  } catch (error) {
-    console.error('Error with Web3Forms:', error)
-    throw error
-  }
-}
-
-// Fallback method using Web3Forms
-const sendEmailFallback = async (formData) => {
-  try {
-    return await sendContactEmailWeb3Forms(formData)
-  } catch (error) {
-    console.error('All email methods failed:', error)
-    
-    return { 
-      success: true, 
-      message: 'Your message has been recorded locally. For immediate assistance, please email me directly at bsateeshk@gmail.com' 
-    }
-  }
-}
+// Note: Web3Forms fallback implementation was removed. The API endpoint
+// `/api/contact` handles sending notifications. If you want to re-enable
+// a client-side fallback to an external email provider, re-add it here.
 
 // Minimal notification email used for comment notifications.
 export const sendNotificationEmail = async ({ sketchName, commenterName, message } = {}) => {

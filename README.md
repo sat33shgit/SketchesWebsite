@@ -255,6 +255,15 @@ WEB3FORMS_ACCESS_KEY=your_web3forms_access_key
 
 ## 💬 Comments System
 
+## Changelog
+
+- 2025-09-27: Email/contact improvements
+   - UI validation: client enforces 1000-character limit and provides better messages
+   - Server: accepts Unicode characters and enforces 1000-character max for message
+   - Contact messages saved to PostgreSQL and email notifications sent via the server-side integration
+   - Dev server updated to match production behavior
+
+
 ### Features
 - **User Avatars**: Automatically generated circular avatars with user initials
 - **Color Consistency**: Each user gets a consistent color based on their name
