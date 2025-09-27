@@ -78,7 +78,7 @@ img.direct-gallery-image {
   width: 100%;
 }
 
-/* Background image approach for guaranteed bordebbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbr-radius */
+/* Background image approach for guaranteed border-radius */
 .bg-image-link {
   flex: 0 0 55%;
   display: block;

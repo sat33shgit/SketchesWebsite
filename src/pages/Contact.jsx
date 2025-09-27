@@ -10,14 +10,30 @@ function sanitizeInput(input) {
 
 function validateFields({ name, email, subject, message }) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!name || !email || !subject || !message) return false;
-  if (!emailRegex.test(email)) return false;
+
+  if (!name || !email || !subject || !message) {
+    return { ok: false, message: 'All fields are required.' };
+  }
+
+  if (!emailRegex.test(email)) {
+    return { ok: false, message: 'Please enter a valid email address.' };
+  }
+
   // Disallow angle brackets and suspicious patterns
   const pattern = /<|>|script|onerror|onload|onclick|javascript:/i;
-  if (pattern.test(name) || pattern.test(subject) || pattern.test(message)) return false;
-  // Limit field lengths
-  if (name.length > 100 || subject.length > 100 || message.length > 1000) return false;
-  return true;
+  if (pattern.test(name) || pattern.test(subject) || pattern.test(message)) {
+    return { ok: false, message: 'Input contains disallowed HTML or script patterns.' };
+  }
+
+  // Allow Unicode characters (emoji, smart quotes, em-dash, etc.) in messages.
+  // Server will also accept Unicode. We still enforce length limits below.
+
+  // Limit field lengths (match front-end limits)
+  if (name.length > 100 || subject.length > 100 || message.length > 1000) {
+    return { ok: false, message: 'One or more fields exceed the allowed length.' };
+  }
+
+  return { ok: true };
 }
 
 const Contact = () => {
@@ -52,9 +68,10 @@ const Contact = () => {
       message: sanitizeInput(formData.message),
     }
 
-    // Validate input
-    if (!validateFields(sanitized)) {
-      setSubmitStatus({ message: 'Invalid or unsafe input detected.', isError: true })
+    // Validate input and show user-friendly messages
+    const validation = validateFields(sanitized)
+    if (!validation.ok) {
+      setSubmitStatus({ message: validation.message || 'Invalid or unsafe input detected.', isError: true })
       return
     }
     

@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     cleanName.length > 100 ||
     cleanEmail.length > 255 ||
     cleanSubject.length > 200 ||
-    cleanMessage.length > 10000 ||
+    cleanMessage.length > 1000 ||
     /<|>|script|onerror|onload|javascript:/i.test(name) ||
     /<|>|script|onerror|onload|javascript:/i.test(subject) ||
     /<|>|script|onerror|onload|javascript:/i.test(message)
@@ -46,9 +46,6 @@ export default async function handler(req, res) {
 
   if (!validator.isEmail(cleanEmail)) {
     return res.status(400).json({ success: false, message: 'Invalid email address.' });
-  }
-  if (!validator.isAscii(cleanName) || !validator.isAscii(cleanSubject) || !validator.isAscii(cleanMessage)) {
-    return res.status(400).json({ success: false, message: 'Input contains unsafe characters.' });
   }
 
   try {
