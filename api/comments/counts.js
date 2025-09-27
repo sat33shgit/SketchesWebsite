@@ -5,7 +5,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
   try {
-    const { rows } = await sql`SELECT sketch_id, COUNT(*) AS count FROM comments GROUP BY sketch_id`;
+    // Count only comments marked as visible (visible = 'Y')
+    const { rows } = await sql`
+      SELECT sketch_id, COUNT(*) AS count
+      FROM comments
+      WHERE visible = 'Y'
+      GROUP BY sketch_id
+    `;
     // Build mapping: { sketchId: count }
     const result = {};
     rows.forEach(row => {

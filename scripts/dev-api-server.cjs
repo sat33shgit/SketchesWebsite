@@ -155,7 +155,12 @@ app.post('/api/contact', async (req, res) => {
 // Comments counts endpoint
 app.get('/api/comments/counts', async (req, res) => {
   try {
-    const { rows } = await sql`SELECT sketch_id, COUNT(*) AS count FROM comments GROUP BY sketch_id`;
+    const { rows } = await sql`
+      SELECT sketch_id, COUNT(*) AS count
+      FROM comments
+      WHERE visible = 'Y'
+      GROUP BY sketch_id
+    `;
     const result = {};
     rows.forEach(row => {
       result[row.sketch_id] = parseInt(row.count, 10);

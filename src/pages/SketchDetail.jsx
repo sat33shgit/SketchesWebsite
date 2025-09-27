@@ -14,10 +14,32 @@ import useAnalytics from '../hooks/useAnalytics'
 const SketchDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const sketch = getSketchById(id)
+  // Initially use local data for immediate render; we'll attempt to fetch authoritative data
+  const localSketch = getSketchById(id)
+  const [sketch, setSketch] = useState(localSketch)
   
   // Track sketch visit
   useAnalytics('sketch', id)
+
+  // Fetch authoritative sketch data (DB-backed) if available
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const resp = await fetch(`/api/sketches/${id}`)
+        if (!resp.ok) return
+        const body = await resp.json()
+        if (!cancelled && body && body.success && body.data) {
+          setSketch(body.data)
+        }
+      } catch (err) {
+        // ignore - keep local data
+        console.warn('Could not fetch sketch details from API, using local data:', err && err.message)
+      }
+    }
+    if (id) load()
+    return () => { cancelled = true }
+  }, [id])
   
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)
@@ -410,7 +432,13 @@ const SketchDetail = () => {
           <div className="header-meta">
             <div className="meta-row">
               <div className="meta-item">
-                Completed: March 14, 2024
+                {sketch && sketch.completedDate ? (
+                  `Completed: ${new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}`
+                ) : 'Completed: —'}
               </div>
             </div>
           </div>
@@ -690,11 +718,13 @@ const SketchDetail = () => {
             <div className="fullscreen-info">
               <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.25rem' }}>{sketch.title}</h3>
               <p style={{ fontSize: '0.875rem', color: '#d1d5db' }}>
-                Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                {sketch && sketch.completedDate ? (
+                  `Completed: ${new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}`
+                ) : 'Completed: —'}
               </p>
               {zoomLevel > 1 && (
                 <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.25rem' }}>Click and drag to pan around</p>
