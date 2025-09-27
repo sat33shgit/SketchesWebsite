@@ -467,21 +467,7 @@ const SketchDetail = () => {
           {/* Title */}
           <h1 className="sketch-main-title">{sketch.title}</h1>
           
-          {/* Description */}
-          <div className="sketch-description">
-            {parseRichText(sketch.description)}
-
-            {/* Render visible comments (comment text only) under About This Piece */}
-            {aboutComments && aboutComments.length > 0 && (
-              <div className="about-comments" style={{ marginTop: '1rem' }}>
-                {aboutComments.map(c => (
-                  <div key={c.id} className="about-comment" style={{ marginBottom: '0.75rem', color: '#374151' }}>
-                    {c.comment}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Description moved to 'About This Piece' below the image */}
         </div>
 
         {/* Main Content */}
