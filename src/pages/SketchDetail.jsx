@@ -47,16 +47,14 @@ const SketchDetail = () => {
         const resp = await fetch(`/api/sketches/${id}`, { cache: 'no-store' })
         if (resp && resp.ok) {
           const body = await resp.json()
-
           // Accept both shapes: { success: true, data: { ... } } or direct object
           let dbSketch = null
           if (body && body.success && body.data) dbSketch = body.data
           else if (body && (body.description || body.imagePath || body.title)) dbSketch = body
 
-          if (!cancelled && dbSketch) {
-            console.info(`SketchDetail: using API sketch for id=${id}`)
-            // Merge DB result into local metadata, but preserve local imagePath
-            // if the DB didn't provide one.
+          // Merge DB result into local metadata, but preserve local imagePath
+          // if the DB didn't provide one.
+          if (dbSketch) {
             setSketch(prev => ({
               ...(prev || {}),
               ...dbSketch,
@@ -68,6 +66,7 @@ const SketchDetail = () => {
             return
           }
         }
+
         // If API returned non-ok or missing sketch, do not overwrite local metadata's description.
         if (!cancelled) console.warn(`SketchDetail: API returned no sketch for id=${id}`)
       } catch (err) {
@@ -516,13 +515,18 @@ const SketchDetail = () => {
                 <img
                   src={getAssetPath(sketch.imagePath)}
                   alt={sketch.title}
-                  className={`sketch-detail-image ${sketch.orientation || 'portrait'}`}
-                  onClick={openFullscreen}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    const fallback = e.target.nextSibling;
-                    if (fallback) fallback.style.display = 'flex';
-                  }}
+                    className={`sketch-detail-image ${sketch.orientation || 'portrait'}`}
+                    onClick={openFullscreen}
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
+                    onMouseDown={(e) => { if (e.button === 1) e.preventDefault() }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      const fallback = e.target.nextSibling;
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
                 />
               </div>
             ) : (
@@ -811,6 +815,10 @@ const SketchDetail = () => {
                 onClick={zoomLevel === 1 ? closeFullscreen : undefined}
                 onMouseDown={handleMouseDown}
                 draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+                onContextMenu={(e) => e.preventDefault()}
+                onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
+                onMouseDownCapture={(e) => { if (e.button === 1) e.preventDefault() }}
               />
             </div>
 

@@ -125,6 +125,11 @@ const Gallery = () => {
                     objectFit: 'contain'
                   }}
                   onClick={() => window.location.href = `/sketch/${sketch.id}`}
+                  draggable={false}
+                  onDragStart={(e) => e.preventDefault()}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
+                  onMouseDown={(e) => { if (e.button === 1) e.preventDefault() }}
                   onError={(e) => {
                     e.target.style.display = 'none';
                   }}

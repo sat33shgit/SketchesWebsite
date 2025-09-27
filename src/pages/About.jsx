@@ -20,6 +20,11 @@ const About = () => {
               <img
                 src={getAssetPath("/images/sateesh-profile.jpg")}
                 alt="Sateesh"
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+                onContextMenu={(e) => e.preventDefault()}
+                onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
+                onMouseDown={(e) => { if (e.button === 1) e.preventDefault() }}
                 onError={(e) => {
                   console.log('Image failed to load:', e.target.src);
                   e.target.src = "https://via.placeholder.com/256x256/374151/ffffff?text=Sateesh"
