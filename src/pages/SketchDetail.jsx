@@ -41,8 +41,13 @@ const SketchDetail = () => {
 
           if (!cancelled && dbSketch) {
             console.info(`SketchDetail: using API sketch for id=${id}`)
-            // Always use the API-provided description (may be markdown or plain text)
-            setSketch(prev => ({ ...(prev || {}), ...dbSketch }))
+            // Merge DB result into local metadata, but preserve local imagePath
+            // if the DB didn't provide one.
+            setSketch(prev => ({
+              ...(prev || {}),
+              ...dbSketch,
+              imagePath: dbSketch.imagePath || (prev && prev.imagePath) || null
+            }))
             return
           }
         }
