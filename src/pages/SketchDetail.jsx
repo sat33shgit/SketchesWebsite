@@ -497,14 +497,7 @@ const SketchDetail = () => {
                   </div>
                 </section>
 
-                {/* Technique & Process */}
-                <section className="content-section">
-                  <h2 className="section-title">Technique & Process</h2>
-                  <div className="section-content">
-                    <p>The artwork was developed through multiple sessions of careful observation and layered rendering. Starting with light construction lines, the portrait gradually emerged through successive layers of graphite, building depth and character with each pass.</p>
-                    <p>Created using a combination of traditional techniques and modern artistic sensibilities, this piece showcases the timeless appeal of pencil portraiture while pushing the boundaries of what can be achieved with these simple tools.</p>
-                  </div>
-                </section>
+                {/* Technique & Process removed as per request */}
 
                 {/* Comments Section */}
                 <CommentsSection sketchId={id} sketchName={sketch.title} />
