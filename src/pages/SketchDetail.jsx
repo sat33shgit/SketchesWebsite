@@ -46,7 +46,10 @@ const SketchDetail = () => {
             setSketch(prev => ({
               ...(prev || {}),
               ...dbSketch,
-              imagePath: dbSketch.imagePath || (prev && prev.imagePath) || null
+              imagePath: dbSketch.imagePath || (prev && prev.imagePath) || null,
+              // preserve orientation (landscape/portrait) from local metadata
+              // when DB doesn't provide it (avoid forcing 'portrait')
+              orientation: dbSketch.orientation || (prev && prev.orientation) || null
             }))
             return
           }
