@@ -14,9 +14,10 @@ import useAnalytics from '../hooks/useAnalytics'
 const SketchDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  // Initially use local data for immediate render; we'll attempt to fetch authoritative data
+  // Local fallback data — prefer DB by default. We'll fetch authoritative data and
+  // only use the local file if the API call fails or returns nothing.
   const localSketch = getSketchById(id)
-  const [sketch, setSketch] = useState(localSketch)
+  const [sketch, setSketch] = useState(null)
   
   // Track sketch visit
   useAnalytics('sketch', id)
@@ -27,19 +28,23 @@ const SketchDetail = () => {
     const load = async () => {
       try {
         const resp = await fetch(`/api/sketches/${id}`)
-        if (!resp.ok) return
-        const body = await resp.json()
-        if (!cancelled && body && body.success && body.data) {
-          setSketch(body.data)
+        if (resp.ok) {
+          const body = await resp.json()
+          if (!cancelled && body && body.success && body.data) {
+            setSketch(body.data)
+            return
+          }
         }
       } catch (err) {
-        // ignore - keep local data
-        console.warn('Could not fetch sketch details from API, using local data:', err && err.message)
+        console.warn('Could not fetch sketch details from API:', err && err.message)
       }
+
+      // If we get here, DB fetch failed or returned nothing — use local fallback
+      if (!cancelled) setSketch(localSketch)
     }
     if (id) load()
     return () => { cancelled = true }
-  }, [id])
+  }, [id, localSketch])
   
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)
