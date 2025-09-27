@@ -17,7 +17,8 @@ const SketchDetail = () => {
   // Local fallback data — prefer DB by default. We'll fetch authoritative data and
   // only use the local file if the API call fails or returns nothing.
   const localSketch = getSketchById(id)
-  const [sketch, setSketch] = useState(null)
+  // Use local data immediately for a stable UI, then overwrite with DB result if available
+  const [sketch, setSketch] = useState(localSketch)
   
   // Track sketch visit
   useAnalytics('sketch', id)
@@ -38,9 +39,7 @@ const SketchDetail = () => {
       } catch (err) {
         console.warn('Could not fetch sketch details from API:', err && err.message)
       }
-
-      // If we get here, DB fetch failed or returned nothing — use local fallback
-      if (!cancelled) setSketch(localSketch)
+      // Keep localSketch as the displayed data if DB fetch fails
     }
     if (id) load()
     return () => { cancelled = true }
