@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       if (!sub && req.method === 'GET') {
         try {
           const { rows } = await sql`
-            SELECT id, title, description, image_path, orientation, completed_date, category
+            SELECT id, title, sketch_description AS description, image_path, orientation, completed_date, category
             FROM sketches WHERE id = ${sketchId}
           `
           if (rows && rows.length) {
