@@ -21,6 +21,20 @@ const SketchDetail = () => {
   // If we have local metadata, initialize with description=null so the UI waits
   // for DB-provided description rather than showing local markdown/plain text.
   const [sketch, setSketch] = useState(localSketch ? { ...localSketch, description: null } : null)
+
+  // Reset the visible sketch and image UI state whenever the route id changes.
+  // This ensures keyboard navigation (which changes the route) immediately
+  // displays the new sketch image instead of preserving the previous one.
+  useEffect(() => {
+    const fresh = localSketch ? { ...localSketch, description: null } : null
+    setSketch(fresh)
+    // Reset image UI state so the new image isn't shown with previous zoom/pan
+    setIsFullscreen(false)
+    setZoomLevel(1)
+    setImagePosition({ x: 0, y: 0 })
+    setIsDragging(false)
+    setDragStart({ x: 0, y: 0 })
+  }, [id])
   
   // Track sketch visit
   useAnalytics('sketch', id)
