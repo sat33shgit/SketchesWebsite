@@ -28,18 +28,27 @@ const SketchDetail = () => {
     let cancelled = false
     const load = async () => {
       try {
-        const resp = await fetch(`/api/sketches/${id}`)
-        if (resp.ok) {
+        const resp = await fetch(`/api/sketches/${id}`, { cache: 'no-store' })
+        if (resp && resp.ok) {
           const body = await resp.json()
-          if (!cancelled && body && body.success && body.data) {
-            setSketch(body.data)
+
+          // Accept both shapes: { success: true, data: { ... } } or direct object
+          let dbSketch = null
+          if (body && body.success && body.data) dbSketch = body.data
+          else if (body && (body.description || body.imagePath || body.title)) dbSketch = body
+
+          if (!cancelled && dbSketch) {
+            console.info(`SketchDetail: using API sketch for id=${id}`)
+            setSketch(dbSketch)
             return
           }
         }
       } catch (err) {
         console.warn('Could not fetch sketch details from API:', err && err.message)
       }
-      // Keep localSketch as the displayed data if DB fetch fails
+
+      // If we get here we keep localSketch; log for visibility
+      if (!cancelled) console.info(`SketchDetail: using local fallback for id=${id}`)
     }
     if (id) load()
     return () => { cancelled = true }
