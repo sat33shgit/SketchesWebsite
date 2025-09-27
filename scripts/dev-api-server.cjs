@@ -187,6 +187,51 @@ app.get('/api/sketches/likes', async (req, res) => {
   }
 });
 
+// Local sketch detail route for dev server
+app.get('/api/sketches/:id', async (req, res) => {
+  const sketchId = req.params.id;
+  try {
+    const { rows } = await sql`
+      SELECT id, title, sketch_description AS description, image_path, orientation, completed_date, category
+      FROM sketches WHERE id = ${sketchId}
+    `;
+    if (rows && rows.length) {
+      const r = rows[0];
+      const completedDate = r.completed_date
+        ? (r.completed_date instanceof Date ? r.completed_date.toISOString().split('T')[0] : String(r.completed_date))
+        : null;
+      const sketch = {
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        imagePath: r.image_path || null,
+        orientation: r.orientation || null,
+        completedDate,
+        category: r.category || null
+      };
+      return res.status(200).json({ success: true, data: sketch });
+    }
+    return res.status(404).json({ success: false, error: 'Sketch not found' });
+  } catch (err) {
+    console.error('Dev GET /api/sketches/:id error:', err);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// Local sketch stats route for dev server
+app.get('/api/sketches/:id/stats', async (req, res) => {
+  const sketchId = req.params.id;
+  try {
+    const { rows } = await sql`SELECT smiley_type, count FROM sketch_reactions WHERE sketch_id = ${sketchId}`;
+    const mapping = {};
+    rows.forEach(r => { mapping[r.smiley_type] = r.count });
+    return res.status(200).json({ success: true, data: { sketchId, likes: mapping['like'] || 0, dislikes: mapping['dislike'] || 0, likedBy: [], dislikedBy: [] } });
+  } catch (err) {
+    console.error('Dev GET /api/sketches/:id/stats error:', err);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
 // Analytics stats endpoint
 app.get('/api/analytics/stats', async (req, res) => {
   try {
