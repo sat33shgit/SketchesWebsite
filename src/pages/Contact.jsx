@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { sendContactEmail } from '../utils/emailService'
 import DOMPurify from 'dompurify'
 import useAnalytics from '../hooks/useAnalytics'
@@ -9,21 +9,21 @@ function sanitizeInput(input) {
   return DOMPurify.sanitize(input, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] })
 }
 
-function validateFields({ name, email, subject, message }) {
+function validateFields({ name, email, subject, message }, t) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!name || !email || !subject || !message) {
-    return { ok: false, message: window.__t ? window.__t('contact.form.validation.required') : 'All fields are required.' };
+    return { ok: false, message: t ? t('contact.form.validation.required') : 'All fields are required.' };
   }
 
   if (!emailRegex.test(email)) {
-    return { ok: false, message: window.__t ? window.__t('contact.form.validation.invalidEmail') : 'Please enter a valid email address.' };
+    return { ok: false, message: t ? t('contact.form.validation.invalidEmail') : 'Please enter a valid email address.' };
   }
 
   // Disallow angle brackets and suspicious patterns
   const pattern = /<|>|script|onerror|onload|onclick|javascript:/i;
   if (pattern.test(name) || pattern.test(subject) || pattern.test(message)) {
-    return { ok: false, message: window.__t ? window.__t('contact.form.validation.disallowedHtml') : 'Input contains disallowed HTML or script patterns.' };
+    return { ok: false, message: t ? t('contact.form.validation.disallowedHtml') : 'Input contains disallowed HTML or script patterns.' };
   }
 
   // Allow Unicode characters (emoji, smart quotes, em-dash, etc.) in messages.
@@ -31,7 +31,7 @@ function validateFields({ name, email, subject, message }) {
 
   // Limit field lengths (match front-end limits)
   if (name.length > 100 || subject.length > 100 || message.length > 1000) {
-    return { ok: false, message: window.__t ? window.__t('contact.form.validation.tooLong') : 'One or more fields exceed the allowed length.' };
+    return { ok: false, message: t ? t('contact.form.validation.tooLong') : 'One or more fields exceed the allowed length.' };
   }
 
   return { ok: true };
@@ -41,12 +41,7 @@ const Contact = () => {
   // Track page visit
   useAnalytics('contact')
   const { t } = useTranslation()
-  // Expose t to helpers that live outside component scope (validateFields uses it)
-  // This is a small pragmatic bridge; a longer-term refactor should move validation into component scope.
-  useEffect(() => {
-    window.__t = (k, f) => t(k, f)
-    return () => { try { delete window.__t } catch (err) { console.warn('i18n cleanup error', err) } }
-  }, [t])
+  // validateFields now accepts `t` directly; no global bridge required.
   
   const [formData, setFormData] = useState({
     name: '',
@@ -77,9 +72,9 @@ const Contact = () => {
     }
 
     // Validate input and show user-friendly messages
-    const validation = validateFields(sanitized)
+    const validation = validateFields(sanitized, t)
     if (!validation.ok) {
-      setSubmitStatus({ message: validation.message || (window.__t ? window.__t('contact.form.validation.invalidOrUnsafe') : 'Invalid or unsafe input detected.'), isError: true })
+      setSubmitStatus({ message: validation.message || (t ? t('contact.form.validation.invalidOrUnsafe') : 'Invalid or unsafe input detected.'), isError: true })
       return
     }
     
@@ -110,7 +105,7 @@ const Contact = () => {
     } catch (err) {
       console.error('sendContactEmail error', err)
       setSubmitStatus({ 
-        message: window.__t ? window.__t('contact.form.fallbackError') : 'Failed to send message. Please try again or contact me directly at bsateeshk@gmail.com', 
+        message: t ? t('contact.form.fallbackError') : 'Failed to send message. Please try again or contact me directly at bsateeshk@gmail.com', 
         isError: true 
       })
     } finally {
