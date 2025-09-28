@@ -660,9 +660,6 @@ const SketchDetail = () => {
                   
                   {/* Discussion row: icon + "N comments" */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', paddingTop: '8px' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="1.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                    </svg>
                     <div style={{ color: '#6b7280', fontSize: '0.95rem', display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <span style={{ fontWeight: 600 }}><CommentCount sketchId={id} showIcon={true} size="large" /></span>
                       <span style={{ fontWeight: 400, color: '#000000' }}>{t('sketch.commentsLabel')}</span>
