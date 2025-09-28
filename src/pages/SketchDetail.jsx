@@ -685,7 +685,9 @@ const SketchDetail = () => {
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>Time</span>
-                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>8-12 hours</span>
+                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>
+                      {sketch && (sketch.time || sketch.Time) ? (sketch.time || sketch.Time) : '—'}
+                    </span>
                   </div>
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between' }}>
