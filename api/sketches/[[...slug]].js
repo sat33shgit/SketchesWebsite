@@ -43,7 +43,15 @@ export default async function handler(req, res) {
       if (!sub && req.method === 'GET') {
         try {
           const { rows } = await sql`
-            SELECT sketch_id AS id, sketch_name AS title, sketch_description AS description, NULL AS image_path, NULL AS orientation, sketch_completed_date AS completed_date, NULL AS category
+            SELECT sketch_id AS id,
+                   sketch_name AS title,
+                   sketch_description AS description,
+                   NULL AS image_path,
+                   NULL AS orientation,
+                   sketch_completed_date AS completed_date,
+                   -- include the new text column 'time' (may be named Time or time in your DB)
+                   time AS time,
+                   NULL AS category
             FROM sketches WHERE sketch_id = ${sketchId}
           `
           if (rows && rows.length) {
@@ -60,6 +68,7 @@ export default async function handler(req, res) {
               imagePath: r.image_path || null,
               orientation: r.orientation || null,
               completedDate,
+              time: r.time || r.Time || null,
               category: r.category || null
             }
             return res.status(200).json({ success: true, data: sketch })
