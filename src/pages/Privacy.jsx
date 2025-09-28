@@ -1,11 +1,26 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 const Privacy = () => {
+  const topRef = useRef(null)
+
+  useEffect(() => {
+    // Ensure the page is scrolled to top and the main header receives focus for accessibility
+    try {
+      window.scrollTo(0, 0)
+    } catch (e) {
+      // ignore in non-browser environments
+    }
+    if (topRef.current && typeof topRef.current.focus === 'function') {
+      topRef.current.focus()
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-gray-50 py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page header: centered shield icon, title and short description */}
-        <div style={{ textAlign: 'center', marginBottom: 20 }}>
+  <div ref={topRef} tabIndex={-1} style={{ textAlign: 'center', marginBottom: 20 }}>
           <div style={{ width: 56, height: 56, margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#111827' }} aria-hidden>
             <svg viewBox="0 0 24 24" width="60" height="60" fill="none"><path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z" stroke="currentColor" strokeWidth={1.5} fill="none" strokeLinejoin="round" strokeLinecap="round"/></svg>
           </div>
