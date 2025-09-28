@@ -22,11 +22,13 @@ export function I18nProvider({ children, defaultLang = 'en' }) {
 	useEffect(() => {
 			let cancelled = false
 			;(async () => {
-				const [contact, about] = await Promise.all([
+				// preload contact, about and ui namespaces to avoid flashing keys in UI
+				const [contact, about, ui] = await Promise.all([
 					loadNamespace(lang, 'contact'),
-					loadNamespace(lang, 'about')
+					loadNamespace(lang, 'about'),
+					loadNamespace(lang, 'ui')
 				])
-				if (!cancelled) setNamespaces(ns => ({ ...ns, contact, about }))
+				if (!cancelled) setNamespaces(ns => ({ ...ns, contact, about, ui }))
 			})()
 		return () => { cancelled = true }
 	}, [lang])
