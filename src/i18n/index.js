@@ -22,14 +22,15 @@ export function I18nProvider({ children, defaultLang = 'en' }) {
 	useEffect(() => {
 			let cancelled = false
 			;(async () => {
-				// preload contact, about, ui and gallery namespaces to avoid flashing keys in UI
-				const [contact, about, ui, gallery] = await Promise.all([
+				// preload contact, about, ui, gallery and sketch namespaces to avoid flashing keys in UI
+				const [contact, about, ui, gallery, sketch] = await Promise.all([
 					loadNamespace(lang, 'contact'),
 					loadNamespace(lang, 'about'),
 					loadNamespace(lang, 'ui'),
-					loadNamespace(lang, 'gallery')
+					loadNamespace(lang, 'gallery'),
+					loadNamespace(lang, 'sketch')
 				])
-				if (!cancelled) setNamespaces(ns => ({ ...ns, contact, about, ui, gallery }))
+				if (!cancelled) setNamespaces(ns => ({ ...ns, contact, about, ui, gallery, sketch }))
 			})()
 		return () => { cancelled = true }
 	}, [lang])
