@@ -8,7 +8,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Privacy from './pages/Privacy'
 import './App.css'
-import { I18nProvider } from './i18n'
+import { I18nProvider } from './i18n/index.jsx'
 
 function App() {
   return (
