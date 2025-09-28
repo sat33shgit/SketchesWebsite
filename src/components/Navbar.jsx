@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useState } from 'react'
+import { useTranslation } from '../i18n'
 
 const Navbar = () => {
   const location = useLocation()
@@ -12,6 +13,8 @@ const Navbar = () => {
     return location.pathname === path
   }
 
+  const { t } = useTranslation()
+
   return (
     <nav>
       <div className="nav-container">
@@ -22,7 +25,7 @@ const Navbar = () => {
               <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
             </svg>
           </div>
-          <span className="logo-text">Sateesh's Sketch Book</span>
+          <span className="logo-text">{t('ui.nav.logoText')}</span>
         </Link>
 
         {/* Navigation Links */}
@@ -31,26 +34,26 @@ const Navbar = () => {
             to="/"
             className={isActive('/') ? 'active' : ''}
           >
-            Gallery
+            {t('ui.nav.gallery')}
           </Link>
           <Link
             to="/about"
             className={isActive('/about') ? 'active' : ''}
           >
-            About
+            {t('ui.nav.about')}
           </Link>
           <Link
             to="/contact"
             className={isActive('/contact') ? 'active' : ''}
           >
-            Contact
+            {t('ui.nav.contact')}
           </Link>
         </div>
 
         {/* Mobile hamburger toggle (shown on small screens) */}
         <button
           className="hamburger"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-label={menuOpen ? t('ui.nav.closeMenu') : t('ui.nav.openMenu')}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(!menuOpen)}
         >
@@ -73,10 +76,10 @@ const Navbar = () => {
 
       {/* Mobile menu (renders below header when open) */}
       {menuOpen && (
-        <div className="mobile-menu" role="menu" aria-label="Main menu">
-          <Link to="/" className={isActive('/') ? 'active' : ''} onClick={() => setMenuOpen(false)}>Gallery</Link>
-          <Link to="/about" className={isActive('/about') ? 'active' : ''} onClick={() => setMenuOpen(false)}>About</Link>
-          <Link to="/contact" className={isActive('/contact') ? 'active' : ''} onClick={() => setMenuOpen(false)}>Contact</Link>
+        <div className="mobile-menu" role="menu" aria-label={t('ui.nav.mobileMenuLabel')}>
+          <Link to="/" className={isActive('/') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.gallery')}</Link>
+          <Link to="/about" className={isActive('/about') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.about')}</Link>
+          <Link to="/contact" className={isActive('/contact') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.contact')}</Link>
         </div>
       )}
     </nav>

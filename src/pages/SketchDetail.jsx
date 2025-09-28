@@ -9,6 +9,7 @@ import { toggleLike, getSketchStats } from '../utils/vercelDatabase'
 import CommentCount from '../components/CommentCount'
 import ViewCount from '../components/ViewCount'
 import useAnalytics from '../hooks/useAnalytics'
+import { useTranslation } from '../i18n'
 
 
 const SketchDetail = () => {
@@ -198,15 +199,17 @@ const SketchDetail = () => {
     }
   }, [showShareMenu])
 
+  const { t } = useTranslation()
+
   if (!sketch) {
     return (
       <div className="sketch-detail-page">
         <div className="sketch-detail-container">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
             <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>Sketch not found</h1>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>{t('sketch.notFound.title')}</h1>
               <Link to="/" style={{ color: '#3b82f6', textDecoration: 'none' }}>
-                Return to Sketch Book
+                {t('sketch.notFound.returnLink')}
               </Link>
             </div>
           </div>
@@ -434,7 +437,7 @@ const SketchDetail = () => {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              Back to Gallery
+              {t('sketch.backToGallery')}
             </Link>
           </div>
           
@@ -443,7 +446,7 @@ const SketchDetail = () => {
             <div className="share-menu-container">
               <button
                 onClick={toggleShareMenu}
-                aria-label="Share"
+                aria-label={t('sketch.share')}
                 className="share-button"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -461,11 +464,11 @@ const SketchDetail = () => {
                       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
                       <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2"/>
                     </svg>
-                    Copy link
+                    {t('sketch.copyLink')}
                   </button>
-                  <button onClick={handleShareFacebook}>Facebook</button>
-                  <button onClick={handleShareTwitter}>Twitter</button>
-                  <button onClick={handleShareWhatsApp}>WhatsApp</button>
+                  <button onClick={handleShareFacebook}>{t('sketch.facebook')}</button>
+                  <button onClick={handleShareTwitter}>{t('sketch.twitter')}</button>
+                  <button onClick={handleShareWhatsApp}>{t('sketch.whatsapp')}</button>
                 </div>
               )}
             </div>
@@ -473,7 +476,7 @@ const SketchDetail = () => {
             {/* Fullscreen Button */}
             <button
               onClick={openFullscreen}
-              aria-label="View Fullscreen"
+              aria-label={t('sketch.viewFullscreen')}
               className="fullscreen-button"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -490,12 +493,12 @@ const SketchDetail = () => {
             <div className="meta-row">
               <div className="meta-item">
                 {sketch && sketch.completedDate ? (
-                  `Completed: ${new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                  `${t('sketch.completed')}: ${new Date(sketch.completedDate).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                   })}`
-                ) : 'Completed: —'}
+                ) : `${t('sketch.completed')}: —`}
               </div>
             </div>
           </div>
@@ -548,7 +551,7 @@ const SketchDetail = () => {
               <div className="main-content">
                 {/* About This Piece */}
                 <section className="content-section">
-                  <h2 className="section-title">About This Piece</h2>
+                  <h2 className="section-title">{t('sketch.aboutThisPiece')}</h2>
                   <div className="section-content">
                     {parseRichText(sketch.description)}
                   </div>
@@ -652,17 +655,14 @@ const SketchDetail = () => {
                   
                   {/* Views row */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
-                    <ViewCount sketchId={id} showIcon={false} />
+                    <ViewCount sketchId={id} showIcon={true} />
                   </div>
                   
                   {/* Discussion row: icon + "N comments" */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', paddingTop: '8px' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="1.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                    </svg>
                     <div style={{ color: '#6b7280', fontSize: '0.95rem', display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 600 }}><CommentCount sketchId={id} showIcon={false} size="large" /></span>
-                      <span style={{ fontWeight: 400, color: '#000000' }}>Comments</span>
+                      <span style={{ fontWeight: 600 }}><CommentCount sketchId={id} showIcon={true} size="large" /></span>
+                      <span style={{ fontWeight: 400, color: '#000000' }}>{t('sketch.commentsLabel')}</span>
                     </div>
                   </div>
                 </div>
@@ -679,19 +679,19 @@ const SketchDetail = () => {
                   }}
                 >
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>Medium</span>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.medium')}</span>
                     <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Graphite</span>
                   </div>
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>Time</span>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.time')}</span>
                     <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>
                       {sketch && (sketch.time || sketch.Time) ? (sketch.time || sketch.Time) : '—'}
                     </span>
                   </div>
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>Paper</span>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.paper')}</span>
                     <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Strathmore</span>
                   </div>
                 </div>

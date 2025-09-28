@@ -63,28 +63,44 @@ const saveToLocalStorage = (sketchId, stats) => {
 export const getSketchStats = async (sketchId) => {
   try {
     const response = await fetch(`/api/sketches/${sketchId}/stats`)
-    
+
     if (response.ok) {
       const result = await response.json()
-      if (result.success) {
-        const deviceId = getDeviceId()
-        const data = result.data
-        
-        // Check user preferences from localStorage
-        const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
-        const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
-        
-        const stats = {
-          likes: data.likes,
-          dislikes: data.dislikes,
-          userLiked,
-          userDisliked
+
+      // result may be one of several shapes. Normalize to { likes, dislikes }
+      let likes = 0
+      let dislikes = 0
+      if (result) {
+        if (result.success && result.data) {
+          likes = Number(result.data.likes ?? result.data.count ?? 0) || 0
+          dislikes = Number(result.data.dislikes ?? 0) || 0
+        } else if (typeof result.count === 'number' || typeof result.likes === 'number') {
+          likes = Number(result.likes ?? result.count ?? 0) || 0
+          dislikes = Number(result.dislikes ?? 0) || 0
+        } else if (Array.isArray(result)) {
+          // Some endpoints may accidentally return rows; try to extract mapping
+          // e.g., [{smiley_type: 'like', count: 3}, ...]
+          const mapping = {}
+          result.forEach(r => { if (r.smiley_type) mapping[r.smiley_type] = Number(r.count || 0) })
+          likes = mapping['like'] || 0
+          dislikes = mapping['dislike'] || 0
         }
-        
-        // Save to localStorage for caching
-        saveToLocalStorage(sketchId, stats)
-        return stats
       }
+
+      const deviceId = getDeviceId()
+      const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
+      const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
+
+      const stats = {
+        likes: likes,
+        dislikes: dislikes,
+        userLiked,
+        userDisliked
+      }
+
+      // Save to localStorage for caching
+      saveToLocalStorage(sketchId, stats)
+      return stats
     }
   } catch (error) {
     // API unavailable, fall back to localStorage
@@ -112,10 +128,21 @@ export const toggleLike = async (sketchId) => {
     
     if (response.ok) {
       const result = await response.json()
-      if (result.success) {
-        const newStats = result.data
+      if (result && result.success && result.data) {
+        const newStats = {
+          likes: Number(result.data.likes ?? result.data.count ?? 0) || 0,
+          dislikes: Number(result.data.dislikes ?? 0) || 0,
+          userLiked: Boolean(result.data.userLiked),
+          userDisliked: Boolean(result.data.userDisliked)
+        }
         saveToLocalStorage(sketchId, newStats)
         console.log('API like toggle result:', newStats)
+        return newStats
+      }
+      // Some endpoints may return { success: true, count: N }
+      if (result && typeof result.count === 'number') {
+        const newStats = { likes: Number(result.count), dislikes: 0, userLiked: action === 'like', userDisliked: false }
+        saveToLocalStorage(sketchId, newStats)
         return newStats
       }
     }

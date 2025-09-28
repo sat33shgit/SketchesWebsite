@@ -18,7 +18,7 @@ const getLocalStorageStats = (sketchId) => {
       userLiked,
       userDisliked
     }
-  } catch (error) {
+  } catch {
     return { likes: 0, dislikes: 0, userLiked: false, userDisliked: false }
   }
 }
@@ -36,26 +36,21 @@ const getDeviceId = () => {
 // Simulate a simple cloud database using predefined data
 // In a real implementation, this would connect to a backend service
 const getCloudData = async () => {
-  try {
-    // For now, return sample data to demonstrate cross-device sync
-    // In production, this would fetch from a real API
-    return {
-      '1': { likes: 15, dislikes: 2, likedBy: [], dislikedBy: [] },
-      '2': { likes: 12, dislikes: 1, likedBy: [], dislikedBy: [] },
-      '3': { likes: 8, dislikes: 3, likedBy: [], dislikedBy: [] },
-      '4': { likes: 20, dislikes: 1, likedBy: [], dislikedBy: [] },
-      '5': { likes: 18, dislikes: 2, likedBy: [], dislikedBy: [] },
-      '6': { likes: 14, dislikes: 4, likedBy: [], dislikedBy: [] },
-      '7': { likes: 22, dislikes: 1, likedBy: [], dislikedBy: [] },
-      '8': { likes: 16, dislikes: 3, likedBy: [], dislikedBy: [] },
-      '9': { likes: 19, dislikes: 2, likedBy: [], dislikedBy: [] },
-      '10': { likes: 13, dislikes: 2, likedBy: [], dislikedBy: [] },
-      '11': { likes: 17, dislikes: 1, likedBy: [], dislikedBy: [] },
-      '12': { likes: 11, dislikes: 3, likedBy: [], dislikedBy: [] }
-    }
-  } catch (error) {
-    console.log('Cloud data unavailable, using localStorage')
-    return null
+  // Return a static sample dataset for development. In production this
+  // would be replaced with an actual network call to fetch shared data.
+  return {
+    '1': { likes: 15, dislikes: 2, likedBy: [], dislikedBy: [] },
+    '2': { likes: 12, dislikes: 1, likedBy: [], dislikedBy: [] },
+    '3': { likes: 8, dislikes: 3, likedBy: [], dislikedBy: [] },
+    '4': { likes: 20, dislikes: 1, likedBy: [], dislikedBy: [] },
+    '5': { likes: 18, dislikes: 2, likedBy: [], dislikedBy: [] },
+    '6': { likes: 14, dislikes: 4, likedBy: [], dislikedBy: [] },
+    '7': { likes: 22, dislikes: 1, likedBy: [], dislikedBy: [] },
+    '8': { likes: 16, dislikes: 3, likedBy: [], dislikedBy: [] },
+    '9': { likes: 19, dislikes: 2, likedBy: [], dislikedBy: [] },
+    '10': { likes: 13, dislikes: 2, likedBy: [], dislikedBy: [] },
+    '11': { likes: 17, dislikes: 1, likedBy: [], dislikedBy: [] },
+    '12': { likes: 11, dislikes: 3, likedBy: [], dislikedBy: [] }
   }
 }
 
@@ -94,10 +89,10 @@ export const getSketchStats = async (sketchId) => {
 // Toggle like for a sketch
 export const toggleLike = async (sketchId) => {
   console.log(`Toggling like for sketch ${sketchId}`)
-  
+
   const deviceId = getDeviceId()
   const currentStats = await getSketchStats(sketchId)
-  
+
   let newStats
   if (currentStats.userLiked) {
     // Remove like
@@ -111,7 +106,7 @@ export const toggleLike = async (sketchId) => {
   } else {
     // Add like and remove dislike if present
     newStats = {
-      likes: currentStats.likes + 1,
+      likes: (currentStats.likes || 0) + 1,
       dislikes: currentStats.userDisliked ? Math.max(0, currentStats.dislikes - 1) : currentStats.dislikes,
       userLiked: true,
       userDisliked: false
@@ -121,17 +116,17 @@ export const toggleLike = async (sketchId) => {
       localStorage.removeItem(`user_disliked_${sketchId}`)
     }
   }
-  
+
   // Update localStorage counts
   const likes = JSON.parse(localStorage.getItem('sketch_likes') || '{}')
   const dislikes = JSON.parse(localStorage.getItem('sketch_dislikes') || '{}')
-  
+
   likes[sketchId] = newStats.likes
   dislikes[sketchId] = newStats.dislikes
-  
+
   localStorage.setItem('sketch_likes', JSON.stringify(likes))
   localStorage.setItem('sketch_dislikes', JSON.stringify(dislikes))
-  
+
   console.log('New stats after like toggle:', newStats)
   return newStats
 }

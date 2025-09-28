@@ -7,18 +7,52 @@ const CommentCount = ({ sketchId, showIcon = true, size = 'small' }) => {
   useEffect(() => {
     if (!sketchId) return
     let mounted = true
-    setLoading(true)
-    fetch(`/api/comments/${sketchId}`)
-      .then(res => res.json())
-      .then(data => {
+
+    const load = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`/api/comments/${encodeURIComponent(sketchId)}`)
         if (!mounted) return
-        setCount(Array.isArray(data) ? data.length : 0)
-      })
-      .catch(() => {
-        if (!mounted) return
-        setCount(0)
-      })
-      .finally(() => mounted && setLoading(false))
+
+        // Try to parse JSON safely
+        let data
+        try {
+          data = await res.json()
+        } catch (e) {
+          data = null
+        }
+
+        // Determine count from several possible response shapes:
+        // - an array (rows) => length
+        // - { success: true, data: [...] } => data.length
+        // - { count: N } => count
+        // - { data: N } => data (number)
+        // - fallback: 0
+        let next = 0
+        if (Array.isArray(data)) next = data.length
+        else if (data && typeof data === 'object') {
+          if (Array.isArray(data.data)) next = data.data.length
+          else if (typeof data.count === 'number') next = data.count
+          else if (typeof data.data === 'number') next = data.data
+          else if (Array.isArray(data.rows)) next = data.rows.length
+        }
+
+        // If response was OK and we derived a valid number, set it; otherwise 0
+        if (res.ok) {
+          setCount(typeof next === 'number' ? next : 0)
+        } else {
+          // Non-ok response, still set derived count if any
+          setCount(typeof next === 'number' ? next : 0)
+        }
+      } catch (err) {
+        // Network error or API unreachable -> fallback to 0
+        if (mounted) setCount(0)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+
+    load()
 
     return () => { mounted = false }
   }, [sketchId])
@@ -30,7 +64,7 @@ const CommentCount = ({ sketchId, showIcon = true, size = 'small' }) => {
           <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V7z" />
         </svg>
       )}
-  <span aria-live="polite" style={{ fontSize: '0.95rem', fontWeight: size === 'large' ? 600 : 500, color: '#2563eb' }}>{loading ? '...' : (count != null ? count : '-')}</span>
+      <span aria-live="polite" style={{ fontSize: '0.95rem', fontWeight: size === 'large' ? 600 : 500, color: '#2563eb' }}>{loading ? '...' : (count != null ? count : '-')}</span>
     </div>
   )
 }

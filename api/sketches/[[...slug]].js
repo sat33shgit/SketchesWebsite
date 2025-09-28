@@ -134,7 +134,7 @@ export default async function handler(req, res) {
       // POST /api/sketches/[id]/react  (smileyType, deviceId, action)
       if (sub === 'react' && req.method === 'POST') {
         const { smileyType, deviceId, action } = req.body || {}
-        if (!id || !smileyType || !deviceId || !action) {
+        if (!sketchId || !smileyType || !deviceId || !action) {
           return res.status(400).json({ error: 'Missing required fields' })
         }
         try {
