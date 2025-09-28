@@ -22,13 +22,14 @@ export function I18nProvider({ children, defaultLang = 'en' }) {
     // translations immediately instead of showing keys.
     let cancelled = false
     ;(async () => {
-      // preload contact, about and ui namespaces to avoid flashing keys
-      const [contact, about, ui] = await Promise.all([
+      // preload contact, about, ui and gallery namespaces to avoid flashing keys
+      const [contact, about, ui, gallery] = await Promise.all([
         loadNamespace(lang, 'contact'),
         loadNamespace(lang, 'about'),
-        loadNamespace(lang, 'ui')
+        loadNamespace(lang, 'ui'),
+        loadNamespace(lang, 'gallery')
       ])
-      if (!cancelled) setNamespaces(ns => ({ ...ns, contact, about, ui }))
+      if (!cancelled) setNamespaces(ns => ({ ...ns, contact, about, ui, gallery }))
     })()
     return () => { cancelled = true }
   }, [lang])
