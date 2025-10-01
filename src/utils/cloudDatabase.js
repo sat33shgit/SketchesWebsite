@@ -24,14 +24,7 @@ const getLocalStorageStats = (sketchId) => {
 }
 
 // Get device ID for tracking votes
-const getDeviceId = () => {
-  let deviceId = localStorage.getItem('deviceId')
-  if (!deviceId) {
-    deviceId = 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now()
-    localStorage.setItem('deviceId', deviceId)
-  }
-  return deviceId
-}
+
 
 // Simulate a simple cloud database using predefined data
 // In a real implementation, this would connect to a backend service
@@ -60,7 +53,6 @@ export const getSketchStats = async (sketchId) => {
   
   // Try to get cloud data first
   const cloudData = await getCloudData()
-  const deviceId = getDeviceId()
   
   if (cloudData && cloudData[sketchId]) {
     const sketchData = cloudData[sketchId]
@@ -90,7 +82,6 @@ export const getSketchStats = async (sketchId) => {
 export const toggleLike = async (sketchId) => {
   console.log(`Toggling like for sketch ${sketchId}`)
 
-  const deviceId = getDeviceId()
   const currentStats = await getSketchStats(sketchId)
 
   let newStats
@@ -135,7 +126,6 @@ export const toggleLike = async (sketchId) => {
 export const toggleDislike = async (sketchId) => {
   console.log(`Toggling dislike for sketch ${sketchId}`)
   
-  const deviceId = getDeviceId()
   const currentStats = await getSketchStats(sketchId)
   
   let newStats

@@ -48,7 +48,7 @@ const Gallery = () => {
           })
         }
         setViewsCounts(map)
-      } catch (err) {
+      } catch {
         setViewsCounts({})
       } finally {
         setViewsLoading(false)
@@ -98,7 +98,7 @@ const Gallery = () => {
                   onContextMenu={(e) => e.preventDefault()}
                   onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
                   onMouseDown={(e) => { if (e.button === 1) e.preventDefault() }}
-                  onError={(e) => { e.target.style.display = 'none' }}
+                  onError={() => { /* hide broken image */ }}
                 />
 
                 <div className="card-content">

@@ -17,10 +17,10 @@ const CommentsSection = ({ sketchId, sketchName }) => {
     fetch(`/api/comments/${sketchId}`)
       .then(res => res.json())
       .then(data => {
-        setComments(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+          setComments(Array.isArray(data) ? data : []);
+          setLoading(false);
+        })
+        .catch(() => { setLoading(false); });
   }, [sketchId]);
 
   // Clear success and error messages when sketchId changes
@@ -85,15 +85,16 @@ const CommentsSection = ({ sketchId, sketchName }) => {
           commenterName: commenterName,
           message: `Hi,\nA new comment was posted on "${sketchName || sketchId}" by ${commenterName}\n\n${commenterComment}`
         })
-      } catch (emailErr) {
-        console.error('Failed to send comment notification email', emailErr)
+      } catch {
+        // Best-effort: don't surface email errors to the user
+        console.error('Failed to send comment notification email')
       }
       // Refresh comments
       const commentsRes = await fetch(`/api/comments/${sketchId}`);
       const commentsData = await commentsRes.json();
       setComments(Array.isArray(commentsData) ? commentsData : []);
-    } catch (err) {
-      setError('Failed to post comment.');
+    } catch {
+      setError('Failed to post comment.')
     }
     setLoading(false);
   };

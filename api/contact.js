@@ -66,7 +66,7 @@ export default async function handler(req, res) {
         const geoData = await geoResponse.json();
         country = geoData.country || 'Unknown';
       }
-    } catch (geoError) {
+    } catch {
       // Geolocation lookup failed, continue with 'Unknown'
       country = 'Unknown';
     }
@@ -127,7 +127,7 @@ export default async function handler(req, res) {
       if (!emailResult.success) {
         // Email sending failed, continue with success response
       }
-    } catch (emailError) {
+    } catch {
       // Email sending failed, continue with success response
     }
 
@@ -139,14 +139,14 @@ export default async function handler(req, res) {
       timestamp: dbResult.rows[0].created_at
     });
 
-  } catch (error) {
-    console.error('Error saving contact message to database:', error);
+  } catch (err) {
+    console.error('Error saving contact message to database:', err && (err.message || err));
     
     // Return error response 
     return res.status(500).json({ 
       success: false, 
       error: 'Failed to save message. Please try again later.',
-      details: error.message
+      details: err.message
     });
   }
 }

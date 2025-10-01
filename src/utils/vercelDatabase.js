@@ -27,7 +27,7 @@ const getStatsFromLocalStorage = (sketchId) => {
       userLiked,
       userDisliked
     }
-  } catch (error) {
+  } catch {
     return { likes: 0, dislikes: 0, userLiked: false, userDisliked: false }
   }
 }
@@ -87,8 +87,7 @@ export const getSketchStats = async (sketchId) => {
         }
       }
 
-      const deviceId = getDeviceId()
-      const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
+  const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
       const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
 
       const stats = {
@@ -102,7 +101,7 @@ export const getSketchStats = async (sketchId) => {
       saveToLocalStorage(sketchId, stats)
       return stats
     }
-  } catch (error) {
+  } catch {
     // API unavailable, fall back to localStorage
   }
   

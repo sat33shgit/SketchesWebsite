@@ -80,7 +80,7 @@ export const sendNotificationEmail = async ({ sketchName, commenterName, message
     try {
   console.log('Notification fallback:', { sketchName, commenterName, commentText: bodyMessage, timestamp })
       return { success: true }
-    } catch (e) {
+    } catch {
       return { success: false }
     }
   }

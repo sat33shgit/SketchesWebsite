@@ -144,7 +144,7 @@ export const getSketchWithOrientation = async (id) => {
   if (!sketch.orientation && sketch.imagePath) {
     try {
       sketch.orientation = await detectImageOrientation(sketch.imagePath)
-    } catch (error) {
+    } catch {
       sketch.orientation = 'portrait' // Default fallback
     }
   }

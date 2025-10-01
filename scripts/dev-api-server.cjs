@@ -95,11 +95,11 @@ app.post('/api/contact', async (req, res) => {
       });
     }
 
-    // Get client information for tracking
-    const clientIP = req.ip || 
-                    req.connection?.remoteAddress || 
-                    req.socket?.remoteAddress ||
-                    '127.0.0.1';
+  // Get client information for tracking
+  const _clientIP = req.ip || 
+          req.connection?.remoteAddress || 
+          req.socket?.remoteAddress ||
+          '127.0.0.1';
     
     const userAgent = req.get('User-Agent') || 'unknown';
 

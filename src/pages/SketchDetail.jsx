@@ -35,7 +35,7 @@ const SketchDetail = () => {
     setImagePosition({ x: 0, y: 0 })
     setIsDragging(false)
     setDragStart({ x: 0, y: 0 })
-  }, [id])
+  }, [id, localSketch])
   
   // Track sketch visit
   useAnalytics('sketch', id)
@@ -70,8 +70,8 @@ const SketchDetail = () => {
 
         // If API returned non-ok or missing sketch, do not overwrite local metadata's description.
         if (!cancelled) console.warn(`SketchDetail: API returned no sketch for id=${id}`)
-      } catch (err) {
-        console.warn('Could not fetch sketch details from API:', err && err.message)
+      } catch {
+        console.warn('Could not fetch sketch details from API:')
       }
     }
     if (id) load()
@@ -83,15 +83,15 @@ const SketchDetail = () => {
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const [aboutComments, setAboutComments] = useState([])
-  const [showCopySuccess, setShowCopySuccess] = useState(false)
+  const [, setAboutComments] = useState([])
+  const [, setShowCopySuccess] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [detailLikeCount, setDetailLikeCount] = useState(null)
   const [detailLikeLoading, setDetailLikeLoading] = useState(true)
   const [detailLiked, setDetailLiked] = useState(() => {
     try {
       return typeof window !== 'undefined' && localStorage.getItem(`user_liked_${id}`) === 'true'
-    } catch (e) {
+    } catch {
       return false
     }
   })
@@ -113,23 +113,23 @@ const SketchDetail = () => {
   const previousSketch = currentIndex > 0 ? sketches[currentIndex - 1] : null
   const nextSketch = currentIndex < sketches.length - 1 ? sketches[currentIndex + 1] : null
 
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     if (previousSketch) {
       navigate(`/sketch/${previousSketch.id}`);
       setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }, 0);
     }
-  }
+  }, [previousSketch, navigate])
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (nextSketch) {
       navigate(`/sketch/${nextSketch.id}`);
       setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }, 0);
     }
-  }
+  }, [nextSketch, navigate])
 
   // Share functionality
   const handleCopyURL = async () => {
@@ -140,7 +140,7 @@ const SketchDetail = () => {
       setShowCopySuccess(true)
       setShowShareMenu(false)
       setTimeout(() => setShowCopySuccess(false), 2000)
-    } catch (err) {
+    } catch {
       // Fallback for older browsers
       const textArea = document.createElement('textarea')
       textArea.value = currentURL
@@ -155,31 +155,24 @@ const SketchDetail = () => {
   }
 
   const handleShareFacebook = () => {
-    const url = encodeURIComponent(window.location.href)
     const shareText = encodeURIComponent(`Check out this amazing pencil sketch: "${sketch.title}" by Sateesh Kumar Boggarapu`)
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${shareText}`, '_blank', 'width=600,height=400')
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${shareText}`, '_blank', 'width=600,height=400')
     setShowShareMenu(false)
   }
 
   const handleShareTwitter = () => {
-    const url = encodeURIComponent(window.location.href)
     const text = encodeURIComponent(`Check out this amazing pencil sketch: "${sketch.title}" by Sateesh Kumar Boggarapu`)
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=600,height=400')
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(window.location.href)}`, '_blank', 'width=600,height=400')
     setShowShareMenu(false)
   }
 
   const handleShareWhatsApp = () => {
-    const url = encodeURIComponent(window.location.href)
     const text = encodeURIComponent(`Check out this amazing pencil sketch: "${sketch.title}" by Sateesh Kumar Boggarapu ${window.location.href}`)
     window.open(`https://wa.me/?text=${text}`, '_blank')
     setShowShareMenu(false)
   }
 
-  const handleShareInstagram = () => {
-    // Instagram doesn't support direct URL sharing, so we'll copy the URL and show instructions
-    handleCopyURL()
-    alert('Instagram doesn\'t support direct link sharing. The URL has been copied to your clipboard. You can paste it in your Instagram post or story!')
-  }
+  // Instagram sharing isn't used in the UI; keep helper removed to avoid unused symbol
 
   const toggleShareMenu = () => {
     setShowShareMenu(!showShareMenu)
@@ -263,7 +256,7 @@ const SketchDetail = () => {
     setImagePosition({ x: 0, y: 0 })
   }, [])
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = useCallback((e) => {
     if (zoomLevel > 1) {
       setIsDragging(true)
       setDragStart({
@@ -271,20 +264,20 @@ const SketchDetail = () => {
         y: e.clientY - imagePosition.y
       })
     }
-  }
+  }, [zoomLevel, imagePosition])
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (isDragging && zoomLevel > 1) {
       setImagePosition({
         x: e.clientX - dragStart.x,
         y: e.clientY - dragStart.y
       })
     }
-  }
+  }, [isDragging, zoomLevel, dragStart])
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false)
-  }
+  }, [])
 
   const handleWheel = (e) => {
     // Only handle wheel when fullscreen is active
@@ -341,7 +334,7 @@ const SketchDetail = () => {
         window.removeEventListener('mouseup', handleMouseUp)
       }
     }
-  }, [isFullscreen, handleKeyDown, isDragging, dragStart, imagePosition])
+  }, [isFullscreen, handleKeyDown, handleMouseMove, handleMouseUp, isDragging, dragStart, imagePosition])
 
   // Add navigation keyboard shortcuts when not in fullscreen
   useEffect(() => {
@@ -359,7 +352,7 @@ const SketchDetail = () => {
       window.addEventListener('keydown', handleGlobalKeyDown)
       return () => window.removeEventListener('keydown', handleGlobalKeyDown)
     }
-  }, [isFullscreen, currentIndex])
+  }, [isFullscreen, currentIndex, goToPrevious, goToNext])
 
 
 
@@ -393,8 +386,8 @@ const SketchDetail = () => {
           setDetailLikeCount(Number(stats.likes) || 0)
           setDetailLiked(Boolean(stats.userLiked))
         }
-      } catch (err) {
-        console.error('Error fetching sketch stats:', err)
+      } catch {
+        console.error('Error fetching sketch stats:')
         if (!cancelled) setDetailLikeCount(0)
       } finally {
         if (!cancelled) setDetailLikeLoading(false)
@@ -610,7 +603,7 @@ const SketchDetail = () => {
                               } else if (newStats && typeof newStats.likes === 'number') {
                                 setDetailLikeCount(newStats.likes)
                               }
-                            } catch (fetchErr) {
+                              } catch {
                               // If stats fetch fails, fall back to returned newStats
                               if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
                             }
@@ -633,7 +626,7 @@ const SketchDetail = () => {
                               } else if (newStats && typeof newStats.likes === 'number') {
                                 setDetailLikeCount(newStats.likes)
                               }
-                            } catch (fetchErr) {
+                            } catch {
                               if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
                             }
                           } catch (err) {

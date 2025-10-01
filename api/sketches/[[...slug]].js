@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   // catch-all routes. As a fallback, parse the path from req.url and extract
   // segments after the "sketches" segment so requests like
   // `/api/sketches/11` or `/api/sketches/11/stats` still resolve correctly.
-  if ((!slug || slug.length === 0) && req.url) {
+    if ((!slug || slug.length === 0) && req.url) {
     try {
       const path = String(req.url).split('?')[0]
       const parts = path.split('/').filter(Boolean)
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       if (idx >= 0) {
         slug = parts.slice(idx + 1)
       }
-    } catch (e) {
+    } catch {
       // ignore and keep slug as-is
     }
   }
