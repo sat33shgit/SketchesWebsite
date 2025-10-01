@@ -560,6 +560,7 @@ const SketchDetail = () => {
                 {/* Technique & Process removed as per request */}
 
                 {/* Comments Section */}
+                <div aria-hidden="true" style={{ height: '1px', background: '#e5e7eb', margin: '24px 0' }} />
                 <CommentsSection sketchId={id} sketchName={sketch.title} />
               </div>
 
@@ -680,7 +681,7 @@ const SketchDetail = () => {
                 >
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.medium')}</span>
-                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Graphite</span>
+                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>6B to 5H Pencils</span>
                   </div>
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -692,7 +693,7 @@ const SketchDetail = () => {
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.paper')}</span>
-                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Strathmore</span>
+                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Drawing Paper</span>
                   </div>
                 </div>
               </div>
