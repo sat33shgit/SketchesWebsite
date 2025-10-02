@@ -67,7 +67,7 @@ When comments are disabled:
 - ✅ The "Your name" input field is disabled
 - ✅ The "Share your thoughts..." textarea is disabled
 - ✅ The "Post Comment" button is disabled
-- ✅ A gray italic message appears: "Posting the comments are disabled currently"
+- ✅ A gray italic message appears: "Comment posting is currently disabled"
 - ✅ Users can still view existing comments
 
 ## Files Modified

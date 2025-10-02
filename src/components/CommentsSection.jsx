@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify'
 import { sendNotificationEmail } from '../utils/emailService'
 import UserAvatar from './UserAvatar'
+import { useTranslation } from 'react-i18next'
 
 const CommentsSection = ({ sketchId, sketchName }) => {
+  const { t } = useTranslation('sketch');
   const [comments, setComments] = useState([]);
   const [form, setForm] = useState({ name: '', comment: '' });
   const [loading, setLoading] = useState(false);
@@ -162,7 +164,7 @@ const CommentsSection = ({ sketchId, sketchName }) => {
           </button>
           {commentsDisabled && (
             <span className="comments-disabled-message">
-              Posting the comments are disabled currently
+              {t('commentsDisabled')}
             </span>
           )}
         </div>
