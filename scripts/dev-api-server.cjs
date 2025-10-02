@@ -20,20 +20,19 @@ app.post('/api/analytics/track', async (req, res) => {
       return res.status(400).json({ error: 'pageType is required' });
     }
 
-    // Get IP and User Agent for basic deduplication
-    const clientIP = req.ip || req.connection.remoteAddress || '127.0.0.1';
-    const userAgent = req.get('User-Agent') || 'unknown';
-    
-    // Create simple hashes
-    const crypto = require('crypto');
-    const ipHash = crypto.createHash('sha256').update(clientIP).digest('hex');
-    const userAgentHash = crypto.createHash('sha256').update(userAgent).digest('hex');
+    // Get country from request headers (simulated for dev)
+    // In production, Vercel provides x-vercel-ip-country header
+    const country = req.headers['x-vercel-ip-country'] || 
+                    req.headers['cf-ipcountry'] || 
+                    'Unknown';
+
+    const normalizedPageId = pageId || pageType;
 
     // Insert or update visit count
     await sql`
-      INSERT INTO page_visits (page_type, page_id, visit_count, ip_hash, user_agent_hash) 
-      VALUES (${pageType}, ${pageId || null}, 1, ${ipHash}, ${userAgentHash})
-      ON CONFLICT (page_type, page_id, ip_hash, user_agent_hash) 
+      INSERT INTO page_visits (page_type, page_id, visit_count, country) 
+      VALUES (${pageType}, ${normalizedPageId}, 1, ${country})
+      ON CONFLICT (page_type, page_id, country) 
       DO UPDATE SET 
         visit_count = page_visits.visit_count + 1,
         updated_at = CURRENT_TIMESTAMP
@@ -41,7 +40,8 @@ app.post('/api/analytics/track', async (req, res) => {
 
     res.json({ 
       success: true, 
-      message: `Visit tracked for ${pageType}${pageId ? ` (${pageId})` : ''}` 
+      message: `Visit tracked for ${pageType}${pageId ? ` (${pageId})` : ''}`,
+      country: country
     });
 
   } catch (error) {
@@ -262,7 +262,7 @@ app.get('/api/analytics/stats', async (req, res) => {
           page_type,
           COUNT(*) as visit_records,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors
+          COUNT(DISTINCT country) as unique_countries
         FROM page_visits 
         WHERE 1=1 ${timeCondition}
           AND page_type = '${pageType}'
@@ -275,7 +275,7 @@ app.get('/api/analytics/stats', async (req, res) => {
           page_type,
           COUNT(*) as visit_records,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors
+          COUNT(DISTINCT country) as unique_countries
         FROM page_visits 
         WHERE page_type = '${pageType}'
         GROUP BY page_type
@@ -287,7 +287,7 @@ app.get('/api/analytics/stats', async (req, res) => {
           page_type,
           COUNT(*) as visit_records,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors
+          COUNT(DISTINCT country) as unique_countries
         FROM page_visits 
         WHERE 1=1 ${timeCondition}
         GROUP BY page_type
@@ -299,7 +299,7 @@ app.get('/api/analytics/stats', async (req, res) => {
           page_type,
           COUNT(*) as visit_records,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors
+          COUNT(DISTINCT country) as unique_countries
         FROM page_visits 
         GROUP BY page_type
         ORDER BY total_visits DESC
@@ -314,7 +314,7 @@ app.get('/api/analytics/stats', async (req, res) => {
           page_type,
           page_id,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors,
+          COUNT(DISTINCT country) as unique_countries,
           MAX(updated_at) as last_visit,
           MIN(created_at) as first_visit
         FROM page_visits 
@@ -330,7 +330,7 @@ app.get('/api/analytics/stats', async (req, res) => {
           page_type,
           page_id,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors,
+          COUNT(DISTINCT country) as unique_countries,
           MAX(updated_at) as last_visit,
           MIN(created_at) as first_visit
         FROM page_visits 
@@ -345,7 +345,7 @@ app.get('/api/analytics/stats', async (req, res) => {
           page_type,
           page_id,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors,
+          COUNT(DISTINCT country) as unique_countries,
           MAX(updated_at) as last_visit,
           MIN(created_at) as first_visit
         FROM page_visits 
@@ -360,7 +360,7 @@ app.get('/api/analytics/stats', async (req, res) => {
           page_type,
           page_id,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors,
+          COUNT(DISTINCT country) as unique_countries,
           MAX(updated_at) as last_visit,
           MIN(created_at) as first_visit
         FROM page_visits 
@@ -377,7 +377,7 @@ app.get('/api/analytics/stats', async (req, res) => {
         SELECT 
           page_id as sketch_id,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors,
+          COUNT(DISTINCT country) as unique_countries,
           MAX(updated_at) as last_visit
         FROM page_visits 
         WHERE page_type = 'sketch' 
@@ -391,7 +391,7 @@ app.get('/api/analytics/stats', async (req, res) => {
         SELECT 
           page_id as sketch_id,
           SUM(visit_count) as total_visits,
-          COUNT(DISTINCT ip_hash) as unique_visitors,
+          COUNT(DISTINCT country) as unique_countries,
           MAX(updated_at) as last_visit
         FROM page_visits 
         WHERE page_type = 'sketch'
