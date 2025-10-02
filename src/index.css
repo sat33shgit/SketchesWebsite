@@ -617,7 +617,13 @@ nav::after {
   border: 1px solid #e5e7eb; /* match contact card borders */
   border-radius: 12px;
   padding: 1.5rem;
+  padding-bottom: 0.5rem; /* reduce bottom padding */
   box-shadow: none; /* remove shadow so border is clean */
+}
+
+/* Remove bottom padding completely for about-text container */
+.about-content > .about-text {
+  padding-bottom: 0 !important;
 }
 
 /* Shrink-wrap the profile card so the border only covers the content area and center it in the grid cell */
@@ -716,19 +722,23 @@ nav::after {
 .about-text {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* reduced gap to tighten spacing between paragraphs */
+  gap: 0 !important; /* remove gap to eliminate spacing between paragraphs */
 }
 
 .about-text p {
   font-size: 1.125rem;
   color: #374151;
   line-height: 1.7;
-  margin: 0 0 0.5rem 0; /* smaller bottom margin to reduce extra space */
+  margin: 0 0 0 0 !important; /* remove all margins */
 }
 
 /* Avoid extra gap at the bottom of the about card by removing bottom margin on the last paragraph */
-.about-text > div:last-child p {
-  margin-bottom: 0;
+.about-text > div:last-child p,
+.about-text p:last-child,
+.about-text > div:last-child,
+.about-text div:last-of-type {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .artist-statement {
