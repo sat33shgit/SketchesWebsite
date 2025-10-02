@@ -9,6 +9,7 @@ const CommentsSection = ({ sketchId, sketchName }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [commentsDisabled, setCommentsDisabled] = useState(false);
 
 
   useEffect(() => {
@@ -22,6 +23,26 @@ const CommentsSection = ({ sketchId, sketchName }) => {
         })
         .catch(() => { setLoading(false); });
   }, [sketchId]);
+
+  // Fetch configuration to check if comments are disabled
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await fetch('/api/config?key=comments_disable');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data && data.data.comments_disable === 'Y') {
+            setCommentsDisabled(true);
+          }
+        }
+      } catch (err) {
+        // If config fetch fails, default to comments enabled
+        console.error('Failed to fetch config:', err);
+      }
+    };
+    
+    fetchConfig();
+  }, []);
 
   // Clear success and error messages when sketchId changes
   useEffect(() => {
@@ -118,6 +139,7 @@ const CommentsSection = ({ sketchId, sketchName }) => {
             onChange={handleChange}
             placeholder="Your name"
             className="name-input"
+            disabled={commentsDisabled}
             required
           />
         </div>
@@ -130,12 +152,20 @@ const CommentsSection = ({ sketchId, sketchName }) => {
             rows={4}
             className="comment-textarea"
             style={{ height: '80px', minHeight: '30px' }}
+            disabled={commentsDisabled}
             required
           />
         </div>
-        <button type="submit" disabled={loading} className="post-comment-btn">
-          {loading ? 'Posting...' : 'Post Comment'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button type="submit" disabled={loading || commentsDisabled} className="post-comment-btn">
+            {loading ? 'Posting...' : 'Post Comment'}
+          </button>
+          {commentsDisabled && (
+            <span className="comments-disabled-message">
+              Posting the comments are disabled currently
+            </span>
+          )}
+        </div>
         
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}

@@ -1662,6 +1662,12 @@ nav::after {
   border-radius: 6px;
 }
 
+.comments-disabled-message {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
 .comments-list {
   display: flex;
   flex-direction: column;
