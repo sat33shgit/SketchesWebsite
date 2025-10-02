@@ -226,6 +226,7 @@ nav::after {
   gap: 0.5rem;
   text-decoration: none;
   color: #1f2937;
+  height: 48px;
 }
 
 .logo-icon {
@@ -242,6 +243,14 @@ nav::after {
 .logo-text {
   font-size: 1.25rem;
   font-weight: 600;
+}
+
+.logo-image {
+  height: 40px !important;
+  width: auto !important;
+  max-width: 160px !important;
+  display: block !important;
+  object-fit: contain !important;
 }
 
 .nav-links {
