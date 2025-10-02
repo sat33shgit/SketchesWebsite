@@ -17,7 +17,7 @@ async function updateConfig() {
     
     await sql`
       UPDATE configurations 
-      SET value = ${value}, date_updated = NOW() 
+      SET value = ${value}, updated_at = NOW() 
       WHERE key = 'message_disable'
     `;
     
@@ -25,7 +25,7 @@ async function updateConfig() {
     
     // Verify the update
     const result = await sql`
-      SELECT key, value, date_updated 
+      SELECT key, value, updated_at 
       FROM configurations 
       WHERE key = 'message_disable'
     `;

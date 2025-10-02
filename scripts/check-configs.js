@@ -5,7 +5,7 @@ async function checkConfigs() {
   try {
     console.log('Checking all configurations...\n');
     
-    const result = await sql`SELECT key, value, date_created, date_updated FROM configurations ORDER BY key`;
+    const result = await sql`SELECT key, value, created_at, updated_at FROM configurations ORDER BY key`;
     
     console.log('Current configurations:');
     console.table(result.rows);

@@ -22,7 +22,7 @@ CREATE INDEX idx_contact_messages_status ON contact_messages(status);
 CREATE INDEX idx_contact_messages_is_read ON contact_messages(is_read);
 
 -- Add trigger to auto-update updated_at timestamp
-CREATE OR REPLACE FUNCTION update_updated_at_column()
+CREATE OR REPLACE FUNCTION upupdated_at_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = CURRENT_TIMESTAMP;
@@ -33,7 +33,7 @@ $$ language 'plpgsql';
 CREATE TRIGGER update_contact_messages_updated_at
     BEFORE UPDATE ON contact_messages
     FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+    EXECUTE FUNCTION upupdated_at_at_column();
 
 -- Comments for documentation
 COMMENT ON TABLE contact_messages IS 'Stores contact form submissions from website visitors';

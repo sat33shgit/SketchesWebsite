@@ -13,14 +13,14 @@ async function updateCommentConfig(newValue) {
     // Update the configuration
     await sql`
       UPDATE configurations 
-      SET value = ${newValue}, date_updated = NOW() 
+      SET value = ${newValue}, updated_at = NOW() 
       WHERE key = 'comments_disable'
     `;
     
     console.log('✅ Configuration updated successfully!');
     
     // Verify the update
-    const result = await sql`SELECT key, value, date_updated FROM configurations WHERE key = 'comments_disable'`;
+    const result = await sql`SELECT key, value, updated_at FROM configurations WHERE key = 'comments_disable'`;
     if (result.rows.length > 0) {
       console.log('✅ Current configuration:', result.rows[0]);
       console.log(`\nComments are now: ${newValue === 'Y' ? 'DISABLED' : 'ENABLED'}`);

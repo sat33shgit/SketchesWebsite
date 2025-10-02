@@ -7,8 +7,8 @@ This feature allows you to enable or disable comment posting and contact form me
 A `configurations` table has been created with the following structure:
 - **key** (VARCHAR(255), PRIMARY KEY): The configuration key name
 - **value** (TEXT): The configuration value
-- **date_created** (TIMESTAMP): When the configuration was created
-- **date_updated** (TIMESTAMP): When the configuration was last updated (auto-updated via trigger)
+- **created_at** (TIMESTAMP): When the configuration was created
+- **updated_at** (TIMESTAMP): When the configuration was last updated (auto-updated via trigger)
 
 ## Default Configuration
 By default, both comments and messages are **enabled**:
@@ -50,28 +50,28 @@ You can also update the configuration directly in your database:
 **To disable comments:**
 ```sql
 UPDATE configurations 
-SET value = 'Y', date_updated = NOW() 
+SET value = 'Y', updated_at = NOW() 
 WHERE key = 'comments_disable';
 ```
 
 **To enable comments:**
 ```sql
 UPDATE configurations 
-SET value = 'N', date_updated = NOW() 
+SET value = 'N', updated_at = NOW() 
 WHERE key = 'comments_disable';
 ```
 
 **To disable contact messages:**
 ```sql
 UPDATE configurations 
-SET value = 'Y', date_updated = NOW() 
+SET value = 'Y', updated_at = NOW() 
 WHERE key = 'message_disable';
 ```
 
 **To enable contact messages:**
 ```sql
 UPDATE configurations 
-SET value = 'N', date_updated = NOW() 
+SET value = 'N', updated_at = NOW() 
 WHERE key = 'message_disable';
 ```
 

@@ -13,14 +13,14 @@ export default async function handler(req, res) {
     if (key) {
       // Fetch specific configuration
       result = await sql`
-        SELECT key, value, date_created, date_updated
+        SELECT key, value, created_at, updated_at
         FROM configurations
         WHERE key = ${key}
       `
     } else {
       // Fetch all configurations
       result = await sql`
-        SELECT key, value, date_created, date_updated
+        SELECT key, value, created_at, updated_at
         FROM configurations
       `
     }

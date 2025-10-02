@@ -2,8 +2,8 @@
 CREATE TABLE IF NOT EXISTS configurations (
   key VARCHAR(255) PRIMARY KEY,
   value TEXT NOT NULL,
-  date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  date_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create index on key for faster lookups
@@ -19,16 +19,16 @@ INSERT INTO configurations (key, value)
 VALUES ('message_disable', 'N')
 ON CONFLICT (key) DO NOTHING;
 
--- Function to update date_updated automatically
+-- Function to update updated_at automatically
 CREATE OR REPLACE FUNCTION update_configuration_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
-  NEW.date_updated = CURRENT_TIMESTAMP;
+  NEW.updated_at = CURRENT_TIMESTAMP;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger to automatically update date_updated
+-- Trigger to automatically update updated_at
 DROP TRIGGER IF EXISTS configurations_update_timestamp ON configurations;
 CREATE TRIGGER configurations_update_timestamp
 BEFORE UPDATE ON configurations
