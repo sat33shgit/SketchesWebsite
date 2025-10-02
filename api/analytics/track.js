@@ -21,11 +21,27 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid pageType' });
     }
 
-    // Get country from Vercel's geolocation headers
-    // Vercel provides this information in the x-vercel-ip-country header
-    const country = req.headers['x-vercel-ip-country'] || 
-                    req.headers['cf-ipcountry'] || // Cloudflare
-                    'Unknown';
+    // Get country code from Vercel/Cloudflare headers (two-letter ISO code)
+    const countryCode = (req.headers['x-vercel-ip-country'] || 
+                         req.headers['cf-ipcountry'] || // Cloudflare
+                         'Unknown').toUpperCase();
+
+    // Convert ISO country code (eg. 'CA') to full country name (eg. 'canada')
+    function getFullCountryName(code) {
+      if (!code || code === 'UNKNOWN') return 'Unknown';
+      try {
+        // Intl.DisplayNames returns localized region names (e.g., 'Canada')
+        const dn = new Intl.DisplayNames(['en'], { type: 'region' });
+        const name = dn.of(code);
+        // Return the display name as-is (capitalized where appropriate). Fallback to uppercased code.
+        return (name || code).toString();
+      } catch (err) {
+        // Fallback: return the uppercased code (e.g., 'CA')
+        return code.toUpperCase();
+      }
+    }
+
+    const country = getFullCountryName(countryCode);
 
     // For pages without page_id (home, about, contact), use the page_type as page_id
     // This ensures the unique constraint works properly
@@ -35,7 +51,7 @@ export default async function handler(req, res) {
     // Using ON CONFLICT to increment visit_count if same country visits again
     await sql`
       INSERT INTO page_visits (page_type, page_id, visit_count, country, updated_at)
-      VALUES (${pageType}, ${normalizedPageId}, 1, ${country}, CURRENT_TIMESTAMP)
+  VALUES (${pageType}, ${normalizedPageId}, 1, ${country}, CURRENT_TIMESTAMP)
       ON CONFLICT (page_type, page_id, country)
       DO UPDATE SET 
         visit_count = page_visits.visit_count + 1,

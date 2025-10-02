@@ -22,9 +22,22 @@ app.post('/api/analytics/track', async (req, res) => {
 
     // Get country from request headers (simulated for dev)
     // In production, Vercel provides x-vercel-ip-country header
-    const country = req.headers['x-vercel-ip-country'] || 
+    const countryCode = (req.headers['x-vercel-ip-country'] || 
                     req.headers['cf-ipcountry'] || 
-                    'Unknown';
+                    'Unknown').toUpperCase();
+
+    function getFullCountryName(code) {
+      if (!code || code === 'UNKNOWN') return 'Unknown';
+      try {
+        const dn = new Intl.DisplayNames(['en'], { type: 'region' });
+        const name = dn.of(code);
+        return (name || code).toString();
+      } catch (err) {
+        return code.toUpperCase();
+      }
+    }
+
+    const country = getFullCountryName(countryCode);
 
     const normalizedPageId = pageId || pageType;
 
