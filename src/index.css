@@ -2333,11 +2333,20 @@ footer {
 }
 
 /* Keep img defaults minimal so our wrapper controls rounding. Remove global radius to avoid unwanted background showing behind the wrapper. */
-img {
+/* Gallery images have their own border-radius rules */
+img:not(.direct-gallery-image):not(.card-image) {
   max-width: 100%;
   height: auto;
   border-radius: 0; /* don't force a radius here; wrapper handles clipping */
   background: transparent;
+}
+
+/* Gallery images should have 8px border radius */
+.direct-gallery-image,
+.card-image,
+.elegant-gallery img,
+.elegant-card img {
+  border-radius: 8px !important;
 }
 
 /* Animations */
@@ -2721,11 +2730,20 @@ img {
 }
 
 /* Keep img defaults minimal so our wrapper controls rounding. Remove global radius to avoid unwanted background showing behind the wrapper. */
-img {
+/* Gallery images have their own border-radius rules */
+img:not(.direct-gallery-image):not(.card-image) {
   max-width: 100%;
   height: auto;
   border-radius: 0; /* don't force a radius here; wrapper handles clipping */
   background: transparent;
+}
+
+/* Gallery images should have 8px border radius */
+.direct-gallery-image,
+.card-image,
+.elegant-gallery img,
+.elegant-card img {
+  border-radius: 8px !important;
 }
 
 /* Rich text content */

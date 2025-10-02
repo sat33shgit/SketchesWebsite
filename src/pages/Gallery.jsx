@@ -87,19 +87,21 @@ const Gallery = () => {
             const isEven = index % 2 === 0
             return (
               <div key={sketch.id} className={`elegant-card ${isEven ? 'image-left' : 'image-right'} ${sketch.orientation || 'portrait'}`}>
-                <img
-                  src={getAssetPath(sketch.imagePath)}
-                  alt={sketch.title}
-                  className={`direct-gallery-image ${sketch.orientation || 'portrait'}`}
-                  style={{ backgroundColor: '#ffffff', cursor: 'pointer', height: sketch.orientation === 'landscape' ? '400px' : '480px', maxWidth: '100%', objectFit: 'contain' }}
-                  onClick={() => (window.location.href = `/sketch/${sketch.id}`)}
-                  draggable={false}
-                  onDragStart={(e) => e.preventDefault()}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
-                  onMouseDown={(e) => { if (e.button === 1) e.preventDefault() }}
-                  onError={() => { /* hide broken image */ }}
-                />
+                <div style={{ borderRadius: '8px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#ffffff' }}>
+                  <img
+                    src={getAssetPath(sketch.imagePath)}
+                    alt={sketch.title}
+                    className={`direct-gallery-image ${sketch.orientation || 'portrait'}`}
+                    style={{ backgroundColor: '#ffffff', cursor: 'pointer', height: sketch.orientation === 'landscape' ? '100px' : '120px', maxWidth: '100%', objectFit: 'contain', display: 'block' }}
+                    onClick={() => (window.location.href = `/sketch/${sketch.id}`)}
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
+                    onMouseDown={(e) => { if (e.button === 1) e.preventDefault() }}
+                    onError={() => { /* hide broken image */ }}
+                  />
+                </div>
 
                 <div className="card-content">
                   <div className="card-year">{new Date(sketch.completedDate).getFullYear()}</div>

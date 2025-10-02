@@ -74,8 +74,14 @@ img.direct-gallery-image {
   border-radius: 8px !important;
   -webkit-border-radius: 8px !important;
   -moz-border-radius: 8px !important;
+  clip-path: inset(0 round 8px) !important;
+  -webkit-clip-path: inset(0 round 8px) !important;
   display: block;
   width: 100%;
+  object-fit: contain !important;
+  overflow: hidden !important;
+  /* Force the image container to be a block that can clip */
+  isolation: isolate;
 }
 
 /* Background image approach for guaranteed border-radius */
@@ -92,14 +98,14 @@ img.direct-gallery-image {
 
 /* Portrait background images */
 .bg-image-link.portrait {
-  height: 480px;
+  height: 120px;
   background-size: contain !important;
   background-color: #ffffff;
 }
 
 /* Landscape background images */
 .bg-image-link.landscape {
-  height: 360px;
+  height: 90px;
   background-size: contain !important;
   background-color: #ffffff;
 }
@@ -134,7 +140,7 @@ img.direct-gallery-image {
 
 /* Portrait images - direct styling */
 .direct-card-image.portrait {
-  height: 480px;
+  height: 120px;
   max-width: 100%;
   object-fit: contain;
   background: #ffffff;
@@ -143,7 +149,7 @@ img.direct-gallery-image {
 
 /* Landscape images - direct styling */
 .direct-card-image.landscape {
-  height: 360px;
+  height: 90px;
   max-width: 100%;
   object-fit: contain;
   background: #ffffff;
