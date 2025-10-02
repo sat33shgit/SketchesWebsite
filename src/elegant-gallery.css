@@ -348,8 +348,9 @@ img.direct-gallery-image {
   font-size: 14px;
   transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
   /* Make the hover target slightly larger and give rounded corners */
-  padding: 6px 10px;
+  padding: 8px 16px;
   border-radius: 8px;
+  white-space: nowrap;
 }
 
 .view-details:hover {

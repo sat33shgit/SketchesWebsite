@@ -348,6 +348,25 @@ nav::after {
   text-align: center !important;
 }
 
+/* Gallery header styles */
+.gallery-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.gallery-description {
+  font-size: 1rem;
+  text-align: center !important;
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  margin: 1.5rem auto 0 auto;
+  padding: 0 1rem;
+}
+
 /* Orientation-based image display */
 .image-container-portrait {
   aspect-ratio: 3/4;
@@ -2220,11 +2239,12 @@ footer {
 
   .gallery-description {
     font-size: 1rem;
-    text-align: center; /* center the tagline under the title */
+    text-align: center !important; /* center the tagline under the title */
     display: block;
     width: 100%;
     max-width: 900px;
     margin: 1.5rem auto 0 auto;
+    padding: 0 1rem;
   }
   
   .page-container {
