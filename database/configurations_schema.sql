@@ -14,6 +14,11 @@ INSERT INTO configurations (key, value)
 VALUES ('comments_disable', 'N')
 ON CONFLICT (key) DO NOTHING;
 
+-- Insert default configuration for contact messages
+INSERT INTO configurations (key, value) 
+VALUES ('message_disable', 'N')
+ON CONFLICT (key) DO NOTHING;
+
 -- Function to update date_updated automatically
 CREATE OR REPLACE FUNCTION update_configuration_timestamp()
 RETURNS TRIGGER AS $$

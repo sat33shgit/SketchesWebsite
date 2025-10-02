@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { sendContactEmail } from '../utils/emailService'
 import DOMPurify from 'dompurify'
 import useAnalytics from '../hooks/useAnalytics'
@@ -52,6 +52,27 @@ const Contact = () => {
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState({ message: '', isError: false })
+  const [messageDisabled, setMessageDisabled] = useState(false)
+
+  // Fetch configuration to check if messages are disabled
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await fetch('/api/config?key=message_disable');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data && data.data.message_disable === 'Y') {
+            setMessageDisabled(true);
+          }
+        }
+      } catch (err) {
+        // If config fetch fails, default to messages enabled
+        console.error('Failed to fetch config:', err);
+      }
+    };
+    
+    fetchConfig();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -139,6 +160,7 @@ const Contact = () => {
                   maxLength={100}
                   value={formData.name}
                   onChange={handleChange}
+                  disabled={messageDisabled}
                 />
               </div>
 
@@ -154,6 +176,7 @@ const Contact = () => {
                   maxLength={100}
                   value={formData.email}
                   onChange={handleChange}
+                  disabled={messageDisabled}
                 />
               </div>
 
@@ -169,6 +192,7 @@ const Contact = () => {
                   maxLength={100}
                   value={formData.subject}
                   onChange={handleChange}
+                  disabled={messageDisabled}
                 />
               </div>
 
@@ -184,12 +208,13 @@ const Contact = () => {
                   maxLength={1000}
                   value={formData.message}
                   onChange={handleChange}
+                  disabled={messageDisabled}
                 />
               </div>
 
                 <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || messageDisabled}
                 className="submit-button"
               >
                 {isSubmitting ? (
@@ -209,6 +234,13 @@ const Contact = () => {
                   </>
                 )}
               </button>
+
+              {/* Message Disabled Notice */}
+              {messageDisabled && (
+                <div className="message-disabled-notice">
+                  {t('contact.form.messageDisabled')}
+                </div>
+              )}
               
               {/* Status Message */}
               {submitStatus.message && (
