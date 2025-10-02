@@ -357,6 +357,12 @@ nav::after {
   margin-bottom: 2rem;
 }
 
+.gallery-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
 .gallery-description {
   font-size: 1rem;
   text-align: center !important;
@@ -832,8 +838,9 @@ nav::after {
 .contact-header p {
   font-size: 1.125rem;
   color: #6b7280;
-  max-width: 512px;
+  max-width: 100%;
   margin: 0 auto;
+  white-space: nowrap;
 }
 
 .contact-content {
