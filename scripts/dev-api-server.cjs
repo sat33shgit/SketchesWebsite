@@ -68,7 +68,7 @@ app.post('/api/contact', async (req, res) => {
     const cleanSubject = stripTags(subject || '').trim();
     const cleanMessage = stripTags(message || '').trim();
 
-    // Validate input
+    // Validate input and enforce UI limit of 1000 characters for message
     if (
       !cleanName ||
       !cleanEmail ||
@@ -77,7 +77,7 @@ app.post('/api/contact', async (req, res) => {
       cleanName.length > 100 ||
       cleanEmail.length > 255 ||
       cleanSubject.length > 200 ||
-      cleanMessage.length > 10000 ||
+      cleanMessage.length > 1000 ||
       /<|>|script|onerror|onload|javascript:/i.test(name) ||
       /<|>|script|onerror|onload|javascript:/i.test(subject) ||
       /<|>|script|onerror|onload|javascript:/i.test(message)
@@ -104,13 +104,16 @@ app.post('/api/contact', async (req, res) => {
     const userAgent = req.get('User-Agent') || 'unknown';
 
     // Save the contact message to database
+    // Note: the contact_messages schema doesn't include an ip_address column
+    // Use the 'country' column (or NULL) and store the user agent. This keeps
+    // the dev server consistent with the production serverless function.
     const dbResult = await sql`
       INSERT INTO contact_messages (
         name, 
         email, 
         subject, 
         message, 
-        ip_address, 
+        country,
         user_agent,
         status,
         is_read,
@@ -120,7 +123,7 @@ app.post('/api/contact', async (req, res) => {
         ${cleanEmail.toLowerCase()}, 
         ${cleanSubject}, 
         ${cleanMessage}, 
-        ${clientIP},
+        ${null},
         ${userAgent},
         'new',
         false,
@@ -152,7 +155,12 @@ app.post('/api/contact', async (req, res) => {
 // Comments counts endpoint
 app.get('/api/comments/counts', async (req, res) => {
   try {
-    const { rows } = await sql`SELECT sketch_id, COUNT(*) AS count FROM comments GROUP BY sketch_id`;
+    const { rows } = await sql`
+      SELECT sketch_id, COUNT(*) AS count
+      FROM comments
+      WHERE visible = 'Y'
+      GROUP BY sketch_id
+    `;
     const result = {};
     rows.forEach(row => {
       result[row.sketch_id] = parseInt(row.count, 10);
@@ -176,6 +184,50 @@ app.get('/api/sketches/likes', async (req, res) => {
   } catch (error) {
     console.error('Error fetching like counts:', error);
     res.status(500).json({ error: 'Failed to fetch like counts' });
+  }
+});
+
+// Local sketch detail route for dev server
+app.get('/api/sketches/:id', async (req, res) => {
+  const sketchId = req.params.id;
+  try {
+    const { rows } = await sql`
+      SELECT sketch_id AS id, sketch_name AS title, sketch_description AS description, NULL AS image_path, NULL AS orientation, sketch_completed_date AS completed_date, NULL AS category
+      FROM sketches WHERE sketch_id = ${sketchId}
+    `;
+    if (rows && rows.length) {
+      const r = rows[0];
+      const rawDate = r.completed_date ?? r.sketch_completed_date
+      const completedDate = rawDate ? ((rawDate instanceof Date) ? rawDate.toISOString().split('T')[0] : String(rawDate)) : null
+      const sketch = {
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        imagePath: r.image_path || null,
+        orientation: r.orientation || null,
+        completedDate,
+        category: r.category || null
+      };
+      return res.status(200).json({ success: true, data: sketch });
+    }
+    return res.status(404).json({ success: false, error: 'Sketch not found' });
+  } catch (err) {
+    console.error('Dev GET /api/sketches/:id error:', err);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// Local sketch stats route for dev server
+app.get('/api/sketches/:id/stats', async (req, res) => {
+  const sketchId = req.params.id;
+  try {
+    const { rows } = await sql`SELECT smiley_type, count FROM sketch_reactions WHERE sketch_id = ${sketchId}`;
+    const mapping = {};
+    rows.forEach(r => { mapping[r.smiley_type] = r.count });
+    return res.status(200).json({ success: true, data: { sketchId, likes: mapping['like'] || 0, dislikes: mapping['dislike'] || 0, likedBy: [], dislikedBy: [] } });
+  } catch (err) {
+    console.error('Dev GET /api/sketches/:id/stats error:', err);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 

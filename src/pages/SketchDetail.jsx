@@ -5,27 +5,104 @@ import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 import { parseRichText } from '../utils/richText'
 import LikeDislike from '../components/LikeDislike'
+import { toggleLike, getSketchStats } from '../utils/vercelDatabase'
 import CommentCount from '../components/CommentCount'
-import SmileyLike from '../components/SmileyLike'
 import ViewCount from '../components/ViewCount'
 import useAnalytics from '../hooks/useAnalytics'
+import { useTranslation } from '../i18n'
 
 
 const SketchDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const sketch = getSketchById(id)
+  // Local fallback metadata (title/image) for immediate UI skeleton only.
+  // IMPORTANT: do not display local description text — always fetch the authoritative
+  // description from the API (DB-backed) and render whatever the DB returns
+  const localSketch = getSketchById(id)
+  // If we have local metadata, initialize with description=null so the UI waits
+  // for DB-provided description rather than showing local markdown/plain text.
+  const [sketch, setSketch] = useState(localSketch ? { ...localSketch, description: null } : null)
+
+  // Reset the visible sketch and image UI state whenever the route id changes.
+  // This ensures keyboard navigation (which changes the route) immediately
+  // displays the new sketch image instead of preserving the previous one.
+  useEffect(() => {
+    const fresh = localSketch ? { ...localSketch, description: null } : null
+    setSketch(fresh)
+    // Reset image UI state so the new image isn't shown with previous zoom/pan
+    setIsFullscreen(false)
+    setZoomLevel(1)
+    setImagePosition({ x: 0, y: 0 })
+    setIsDragging(false)
+    setDragStart({ x: 0, y: 0 })
+  }, [id])
   
   // Track sketch visit
   useAnalytics('sketch', id)
+
+  // Fetch authoritative sketch data (DB-backed) if available
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const resp = await fetch(`/api/sketches/${id}`, { cache: 'no-store' })
+        if (resp && resp.ok) {
+          const body = await resp.json()
+          // Accept both shapes: { success: true, data: { ... } } or direct object
+          let dbSketch = null
+          if (body && body.success && body.data) dbSketch = body.data
+          else if (body && (body.description || body.imagePath || body.title)) dbSketch = body
+
+          // Merge DB result into local metadata, but preserve local imagePath
+          // if the DB didn't provide one.
+          if (dbSketch) {
+            setSketch(prev => ({
+              ...(prev || {}),
+              ...dbSketch,
+              imagePath: dbSketch.imagePath || (prev && prev.imagePath) || null,
+              // preserve orientation (landscape/portrait) from local metadata
+              // when DB doesn't provide it (avoid forcing 'portrait')
+              orientation: dbSketch.orientation || (prev && prev.orientation) || null
+            }))
+            return
+          }
+        }
+
+        // If API returned non-ok or missing sketch, do not overwrite local metadata's description.
+        if (!cancelled) console.warn(`SketchDetail: API returned no sketch for id=${id}`)
+      } catch (err) {
+        console.warn('Could not fetch sketch details from API:', err && err.message)
+      }
+    }
+    if (id) load()
+    return () => { cancelled = true }
+  }, [id, localSketch])
   
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [aboutComments, setAboutComments] = useState([])
   const [showCopySuccess, setShowCopySuccess] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
+  const [detailLikeCount, setDetailLikeCount] = useState(null)
+  const [detailLikeLoading, setDetailLikeLoading] = useState(true)
+  const [detailLiked, setDetailLiked] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem(`user_liked_${id}`) === 'true'
+    } catch (e) {
+      return false
+    }
+  })
+
+  // NOTE: do NOT sync `detailLiked` automatically to localStorage here.
+  // The API helper `toggleLike` reads the previous value from localStorage to
+  // decide whether the action should be 'like' or 'unlike'. Writing to
+  // localStorage prematurely (e.g. during an optimistic update) causes the
+  // API helper to see the new state and flip the action, producing reversed
+  // behavior. Instead, rely on `toggleLike` (and `getSketchStats`) to
+  // persist authoritative state to localStorage.
   
   // Comments functionality disabled for now
   // const [comments] = useState([])
@@ -122,15 +199,17 @@ const SketchDetail = () => {
     }
   }, [showShareMenu])
 
+  const { t } = useTranslation()
+
   if (!sketch) {
     return (
       <div className="sketch-detail-page">
         <div className="sketch-detail-container">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
             <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>Sketch not found</h1>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>{t('sketch.notFound.title')}</h1>
               <Link to="/" style={{ color: '#3b82f6', textDecoration: 'none' }}>
-                Return to Sketch Book
+                {t('sketch.notFound.returnLink')}
               </Link>
             </div>
           </div>
@@ -208,12 +287,19 @@ const SketchDetail = () => {
   }
 
   const handleWheel = (e) => {
+    // Only handle wheel when fullscreen is active
+    if (!isFullscreen) return
     e.preventDefault()
-    if (e.deltaY < 0) {
-      zoomIn()
-    } else {
-      zoomOut()
-    }
+
+    // Use a smooth factor based on the wheel delta so small rolls give small zoom changes
+    const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1
+
+    setZoomLevel((prev) => {
+      const next = Math.min(5, Math.max(0.5, prev * factor))
+      // When returning to 1x reset pan so image recenters
+      if (next === 1) setImagePosition({ x: 0, y: 0 })
+      return next
+    })
   }
 
   const handleKeyDown = useCallback((e) => {
@@ -296,200 +382,320 @@ const SketchDetail = () => {
     }
   }, [isFullscreen])
 
+  // Fetch authoritative stats for this sketch (likes + whether user has liked)
+  useEffect(() => {
+    let cancelled = false
+    const loadStats = async () => {
+      try {
+        setDetailLikeLoading(true)
+        const stats = await getSketchStats(id)
+        if (!cancelled && stats) {
+          setDetailLikeCount(Number(stats.likes) || 0)
+          setDetailLiked(Boolean(stats.userLiked))
+        }
+      } catch (err) {
+        console.error('Error fetching sketch stats:', err)
+        if (!cancelled) setDetailLikeCount(0)
+      } finally {
+        if (!cancelled) setDetailLikeLoading(false)
+      }
+    }
+
+    if (id) loadStats()
+    return () => { cancelled = true }
+  }, [id])
+
+  // Fetch visible comments for this sketch and display their comment text under "About This Piece"
+  useEffect(() => {
+    let cancelled = false
+    const loadComments = async () => {
+      if (!id) return
+      try {
+        const res = await fetch(`/api/comments/${encodeURIComponent(id)}`)
+        if (!res.ok) return
+        const data = await res.json()
+        if (!cancelled && Array.isArray(data)) {
+          setAboutComments(data)
+        }
+      } catch (err) {
+        console.warn('Failed to load comments for sketch detail:', err && err.message)
+      }
+    }
+    loadComments()
+    return () => { cancelled = true }
+  }, [id])
+
 
   return (
-    <div className="sketch-detail-page split-view">
-      <div className="sketch-detail-container split-view-container">
-        {/* Breadcrumb */}
-        <nav className="breadcrumb">
-          <Link to="/">Sketches</Link>
-          <span> / </span>
-          <span style={{ color: '#1f2937' }}>{sketch.title}</span>
-        </nav>
-
-        <div className="split-view-content">
-          {/* Left: Image (fixed, non-scrollable) */}
-          <div className="split-view-image">
-            <div className="sketch-image-section">
-              {sketch.imagePath ? (
-                <>
-                  <img
-                    src={getAssetPath(sketch.imagePath)}
-                    alt={sketch.title}
-                    className="sketch-detail-image"
-                    onClick={openFullscreen}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                </>
-              ) : (
-                <div style={{ width: '100%', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <svg style={{ width: '6rem', height: '6rem', margin: '0 auto 1.5rem', color: '#9ca3af' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    <div className="sketch-detail-page single-view">
+      <div className="sketch-detail-container single-view-container">
+        {/* Header Section */}
+        <div className="sketch-header">
+          {/* Navigation and Actions */}
+          <div className="header-nav">
+            <Link to="/gallery" className="back-nav-link">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              {t('sketch.backToGallery')}
+            </Link>
+          </div>
+          
+          <div className="header-actions">
+            {/* Share Menu */}
+            <div className="share-menu-container">
+              <button
+                onClick={toggleShareMenu}
+                aria-label={t('sketch.share')}
+                className="share-button"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="18" cy="5" r="3"/>
+                  <circle cx="6" cy="12" r="3"/>
+                  <circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+              </button>
+              {showShareMenu && (
+                <div className="share-menu">
+                  <button onClick={handleCopyURL}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2"/>
                     </svg>
-                    <p style={{ color: '#9ca3af', fontSize: '1.125rem', fontWeight: '500' }}>No Image Available</p>
-                    <p style={{ color: '#d1d5db', fontSize: '0.875rem', marginTop: '0.5rem' }}>Sketch artwork will be displayed here</p>
-                  </div>
+                    {t('sketch.copyLink')}
+                  </button>
+                  <button onClick={handleShareFacebook}>{t('sketch.facebook')}</button>
+                  <button onClick={handleShareTwitter}>{t('sketch.twitter')}</button>
+                  <button onClick={handleShareWhatsApp}>{t('sketch.whatsapp')}</button>
                 </div>
               )}
             </div>
+            
+            {/* Fullscreen Button */}
+            <button
+              onClick={openFullscreen}
+              aria-label={t('sketch.viewFullscreen')}
+              className="fullscreen-button"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h4a2 2 0 0 1 2 2v4M9 21H5a2 2 0 0 1-2-2v-4M21 9V5a2 2 0 0 0-2-2h-4M3 15v4a2 2 0 0 0 2 2h4" />
+              </svg>
+            </button>
           </div>
+        </div>
+        
+        {/* Content Section */}
+        <div className="sketch-content">
+          {/* Metadata */}
+          <div className="header-meta">
+            <div className="meta-row">
+              <div className="meta-item">
+                {sketch && sketch.completedDate ? (
+                  `${t('sketch.completed')}: ${new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}`
+                ) : `${t('sketch.completed')}: —`}
+              </div>
+            </div>
+          </div>
+          
+          {/* Title */}
+          <h1 className="sketch-main-title">{sketch.title}</h1>
+          
+          {/* Description moved to 'About This Piece' below the image */}
+        </div>
 
-          {/* Right: Details, navigation, comments (scrollable) */}
-          <div className="split-view-details">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingTop: '0.5rem' }}>
-              {/* Sketch Info */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <h1 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#1f2937', flex: '1', marginBottom: '0.5rem' }}>{sketch.title}</h1>
-                  {/* Share Button */}
-                  <div style={{ position: 'relative', marginLeft: '1rem', marginTop: '0.25rem' }} className="share-menu-container">
-                    <button
-                      onClick={toggleShareMenu}
-                      aria-label="Share"
-                      style={{
-                        background: '#fff',
-                        border: '1px solid #e5e7eb',
-                        cursor: 'pointer',
-                        fontSize: '1.1rem',
-                        color: '#6b7280',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        borderRadius: '999px',
-                        padding: '0.5rem 1.1rem',
-                        boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-                        transition: 'all 0.2s',
-                        fontWeight: 500
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.background = '#f3f4f6';
-                        e.currentTarget.style.borderColor = '#d1d5db';
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.background = '#fff';
-                        e.currentTarget.style.borderColor = '#e5e7eb';
-                      }}
-                    >
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginRight: '0.5rem'}}>
-                        <path d="M8 17V14C8 12.8954 8.89543 12 10 12H19" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M15 7L20 12L15 17" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      <span style={{ fontWeight: 500 }}>Share</span>
-                    </button>
-                    {showShareMenu && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '2.8rem',
-                        right: 0,
-                        background: '#fff',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '1rem',
-                        boxShadow: '0 6px 24px rgba(37,99,235,0.13)',
-                        padding: '1.1rem 1.2rem',
-                        zIndex: 20,
-                        minWidth: '340px',
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(3, 1fr)',
-                        gridTemplateRows: 'repeat(2, 1fr)',
-                        gap: '1.4rem 1.2rem',
-                        alignItems: 'center',
-                        justifyItems: 'center',
-                        animation: 'fadeIn 0.2s',
-                        fontSize: '1.05rem',
-                        textAlign: 'center'
-                      }}>
-                        <div>
-                          <button onClick={handleCopyURL} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
-                              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="7" width="14" height="17" rx="3" stroke="#222" strokeWidth="2.5"/><rect x="4" y="4" width="14" height="17" rx="3" stroke="#222" strokeWidth="2.5"/></svg>
-                            </span>
-                            <span style={{ fontSize: '0.95rem', color: '#222' }}>Copy link</span>
-                          </button>
-                          {showCopySuccess && (
-                            <span style={{ color: '#10b981', fontSize: '0.95rem', marginTop: '0.5rem', fontWeight: 500 }}>Link copied!</span>
-                          )}
-                        </div>
-                        <div>
-                          <button onClick={handleShareFacebook} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22.675 0h-21.35C.595 0 0 .592 0 1.326v21.348C0 23.408.595 24 1.326 24h11.495v-9.294H9.691v-3.622h3.13V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.797.143v3.24l-1.918.001c-1.504 0-1.797.715-1.797 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.325-.592 1.325-1.326V1.326C24 .592 23.405 0 22.675 0" fill="#1877F2"/><path d="M16.671 24v-9.294h3.12l.467-3.622h-3.587v-2.313c0-1.048.293-1.763 1.797-1.763l1.918-.001v-3.24c-.334-.044-1.472-.143-2.797-.143-2.766 0-4.659 1.688-4.659 4.788v2.313h-3.13v3.622h3.13V24h2.004z" fill="#fff"/></svg>
-                            </span>
-                            <span style={{ fontSize: '0.95rem', color: '#222' }}>Facebook</span>
-                          </button>
-                        </div>
-                        <div>
-                          <button onClick={handleShareWhatsApp} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.472-.148-.67.15-.197.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.173.198-.298.298-.496.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.207-.242-.579-.487-.501-.669-.511-.173-.008-.372-.01-.571-.01-.198 0-.52.075-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.1 3.202 5.077 4.372.711.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.288.173-1.413-.075-.124-.272-.198-.57-.347z" fill="#25D366"/><path d="M12.004 2.003c-5.523 0-9.997 4.474-9.997 9.997 0 1.762.462 3.487 1.338 4.997l-1.414 5.175 5.308-1.396c1.462.799 3.099 1.221 4.765 1.221 5.523 0 9.997-4.474 9.997-9.997s-4.474-9.997-9.997-9.997zm4.842 14.545c-.199.561-1.163 1.099-1.591 1.175-.408.075-.942.108-1.51-.118-.432-.136-1.107-.354-1.813-.653-3.003-1.172-4.956-4.072-5.104-4.271-.149-.198-1.213-1.612-1.213-3.074 0-1.463.768-2.182 1.04-2.479.272-.297.594-.372.792-.372.199 0 .398.002.571.01.182.01.427-.068.669.511.247.596.841 2.058.916 2.207.075.149.124.323.025.521-.1.198-.149.323-.298.496-.149.173-.313.387-.447.52-.148.148-.303.309-.13.606.173.298.77 1.271 1.653 2.059 1.135 1.013 2.093 1.326 2.39 1.475.297.148.471.123.644-.075.173-.198.743-.867.94-1.164.198-.298.397-.249.67-.15.272.1 1.733.818 2.03.967.297.149.495.223.57.347.075.125.075.719-.173 1.413z" fill="#25D366"/></svg>
-                            </span>
-                            <span style={{ fontSize: '0.95rem', color: '#222' }}>WhatsApp</span>
-                          </button>
-                        </div>
-                        <div>
-                          <button onClick={handleShareInstagram} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><radialGradient id="IGpaint0_radial" cx="0" cy="0" r="1" gradientTransform="translate(12 12) scale(12)"><stop stopColor="#FFD600"/><stop offset="0.5" stopColor="#FF6B00"/><stop offset="1" stopColor="#E1306C"/></radialGradient><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#IGpaint0_radial)"/><circle cx="12" cy="12" r="5" fill="#fff"/><circle cx="12" cy="12" r="3.5" fill="#E1306C"/><circle cx="16.5" cy="7.5" r="1" fill="#fff"/></svg>
-                            </span>
-                            <span style={{ fontSize: '0.95rem', color: '#222' }}>Instagram</span>
-                          </button>
-                        </div>
-                        <div>
-                          <button onClick={handleShareTwitter} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#000"/><path d="M17.53 7.47h-2.06l-2.47 3.53-2.47-3.53H8.47l2.97 4.24-3.13 4.29h2.06l2.63-3.76 2.63 3.76h2.06l-3.13-4.29 2.97-4.24z" fill="#fff"/></svg>
-                            </span>
-                            <span style={{ fontSize: '0.95rem', color: '#222' }}>X</span>
-                          </button>
-                        </div>
-                        <div>
-                          <button onClick={() => window.location.href = `mailto:?subject=Check%20out%20this%20sketch&body=${window.location.href}`} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ background: '#f3f4f6', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.2rem' }}>
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="12" rx="4" fill="#EA4335"/><path d="M2 6l10 7 10-7" stroke="#fff" strokeWidth="2" strokeLinejoin="round"/></svg>
-                            </span>
-                            <span style={{ fontSize: '0.95rem', color: '#222' }}>Email</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                  <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: 0 }}>
-                    Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                  <button onClick={() => {
-                    const el = document.getElementById('comments-section')
-                    if (el) {
-                      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                      // focus for keyboard users
-                      el.focus({ preventScroll: true })
-                    }
-                  }} aria-label="View comments" title="View comments" style={{ background: 'transparent', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                    <CommentCount sketchId={id} />
-                  </button>
-                </div>
-                <div style={{ color: '#374151', lineHeight: 1.7 }}>
-                  {parseRichText(sketch.description)}
-                </div>
-                {/* Smiley Like Picker and View Count */}
-                <div style={{ margin: '1.5rem 0', display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
-                  <SmileyLike sketchId={id} />
-                  <ViewCount sketchId={id} size="medium" />
+        {/* Main Content */}
+        <div className="single-view-content">
+          {/* Image Section - Full Width */}
+          <div className="single-view-image">
+            {sketch.imagePath ? (
+              <div className="image-center">
+                <img
+                  src={getAssetPath(sketch.imagePath)}
+                  alt={sketch.title}
+                    className={`sketch-detail-image ${sketch.orientation || 'portrait'}`}
+                    onClick={openFullscreen}
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
+                    onMouseDown={(e) => { if (e.button === 1) e.preventDefault() }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      const fallback = e.target.nextSibling;
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
+                />
+              </div>
+            ) : (
+              <div style={{ width: '100%', height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f9fafb', borderRadius: '16px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <svg style={{ width: '6rem', height: '6rem', margin: '0 auto 1.5rem', color: '#9ca3af' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p style={{ color: '#9ca3af', fontSize: '1.125rem', fontWeight: '500' }}>No Image Available</p>
                 </div>
               </div>
+            )}
+          </div>
 
-              {/* Navigation controls removed from UI; keyboard and fullscreen navigation remain functional */}
+          {/* Content Below Image */}
+          <div className="single-view-details">
+            <div className="content-and-sidebar">
+              {/* Left: Main Content */}
+              <div className="main-content">
+                {/* About This Piece */}
+                <section className="content-section">
+                  <h2 className="section-title">{t('sketch.aboutThisPiece')}</h2>
+                  <div className="section-content">
+                    {parseRichText(sketch.description)}
+                  </div>
+                </section>
 
-              {/* Comments Section */}
-              <CommentsSection sketchId={id} sketchName={sketch.title} />
+                {/* Technique & Process removed as per request */}
+
+                {/* Comments Section */}
+                <CommentsSection sketchId={id} sketchName={sketch.title} />
+              </div>
+
+              {/* Right: Stats Sidebar */}
+              <div className="stats-sidebar">
+                {/* Engagement Metrics Card */}
+                <div 
+                  className="stats-card engagement-card"
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '8px', 
+                    border: '0.5px solid #e5e7eb',
+                    padding: '16px',
+                    marginBottom: '16px',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+                  }}
+                >
+                  {/* Top row: Likes only */}
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+                    <div
+                      className={`like-count clickable-like ${detailLiked ? 'liked' : ''}`}
+                      style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                      onClick={async (e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+
+                        const prev = detailLikeCount ?? 0
+
+                        // If currently not liked -> set liked
+                        if (!detailLiked) {
+                          // Optimistic update: set UI to liked state (black bg + white text), increment count
+                          setDetailLiked(true)
+                          setDetailLikeCount(prev + 1)
+
+                          // Call API to persist like; do NOT update localStorage here because
+                          // toggleLike reads the previous state from localStorage to decide
+                          // whether to 'like' or 'unlike'. Writing localStorage prematurely
+                          // causes the action to be reversed.
+                          try {
+                            const newStats = await toggleLike(id)
+                            // Try to reconcile with authoritative stats after toggle
+                            try {
+                              const fresh = await getSketchStats(id)
+                              if (fresh && typeof fresh.likes === 'number') {
+                                setDetailLikeCount(Number(fresh.likes))
+                                setDetailLiked(Boolean(fresh.userLiked))
+                              } else if (newStats && typeof newStats.likes === 'number') {
+                                setDetailLikeCount(newStats.likes)
+                              }
+                            } catch (fetchErr) {
+                              // If stats fetch fails, fall back to returned newStats
+                              if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
+                            }
+                          } catch (err) {
+                            console.error('Error toggling like:', err)
+                          }
+
+                        } else {
+                          // Currently liked -> un-like
+                          setDetailLiked(false)
+                          setDetailLikeCount(Math.max(0, prev - 1))
+
+                          try {
+                            const newStats = await toggleLike(id)
+                            try {
+                              const fresh = await getSketchStats(id)
+                              if (fresh && typeof fresh.likes === 'number') {
+                                setDetailLikeCount(Number(fresh.likes))
+                                setDetailLiked(Boolean(fresh.userLiked))
+                              } else if (newStats && typeof newStats.likes === 'number') {
+                                setDetailLikeCount(newStats.likes)
+                              }
+                            } catch (fetchErr) {
+                              if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
+                            }
+                          } catch (err) {
+                            console.error('Error toggling like:', err)
+                          }
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click() }}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill={detailLiked ? '#ef4444' : 'none'}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                      <span>
+                        {detailLikeLoading ? <span className="stat-shimmer" aria-hidden="true"></span> : (detailLikeCount ?? 0)}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Views row */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+                    <ViewCount sketchId={id} showIcon={true} />
+                  </div>
+                  
+                  {/* Discussion row: icon + "N comments" */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', paddingTop: '8px' }}>
+                    <div style={{ color: '#6b7280', fontSize: '0.95rem', display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 600 }}><CommentCount sketchId={id} showIcon={true} size="large" /></span>
+                      <span style={{ fontWeight: 400, color: '#000000' }}>{t('sketch.commentsLabel')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sketch Details Card */}
+                <div 
+                  className="stats-card sketch-details-card"
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    border: '0.5px solid #e5e7eb',
+                    padding: '16px',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+                  }}
+                >
+                  <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.medium')}</span>
+                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Graphite</span>
+                  </div>
+                  
+                  <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.time')}</span>
+                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>
+                      {sketch && (sketch.time || sketch.Time) ? (sketch.time || sketch.Time) : '—'}
+                    </span>
+                  </div>
+                  
+                  <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.paper')}</span>
+                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Strathmore</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -564,11 +770,13 @@ const SketchDetail = () => {
             <div className="fullscreen-info">
               <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.25rem' }}>{sketch.title}</h3>
               <p style={{ fontSize: '0.875rem', color: '#d1d5db' }}>
-                Completed: {new Date(sketch.completedDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                {sketch && sketch.completedDate ? (
+                  `Completed: ${new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}`
+                ) : 'Completed: —'}
               </p>
               {zoomLevel > 1 && (
                 <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.25rem' }}>Click and drag to pan around</p>
@@ -599,16 +807,20 @@ const SketchDetail = () => {
               <img
                 src={getAssetPath(sketch.imagePath)}
                 alt={sketch.title}
-                className={`fullscreen-image ${isDragging ? 'dragging' : ''}`}
+                className={`fullscreen-image ${sketch.orientation || 'portrait'} ${isDragging ? 'dragging' : ''}`}
                 style={{
                   transform: `scale(${zoomLevel}) translate(${imagePosition.x / zoomLevel}px, ${imagePosition.y / zoomLevel}px)`,
-                  maxWidth: zoomLevel === 1 ? '90%' : 'none',
-                  maxHeight: zoomLevel === 1 ? '90%' : 'none',
+                  maxWidth: zoomLevel === 1 ? (sketch.orientation === 'landscape' ? '95%' : '90%') : 'none',
+                  maxHeight: zoomLevel === 1 ? (sketch.orientation === 'landscape' ? '85%' : '90%') : 'none',
                   marginTop: '32px', // Add space from the top
                 }}
                 onClick={zoomLevel === 1 ? closeFullscreen : undefined}
                 onMouseDown={handleMouseDown}
                 draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+                onContextMenu={(e) => e.preventDefault()}
+                onAuxClick={(e) => { if (e.button === 1) e.preventDefault() }}
+                onMouseDownCapture={(e) => { if (e.button === 1) e.preventDefault() }}
               />
             </div>
 
@@ -646,6 +858,7 @@ const SketchDetail = () => {
               <div 
                 className="fullscreen-overlay"
                 onClick={closeFullscreen}
+                onWheel={handleWheel}
                 aria-label="Click to close fullscreen view"
               />
             )}

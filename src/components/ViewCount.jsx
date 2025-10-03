@@ -51,34 +51,10 @@ const ViewCount = ({ sketchId, size = 'small', className = '' }) => {
     large: 'w-6 h-6'
   }
 
-  const buttonSizeClasses = {
-    small: 'p-1',
-    medium: 'p-2',
-    large: 'p-2'
-  }
-
-  const textSizeClasses = {
-    small: 'text-xs',
-    medium: 'text-sm',
-    large: 'text-base'
-  }
+  // keep sizeClasses for the svg sizing and allow passing a custom className on the root span
 
   return (
-    <div 
-      className={`inline-flex items-center ${buttonSizeClasses[size]} rounded-full transition-colors text-gray-600 bg-gray-100 ${className}`}
-      style={{
-        backgroundColor: '#f3f4f6',
-        borderRadius: '999px',
-        padding: '0.5rem 1rem',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-        color: '#374151',
-        fontSize: '0.875rem',
-        fontWeight: 500
-      }}
-    >
-      {/* Eye icon for views */}
+    <span className={className} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#374151', fontSize: '0.95rem', fontWeight: 500 }}>
       <svg 
         className={sizeClasses[size]} 
         fill="none" 
@@ -102,13 +78,11 @@ const ViewCount = ({ sketchId, size = 'small', className = '' }) => {
           d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
         />
       </svg>
-      <span style={{ fontSize: '0.875rem' }}>
-        Views
-      </span>
-      <span style={{ fontSize: '1.2rem', color: '#2563eb', fontWeight: 600, marginLeft: '0.5rem' }}>
+      <span style={{ color: '#2563eb', fontWeight: 600 }}>
         {isLoading ? '...' : viewCount}
       </span>
-    </div>
+  <span style={{ color: '#000000' }}>Views</span>
+    </span>
   )
 }
 

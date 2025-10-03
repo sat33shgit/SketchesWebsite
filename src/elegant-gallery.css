@@ -1,0 +1,570 @@
+/* Elegant Gallery Styles */
+
+.elegant-card {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  transition: all 0.3s ease;
+  display: flex;
+  min-height: 300px;
+  border: none;
+  gap: 24px;
+  align-items: center;
+  padding-left: 24px; /* reduced for tighter mobile layout */
+  padding-right: 24px; /* reduced for tighter mobile layout */
+}
+
+.elegant-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Enhanced Gallery Layout - Clean and Separated Content */
+
+.elegant-gallery {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 16px; /* reduce horizontal padding so mobile has less whitespace */
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  background: #ffffff;
+}
+
+/* consolidated .elegant-card rules are defined earlier */
+
+.elegant-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Image Left Layout (Even indexed cards: 0, 2, 4...) */
+.elegant-card.image-left {
+  flex-direction: row;
+}
+
+/* Image Right Layout (Odd indexed cards: 1, 3, 5...) */
+.elegant-card.image-right {
+  flex-direction: row-reverse;
+}
+
+/* Move text slightly to the right for image-right cards */
+.elegant-card.image-right .card-content {
+  margin-left: 0; /* remove large left margin so content aligns naturally on small screens */
+}
+
+/* Simple zoom hover effect for gallery images - contained within frame */
+.elegant-card img.direct-gallery-image {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  transform-origin: center center; /* Zoom from center */
+  max-width: 100%;
+  height: auto;
+}
+
+.elegant-card:hover img.direct-gallery-image {
+  transform: scale(1.03);
+}
+
+/* Smaller border radius - clean rounded corners */
+.elegant-gallery .elegant-card img.direct-gallery-image,
+.elegant-card img.direct-gallery-image,
+img.direct-gallery-image {
+  border-radius: 8px !important;
+  -webkit-border-radius: 8px !important;
+  -moz-border-radius: 8px !important;
+  display: block;
+  width: 100%;
+}
+
+/* Background image approach for guaranteed border-radius */
+.bg-image-link {
+  flex: 0 0 55%;
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  border-radius: 8px !important;
+  overflow: hidden; /* This ensures the background image respects border-radius AND contains zoom */
+  transition: transform 0.3s ease;
+}
+
+/* Portrait background images */
+.bg-image-link.portrait {
+  height: 480px;
+  background-size: contain !important;
+  background-color: #ffffff;
+}
+
+/* Landscape background images */
+.bg-image-link.landscape {
+  height: 360px;
+  background-size: contain !important;
+  background-color: #ffffff;
+}
+
+/* Hover effects for background images */
+.elegant-card:hover .bg-image-link {
+  transform: scale(1.1);
+}
+
+/* Direct image link without wrapper containers */
+.direct-image-link {
+  flex: 0 0 55%; /* Same flex properties as the old wrapper */
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden; /* Contain the zoom effect within bounds */
+  border-radius: 8px !important; /* Apply border radius to container */
+  width: 100%;
+}
+
+/* Direct card images without any container clipping */
+.direct-card-image {
+  width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  border-radius: 8px !important;
+  background: #ffffff;
+  transform-origin: center center; /* Zoom from center */
+  display: block;
+}
+
+/* Portrait images - direct styling */
+.direct-card-image.portrait {
+  height: 480px;
+  max-width: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 8px !important;
+}
+
+/* Landscape images - direct styling */
+.direct-card-image.landscape {
+  height: 360px;
+  max-width: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 8px !important;
+}
+
+/* Hover effects for direct images */
+.elegant-card:hover .direct-image-link {
+  transform: none;
+}
+
+.elegant-card:hover .direct-card-image {
+  transform: scale(1.1);
+}
+
+/* Note: .image-wrapper concept removed for detail-page; gallery uses .card-image and .image-link instead */
+
+/* Remove old card-image-section styles since we replaced with image-wrapper */
+
+.image-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.elegant-card:hover .card-image {
+  transform: none;
+}
+
+.card-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain; /* Changed from cover to contain to show full image */
+  transition: transform 0.3s ease;
+  border-radius: 8px !important; /* Increased border radius for more rounded edges */
+  background: #ffffff; /* Ensure white background for images */
+  transform-origin: center center; /* Zoom from center */
+  display: block;
+}
+
+/* Portrait images should fit properly and have proper sizing */
+.card-image.portrait {
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 8px !important;
+}
+
+/* Landscape images should fit properly and have proper sizing */
+.card-image.landscape {
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 8px !important;
+}
+
+.elegant-card:hover .card-image {
+  transform: scale(1.1);
+}
+
+/* Force border radius on all gallery images */
+.elegant-card img,
+.card-image-section img,
+.card-image {
+  border-radius: 8px !important;
+}
+
+/* Super specific selectors to override any other styles */
+.elegant-gallery .elegant-card .image-link .card-image,
+.elegant-gallery .elegant-card .image-link img,
+.elegant-gallery img {
+  border-radius: 8px !important;
+  -webkit-border-radius: 8px !important;
+  -moz-border-radius: 8px !important;
+}
+
+/* Force portrait images to clip to the same 8px radius (some portrait imgs render differently) */
+.elegant-card img.direct-gallery-image.portrait,
+.elegant-card img.direct-gallery-image.portrait + img,
+.elegant-card .direct-card-image.portrait,
+.elegant-gallery img.direct-gallery-image.portrait {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  -webkit-clip-path: inset(0 round 8px) !important;
+  clip-path: inset(0 round 8px) !important;
+}
+
+.no-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff; /* Changed to white background */
+  color: #64748b;
+  font-weight: 500;
+  font-size: 16px;
+  border-radius: 8px; /* Increased border radius */
+}
+
+/* Content Section - Floating content */
+.card-content {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: transparent;
+}
+
+.card-year {
+  font-size: 14px;
+  font-weight: 500;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  margin: 0 0 20px 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #111827;
+}
+
+.card-title a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+.card-title a:hover {
+  color: #3b82f6;
+}
+
+.card-description {
+  color: #6b7280;
+  line-height: 1.6;
+  font-size: 16px;
+  margin: 0 0 16px 0;
+  max-width: 400px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Footer Section - Simplified like reference */
+.card-footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 0;
+  gap: 40px;
+}
+
+.card-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #9ca3af;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Simplified icons - colored like in reference */
+.stat:nth-child(1) .stat-icon {
+  color: #6b7280;
+}
+
+.stat:nth-child(2) .stat-icon {
+  color: #ef4444;
+}
+
+.stat:nth-child(3) .stat-icon {
+  color: #3b82f6;
+}
+
+.stat-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
+.view-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #111827;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.view-details:hover {
+  color: #3b82f6;
+}
+
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+  transition: transform 0.3s ease;
+}
+
+.view-details:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .elegant-gallery {
+    padding: 20px 12px;
+    gap: 40px;
+  }
+  
+  .elegant-card, 
+  .elegant-card.image-left,
+  .elegant-card.image-right {
+    flex-direction: column;
+    min-height: auto;
+    gap: 16px;
+    align-items: stretch;
+    padding-left: 12px; /* tighten mobile padding */
+    padding-right: 12px; /* tighten mobile padding */
+  }
+  
+  .card-image-section {
+    flex: 0 0 auto; /* let image size naturally on mobile */
+    width: 100%;
+  }
+  
+  .card-content {
+    padding: 0;
+    text-align: center;
+  }
+  
+  .card-title {
+    font-size: 24px;
+  }
+  
+  .card-description {
+    max-width: none;
+  }
+  
+  .card-footer {
+    justify-content: center;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-content {
+    padding: 0;
+  }
+  
+  .card-title {
+    font-size: 22px;
+  }
+  
+  .card-description {
+    font-size: 15px;
+  }
+}
+
+/* Subtle Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.elegant-card {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* FINAL OVERRIDE - Force rounded corners on ALL images in gallery */
+.elegant-gallery img,
+.elegant-gallery [class*="card-image"],
+.elegant-card img {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.elegant-card:nth-child(odd) {
+  animation-delay: 0.1s;
+}
+
+.elegant-card:nth-child(even) {
+  animation-delay: 0.2s;
+}
+
+/* Final strong override: ensure gallery images and their containers clip to 8px radius */
+.elegant-gallery .elegant-card .direct-image-link,
+.elegant-gallery .elegant-card .bg-image-link,
+.elegant-gallery .elegant-card .card-image-section,
+.elegant-gallery .elegant-card img,
+.elegant-gallery .card-image,
+.elegant-gallery img.direct-gallery-image {
+  border-radius: 0 !important;
+  overflow: visible !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  -webkit-clip-path: none !important;
+  clip-path: none !important;
+}
+
+/* Ensure any portrait-specific clipping/radius is also disabled */
+.elegant-card img.direct-gallery-image.portrait,
+.elegant-card .direct-card-image.portrait,
+.elegant-gallery img.direct-gallery-image.portrait {
+  border-radius: 0 !important;
+  overflow: visible !important;
+  -webkit-clip-path: none !important;
+  clip-path: none !important;
+  display: block !important;
+}
+
+/* Desktop overrides: make images flush to the left and remove card horizontal padding */
+@media (min-width: 769px) {
+  .elegant-gallery {
+    padding-left: 16px; /* keep a small outer gutter */
+    padding-right: 16px;
+    gap: 56px;
+  }
+
+  .elegant-card {
+    padding-left: 0; /* remove left padding so image sits flush */
+    padding-right: 0; /* remove right padding */
+    gap: 0; /* remove visual gap; use internal padding on content instead */
+    align-items: center;
+  }
+
+  /* For medium screens keep flexible percent-based split */
+  .elegant-card .direct-image-link,
+  .elegant-card .bg-image-link,
+  .elegant-card .card-image-section {
+    flex: 0 0 45%;
+    max-width: 45%;
+    width: 45%;
+  }
+
+  .elegant-card .card-content {
+    flex: 1 1 55%;
+    padding-left: 20px; /* internal breathing room so text doesn't touch image */
+    padding-right: 0;
+  }
+
+  /* Portrait-oriented cards: make image slightly narrower */
+  .elegant-card.portrait .direct-image-link,
+  .elegant-card.portrait .bg-image-link,
+  .elegant-card.portrait .card-image-section {
+    flex: 0 0 40%;
+    max-width: 40%;
+    width: 40%;
+  }
+
+  .elegant-card.portrait .card-content {
+    flex: 1 1 60%;
+  }
+
+
+/* Desktop: use fixed pixel widths for predictable typography */
+@media (min-width: 1024px) {
+  .elegant-card .direct-image-link,
+  .elegant-card .bg-image-link,
+  .elegant-card .card-image-section {
+  /* responsive cap: restore previous moderate size */
+  flex: 0 0 min(360px, 35vw);
+  max-width: min(360px, 35vw);
+  width: min(360px, 35vw);
+  }
+
+  .elegant-card .card-content {
+    flex: 1 1 auto;
+    padding-left: 24px;
+  }
+
+  /* For portrait cards, use a slightly narrower fixed image so text gets extra room */
+  .elegant-card.portrait .direct-image-link,
+  .elegant-card.portrait .bg-image-link,
+  .elegant-card.portrait .card-image-section {
+  /* portrait images slightly narrower by default */
+  flex: 0 0 min(320px, 30vw);
+  max-width: min(320px, 30vw);
+  width: min(320px, 30vw);
+  }
+
+  /* Limit the visible height of images so tall images don't dominate the layout */
+  .elegant-card .card-image,
+  .elegant-card img.direct-gallery-image,
+  .elegant-card .direct-card-image {
+    max-height: 420px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .elegant-card.portrait .card-content {
+    flex: 1 1 auto;
+  }
+}
+  /* For image-right cards, reverse spacing so content sits to the left of the image */
+  .elegant-card.image-right .card-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

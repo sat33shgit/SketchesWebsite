@@ -126,7 +126,7 @@ footer {
 html, body {
   height: 100%;
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #f9fafb;
+  background-color: #ffffff;
   color: #1f2937;
   overflow-x: hidden;
   scroll-behavior: smooth;
@@ -143,7 +143,7 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f9fafb;
+  background-color: #ffffff;
 }
 
 /* Override background for sketch detail page */
@@ -301,6 +301,18 @@ nav::after {
   padding: 0 1rem;
 }
 
+/* Utility fallback for max-width classes used by Gallery.jsx (lightweight replacement for Tailwind utilities) */
+.max-w-7xl {
+  max-width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.mx-auto { margin-left: auto; margin-right: auto; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.sm\:px-6 { padding-left: 1rem; padding-right: 1rem; }
+.lg\:px-8 { padding-left: 1rem; padding-right: 1rem; }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+
 .page-container-full {
   max-width: 1024px;
   margin: 0 auto;
@@ -308,24 +320,95 @@ nav::after {
 }
 
 /* Gallery styles */
-.gallery-header {
-  text-align: center;
-  margin-bottom: 2rem;
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  /* keep items left-aligned so timestamp sits next to the name */
+  justify-content: flex-start;
 }
 
-.gallery-title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 1rem;
+.comment-author {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.95rem;
 }
 
-.gallery-description {
-  font-size: 1.125rem;
-  color: #6b7280;
-  max-width: 768px;
-  margin: 0 auto;
-  line-height: 1.6;
+.comment-timestamp {
+  margin-left: 0.5rem; /* sit to the right of the author */
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+/* Force center alignment for gallery page title */
+.min-h-screen h1,
+.gallery-page h1 {
+  text-align: center !important;
+}
+
+/* Orientation-based image display */
+.image-container-portrait {
+  aspect-ratio: 3/4;
+  max-height: 700px; /* Increased from 600px */
+  background: #ffffff;
+  border-radius: 16px; /* More rounded edges */
+}
+
+.image-container-landscape {
+  aspect-ratio: 4/3;
+  max-height: 550px; /* Increased from 450px */
+  background: #ffffff;
+  border-radius: 16px; /* More rounded edges */
+}
+
+.image-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 16px;
+}
+
+.image-landscape {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 16px;
+}
+
+/* Gallery card image containers with orientation */
+.card-image-section.portrait {
+  aspect-ratio: 3/4;
+  max-height: 480px; /* Increased from 400px */
+  background: #ffffff;
+}
+
+.card-image-section.landscape {
+  aspect-ratio: 4/3;
+  max-height: 380px; /* Increased from 320px */
+  background: #ffffff;
+}
+
+/* Sketch detail page orientations */
+.sketch-detail-image.portrait {
+  max-width: 1050px; /* increased ~1.5x to enlarge view area */
+  max-height: 95vh; /* increased to allow larger visual area (approx 1.5x) */
+  aspect-ratio: 3/4;
+  object-fit: contain;
+  border-radius: 16px; /* More rounded edges */
+  background: #ffffff;
+}
+
+.sketch-detail-image.landscape {
+  max-width: 100%;
+  max-height: 95vh; /* increased to allow larger visual area (approx 1.5x) */
+  aspect-ratio: 4/3;
+  object-fit: contain;
+  border-radius: 16px; /* More rounded edges */
+  background: #ffffff;
 }
 
 .gallery-grid {
@@ -349,7 +432,7 @@ nav::after {
 /* Sketch cards */
 .sketch-card {
   background: white;
-  border-radius: 0.5rem;
+  border-radius: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -365,8 +448,9 @@ nav::after {
 
 .sketch-image-container {
   width: 100%;
-  height: 300px;
-  background: #f3f4f6;
+  height: 400px;
+  background: white;
+  border-radius: 8px;
   position: relative;
   overflow: hidden;
 }
@@ -375,6 +459,7 @@ nav::after {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 8px;
   transition: transform 0.3s;
 }
 
@@ -464,6 +549,15 @@ nav::after {
   gap: 3rem;
 }
 
+/* Make each section in the About page appear as a rounded card (like Contact page) */
+.about-content > * {
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  box-shadow: none;
+}
+
 @media (min-width: 1024px) {
   .about-content {
     grid-template-columns: 1fr 2fr;
@@ -475,6 +569,54 @@ nav::after {
   top: 2rem;
 }
 
+/* Make the profile card shrink-wrap and center text under the image */
+.about-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.profile-info {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Make About page sections look like contact cards: rounded border, no heavy shadow */
+.about-content > * {
+  background: #ffffff;
+  border: 1px solid #e5e7eb; /* match contact card borders */
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: none; /* remove shadow so border is clean */
+}
+
+/* Shrink-wrap the profile card so the border only covers the content area and center it in the grid cell */
+.about-profile {
+  /* allow the profile card to size to its content */
+  display: inline-block;
+  width: auto;
+  justify-self: center; /* center inside the grid column */
+  align-self: start;
+  position: relative; /* keep sticky behavior working when present */
+}
+
+/* Center profile text beneath the image */
+.about-profile .profile-info,
+.about-profile .profile-image {
+  text-align: center;
+}
+
+/* Ensure the profile-info headings are centered when the profile card is shrink-wrapped */
+.about-profile .profile-info h2,
+.about-profile .profile-info p {
+  margin: 0;
+}
+
 .profile-image {
   width: 256px;
   height: 256px;
@@ -482,6 +624,34 @@ nav::after {
   border-radius: 50%;
   overflow: hidden;
   background: #e5e7eb;
+}
+
+/* Make the profile area shrink-wrap its contents and center-align text */
+.about-profile {
+  position: sticky;
+  top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 320px; /* prevent the border spanning full column */
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.profile-info {
+  text-align: center;
+}
+
+/* Artist statement card styling: match contact card look */
+.artist-statement-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-top: 1.5rem;
 }
 
 @media (min-width: 1024px) {
@@ -521,19 +691,39 @@ nav::after {
 .about-text {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem; /* reduced gap to tighten spacing between paragraphs */
 }
 
 .about-text p {
   font-size: 1.125rem;
   color: #374151;
   line-height: 1.7;
+  margin: 0 0 0.5rem 0; /* smaller bottom margin to reduce extra space */
+}
+
+/* Avoid extra gap at the bottom of the about card by removing bottom margin on the last paragraph */
+.about-text > div:last-child p {
+  margin-bottom: 0;
 }
 
 .artist-statement {
-  background: #f9fafb;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 0.5rem;
+}
+
+/* Card style for the artist statement when used on the about page */
+.artist-statement-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.artist-statement-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
 }
 
 .artist-statement h3 {
@@ -544,8 +734,29 @@ nav::after {
 }
 
 .artist-statement p {
+  /* match the main about paragraphs (fallback) */
+  font-size: 1.125rem;
   color: #374151;
-  line-height: 1.7;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+  font-family: inherit;
+  font-weight: 400;
+}
+
+/* More specific rule for the Artist Statement card to ensure consistent font and equal line spacing */
+.artist-statement-card p {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-size: 1.125rem; /* increased for better readability */
+  line-height: 1.6; /* slightly more breathing room between lines */
+  color: #374151;
+  margin: 0; /* remove bottom margin to avoid trailing space in the card */
+  font-weight: 400;
+  letter-spacing: 0; /* ensure consistent glyph spacing */
+}
+
+/* Add controlled top spacing between multiple paragraphs inside the artist statement */
+.artist-statement-card p + p {
+  margin-top: 1rem;
 }
 
 /* Contact page styles */
@@ -622,7 +833,9 @@ nav::after {
 .contact-info-card {
   background: white;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  /* remove drop shadow for a flat border look on the contact page */
+  box-shadow: none;
   padding: 2rem;
 }
 
@@ -656,6 +869,26 @@ nav::after {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.artist-statement-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: none;
+}
+
+@media (min-width: 1024px) {
+  .artist-statement-card {
+    grid-column: 2 / span 1; /* force into right column */
+    margin-top: 0; /* align under the other content */
+  }
+}
+
+@media (max-width: 1023px) {
+  .artist-statement-card {
+    grid-column: 1 / -1; /* full width on smaller screens */
+  }
+}
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
@@ -670,7 +903,8 @@ nav::after {
 
 .submit-button {
   width: 100%;
-  background: #3b82f6;
+  /* use the darker gray-blue from the provided image */
+  background: #6b7280;
   color: white;
   padding: 0.75rem 1rem;
   border: none;
@@ -685,7 +919,8 @@ nav::after {
 }
 
 .submit-button:hover {
-  background: #2563eb;
+  /* slightly darker on hover */
+  background: #4b5563;
 }
 
 .submit-button:disabled {
@@ -796,9 +1031,668 @@ nav::after {
 /* Sketch Detail page styles */
 .sketch-detail-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  background: #ffffff;
   padding-top: 0;
   margin-top: 0;
+}
+
+/* Single View Layout for Sketch Detail */
+
+/* Header Navigation */
+.sketch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 20px;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.back-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #666;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.back-nav-link:hover {
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.share-menu-container {
+  position: relative;
+}
+
+.share-button, .fullscreen-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  color: #666;
+}
+
+.share-button:hover, .fullscreen-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.share-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 160px;
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+.share-menu button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 14px;
+}
+
+.share-menu button:hover {
+  background-color: #f8f9fa;
+}
+
+.share-menu button:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.share-menu button:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.header-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: #666;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sketch-main-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Content Section */
+.sketch-content {
+  margin-bottom: 3rem;
+}
+
+.sketch-description {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #4a5568;
+  margin-top: 1.5rem;
+  max-width: none;
+}
+
+.header-meta .meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 1.5rem;
+}
+
+.meta-separator {
+  color: #d1d5db;
+  font-weight: 500;
+}
+.single-view-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.single-view-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.single-view-image {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* ensure the container itself doesn't provide a visible background or padding that would show around the rounded wrapper */
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden; /* clip rounded corners and remove white side areas */
+}
+
+/* Centralized wrapper that enforces rounded corners for the normal (non-fullscreen) image */
+
+/* Apply image display rules directly to the inline-centered image (wrapper removed) */
+.image-center > img.sketch-detail-image {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  box-shadow: none !important;
+  border-radius: 12px !important; /* reduced edge radius */
+  background: transparent !important;
+  box-sizing: border-box;
+}
+
+/* Don't show the red border in fullscreen mode */
+.fullscreen-modal .fullscreen-image,
+.fullscreen-image-container .fullscreen-image,
+.fullscreen-modal .fullscreen-image-container img,
+.fullscreen-image-container img.fullscreen-image {
+  border: none !important;
+}
+
+/* Ensure the immediate center container centers the wrapper reliably */
+.image-center {
+  width: 100%;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Hover overlay shown on the normal (non-fullscreen) image */
+.image-wrapper {
+  /* legacy selector kept for other components; no positioning needed for detail page image (we removed the wrapper) */
+  position: relative;
+}
+
+/* overlay removed: no hover overlay in normal view */
+
+/* Slight responsive tweak: allow a wider max on large screens */
+@media (min-width: 1200px) {
+  .image-center > img.sketch-detail-image {
+    max-width: 1380px; /* allow larger display on very large screens */
+  }
+}
+
+.single-view-details {
+  width: 100%;
+}
+
+.content-and-sidebar {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 4rem;
+  align-items: start;
+}
+
+@media (max-width: 968px) {
+  .content-and-sidebar {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  .stats-sidebar {
+    order: -1;
+  }
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+}
+
+.sketch-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 2rem 0;
+  line-height: 1.2;
+}
+
+.content-section {
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 1rem 0;
+  line-height: 1.3;
+}
+
+.section-content {
+  color: #4b5563;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.section-content p {
+  margin: 0 0 1rem 0;
+}
+
+.section-content p:last-child {
+  margin-bottom: 0;
+}
+
+.interaction-section {
+  margin: 2rem 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Stats Sidebar */
+.stats-sidebar {
+  background: #ffffff;
+  /* slightly darker border for better contrast */
+  border: 1px solid #ffffff; /* slightly darker so the outline is more visible */
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: fit-content;
+  position: sticky;
+  top: 2rem;
+}
+
+/* Keep the engagement card's border but remove only the drop shadow so it looks flat */
+.stats-sidebar .stats-card.engagement-card {
+  box-shadow: none !important;
+}
+
+/* Make the engagement card's thin border a bit darker to improve visibility */
+.stats-sidebar .stats-card.engagement-card {
+  border-color: #d1d5db !important; /* darker than #e5e7eb */
+  border-style: solid !important;
+  border-width: 0.5px !important;
+}
+
+/* Also darken the border for the sketch details card (Medium / Time / Paper) so it's more visible */
+.stats-sidebar .stats-card.sketch-details-card {
+  border-color: #d1d5db !important;
+  border-style: solid !important;
+  border-width: 0.5px !important;
+  box-shadow: none !important;
+}
+
+
+.action-buttons {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb; /* darker than before for visibility */
+}
+
+.like-share-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.like-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.like-count svg {
+  stroke: #ef4444;
+  fill: none;
+}
+
+.share-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: #6b7280;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.share-button:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.share-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  z-index: 20;
+  min-width: 150px;
+}
+
+.share-menu button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: #374151;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.share-menu button:hover {
+  background: #f9fafb;
+}
+
+.stats-list {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  /* make separator a touch darker for visibility */
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+}
+
+.stat-item:not(:last-child) {
+  /* slightly darker divider between stat rows */
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.stat-label {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-label {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.detail-value {
+  color: #111827;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Discussion/Comments Section Styles */
+.discussion-section {
+  margin-top: 3rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.discussion-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.discussion-icon {
+  color: #6b7280;
+  stroke-width: 2;
+}
+
+.discussion-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.comment-form {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group:last-of-type {
+  margin-bottom: 0.75rem;
+}
+
+.name-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: #ffffff;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.name-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.name-input::placeholder {
+  color: #9ca3af;
+}
+
+.comment-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: #ffffff;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.comment-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.comment-textarea::placeholder {
+  color: #9ca3af;
+}
+
+.post-comment-btn {
+  background: #6b7280;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.post-comment-btn:hover:not(:disabled) {
+  background: #4b5563;
+}
+
+.post-comment-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+}
+
+.success-message {
+  color: #059669;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 6px;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.loading-message,
+.no-comments-message {
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #ffffff; /* card background */
+  border: 1px solid rgba(15, 23, 42, 0.16); /* slightly darker border for better contrast */
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+}
+
+.comment-avatar {
+  flex-shrink: 0;
+  margin: 0.125rem 0 0 0; /* small top offset to center visually */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+}
+
+.comment-content {
+  flex: 1;
+  min-width: 0; /* Allows text to wrap properly */
+}
+
+
+
+.comment-text {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  word-wrap: break-word;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 640px) {
+  .discussion-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .discussion-title {
+    font-size: 1.25rem;
+  }
+  
+  .comment-form {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .comment-item {
+    gap: 0.75rem;
+  }
+  
+  .post-comment-btn {
+    width: 100%;
+  }
 }
 
 .sketch-detail-container {
@@ -859,24 +1753,50 @@ nav::after {
 .sketch-detail-image {
   width: 100%;
   height: auto;
-  max-height: 80vh;
+  max-height: 85vh; /* Increased from 80vh */
   object-fit: contain;
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 12px; /* reduced edge radius */
+  box-shadow: none;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
+  display: block;
+  background: transparent; /* remove background so container clipping shows rounded corners */
+}
+
+/* No image zoom: the wrapper controls the display area; keep image at natural scale */
+
+/* Ensure the image container clips the image so border-radius is visible */
+.single-view-image {
+  border-radius: 12px !important;
+  overflow: visible !important;
+  /* ensure the container and image align and clip properly */
   display: block;
 }
 
-.sketch-detail-image:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+/* Force the image to inherit the container's rounding and be block-level so clipping works */
+.single-view-image > img,
+.single-view-image .sketch-detail-image {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  -webkit-border-radius: 12px !important;
+  -moz-border-radius: 12px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  -webkit-clip-path: inset(0 round 12px) !important;
+  clip-path: inset(0 round 12px) !important;
+}
+
+/* Stronger fallback in case a later global img rule overrides rounding */
+.sketch-detail-content .single-view-image > img,
+.sketch-detail-content .single-view-image .sketch-detail-image {
+  border-radius: 12px !important;
 }
 
 .sketch-info {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   padding: 2.5rem;
-  border-radius: 0.75rem;
+  border-radius: 16px; /* Increased from 0.375rem for more rounded edges */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   border: 1px solid #e5e7eb;
 }
@@ -932,7 +1852,7 @@ nav::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
   padding: 1.5rem;
   border-radius: 0.75rem;
   border: 1px solid #e5e7eb;
@@ -979,16 +1899,7 @@ nav::after {
 
 /* Responsive design for navigation section */
 @media (max-width: 768px) {
-  .sketch-navigation-section {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-  
-  .sketch-nav-counter {
-    order: -1;
-  }
-  
+  /* Responsive adjustments for navigation on small screens */
   .sketch-nav-link {
     justify-content: center;
   }
@@ -996,7 +1907,7 @@ nav::after {
 
 /* Enhanced navigation info styling */
 .sketch-detail-content .flex.items-center.justify-between {
-  background: #f9fafb;
+  background: #ffffff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   border: 1px solid #e5e7eb;
@@ -1004,7 +1915,7 @@ nav::after {
 
 /* Like/Dislike section enhancement */
 .pt-4.border-t {
-  background: #f8fafc;
+  background: #ffffff;
   padding: 1.5rem;
   border-radius: 0.5rem;
   margin-top: 1rem;
@@ -1054,6 +1965,78 @@ footer {
   display: none;
 }
 
+/* Small shimmer placeholder used for inline stat counts while loading */
+.stat-shimmer {
+  display: inline-block;
+  width: 32px;
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f3f4f6 25%, #e6eefc 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Clickable like badge in detail sidebar */
+.clickable-like {
+  border-radius: 12px;
+  padding: 6px 8px;
+  transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease;
+}
+
+.clickable-like:hover {
+  cursor: pointer;
+  background: rgba(243,244,246,0.6);
+  transform: translateY(-2px);
+  color: #b91c1c; /* darker red on hover */
+}
+
+/* When the user clicks, we temporarily apply a black color state via the `clicked-black` class */
+.clickable-like.clicked-black,
+.like-count.clicked-black {
+  background: #000000 !important;
+  border-color: #000000 !important;
+  color: #ffffff !important; /* white text on black background */
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.clickable-like.clicked-black svg,
+.like-count.clicked-black svg {
+  stroke: #ffffff !important; /* white icon */
+  fill: none;
+}
+
+.clickable-like:active {
+  transform: translateY(0);
+}
+
+/* When liked: change color and make it stand out */
+.clickable-like.liked,
+.like-count.liked {
+  background: #000000 !important; /* black background when liked */
+  border-color: #000000 !important;
+  color: #ffffff !important; /* white text */
+  font-weight: 600;
+}
+
+/* Heart icon: filled red when liked */
+.clickable-like.liked svg,
+.like-count.liked svg {
+  stroke: #ef4444 !important;
+  fill: #ef4444 !important;
+}
+
+/* Active/focus styles for accessibility */
+.clickable-like:active, .clickable-like:focus {
+  outline: none;
+  transform: translateY(1px);
+}
+
 .flex {
   display: flex;
 }
@@ -1093,6 +2076,29 @@ footer {
 
 .rich-text-content em {
   font-style: italic;
+}
+
+/* Let the detail image occupy more layout space (not clipped) on medium+ screens */
+@media (min-width: 768px) {
+  /* On desktop make the image fill the view area; crop sides if necessary to avoid white bars */
+  .image-center > img.sketch-detail-image {
+    width: auto !important;
+    /* Increase desktop image height to ~1.5x of previous to enlarge view area */
+    height: 95vh !important; /* larger visual area */
+    object-fit: cover !important; /* crop to fill the area */
+    max-width: none !important;
+    position: static !important;
+    transform: none !important; /* no scaling */
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .single-view-image {
+    overflow: hidden !important; /* clip scaled image edges */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
 }
 
 /* Mobile padding fixes: ensure content has a small right padding so text/images don't get truncated */
@@ -1204,8 +2210,21 @@ footer {
     font-size: 1.875rem;
   }
   
+  /* Center the gallery header (title + tagline) on wider screens as well */
+  .gallery-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
   .gallery-description {
     font-size: 1rem;
+    text-align: center; /* center the tagline under the title */
+    display: block;
+    width: 100%;
+    max-width: 900px;
+    margin: 0.5rem auto 0 auto;
   }
   
   .page-container {
@@ -1217,7 +2236,7 @@ footer {
   }
   
   .sketch-image-container {
-    height: 250px;
+    height: 320px;
   }
   
   .sketch-card-content {
@@ -1286,9 +2305,12 @@ footer {
   box-sizing: border-box !important;
 }
 
+/* Keep img defaults minimal so our wrapper controls rounding. Remove global radius to avoid unwanted background showing behind the wrapper. */
 img {
   max-width: 100%;
   height: auto;
+  border-radius: 0; /* don't force a radius here; wrapper handles clipping */
+  background: transparent;
 }
 
 /* Animations */
@@ -1302,6 +2324,58 @@ img {
 }
 
 /* Fullscreen Modal */
+/* Fullscreen image orientation handling */
+.fullscreen-image.portrait {
+  max-width: 75% !important; /* Increased from 70% */
+  max-height: 90% !important;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 0 !important; /* remove rounding in fullscreen */
+}
+
+.fullscreen-image.landscape {
+  max-width: 95% !important;
+  max-height: 85% !important; /* Increased from 80% */
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 0 !important; /* remove rounding in fullscreen */
+}
+
+/* Mobile responsive orientations */
+@media (max-width: 768px) {
+  .card-image-section.portrait {
+    height: 380px; /* Increased from 320px */
+  }
+  
+  .card-image-section.landscape {
+    height: 280px; /* Increased from 240px */
+  }
+  
+  .sketch-detail-image.portrait {
+    max-width: 100%;
+    max-height: 65vh; /* Increased from 60vh */
+    border-radius: 12px; /* Slightly less rounded on mobile */
+  }
+  
+  .sketch-detail-image.landscape {
+    max-width: 100%;
+    max-height: 55vh; /* Increased from 50vh */
+    border-radius: 12px; /* Slightly less rounded on mobile */
+  }
+  
+  .fullscreen-image.portrait {
+    max-width: 90% !important;
+    max-height: 85% !important; /* Increased from 80% */
+    border-radius: 12px;
+  }
+  
+  .fullscreen-image.landscape {
+    max-width: 95% !important;
+    max-height: 75% !important; /* Increased from 70% */
+    border-radius: 12px;
+  }
+}
+
 .fullscreen-modal {
   position: fixed;
   top: 0;
@@ -1397,7 +2471,8 @@ img {
   display: flex;
   margin-bottom: 1.5rem;
   justify-content: center;
-  overflow: hidden;
+  /* Do not clip corners in fullscreen modal so the image can show square corners */
+  overflow: visible !important;
 }
 
 .fullscreen-image {
@@ -1406,6 +2481,7 @@ img {
   object-fit: contain;
   cursor: grab;
   transition: transform 0.1s ease-out;
+  border-radius: 0 !important; /* ensure no rounding in fullscreen */
 }
 
 .fullscreen-image.dragging {
@@ -1477,7 +2553,7 @@ img {
 /* Sketch cards */
 .sketch-card {
   background: white;
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -1493,8 +2569,9 @@ img {
 
 .sketch-image-container {
   width: 100%;
-  height: 300px;
-  background: #f3f4f6;
+  height: 400px;
+  background: white;
+  border-radius: 8px;
   position: relative;
   overflow: hidden;
 }
@@ -1503,6 +2580,7 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 8px;
   transition: transform 0.3s;
 }
 
@@ -1574,9 +2652,7 @@ img {
     font-size: 1.875rem;
   }
   
-  .gallery-description {
-    font-size: 1rem;
-  }
+
   
   .page-container {
     padding: 0 0.5rem;
@@ -1587,7 +2663,7 @@ img {
   }
   
   .sketch-image-container {
-    height: 250px;
+    height: 320px;
   }
   
   .sketch-card-content {
@@ -1617,9 +2693,12 @@ img {
   box-sizing: border-box !important;
 }
 
+/* Keep img defaults minimal so our wrapper controls rounding. Remove global radius to avoid unwanted background showing behind the wrapper. */
 img {
   max-width: 100%;
   height: auto;
+  border-radius: 0; /* don't force a radius here; wrapper handles clipping */
+  background: transparent;
 }
 
 /* Rich text content */
