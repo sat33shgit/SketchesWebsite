@@ -27,7 +27,7 @@ const ReactionPicker = ({ sketchId }) => {
         if (!mounted) return
         setLikes(stats.likes || 0)
         setUserLiked(!!stats.userLiked)
-      } catch (e) {
+      } catch {
         // ignore
       }
       // read selected reaction from localStorage

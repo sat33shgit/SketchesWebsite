@@ -17,7 +17,7 @@ const getDeviceId = () => {
 }
 
 // Fallback localStorage functions
-const getStatsFromLocalStorage = (sketchId) => {
+const _getStatsFromLocalStorage = (sketchId) => {
   try {
     const likes = JSON.parse(localStorage.getItem('sketch_likes') || '{}')
     const dislikes = JSON.parse(localStorage.getItem('sketch_dislikes') || '{}')
@@ -36,7 +36,7 @@ const getStatsFromLocalStorage = (sketchId) => {
   }
 }
 
-const saveStatsToLocalStorage = (sketchId, stats) => {
+const _saveStatsToLocalStorage = (sketchId, stats) => {
   try {
     const likes = JSON.parse(localStorage.getItem('sketch_likes') || '{}')
     const dislikes = JSON.parse(localStorage.getItem('sketch_dislikes') || '{}')
@@ -67,7 +67,7 @@ const saveStatsToLocalStorage = (sketchId, stats) => {
 }
 
 // Fetch data from JSONBin
-const fetchFromJSONBin = async () => {
+const _fetchFromJSONBin = async () => {
   try {
     const response = await fetch(`${JSONBIN_API_URL}/b/${BIN_ID}/latest`, {
       method: 'GET',
@@ -91,7 +91,7 @@ const fetchFromJSONBin = async () => {
 }
 
 // Save data to JSONBin
-const saveToJSONBin = async (data) => {
+const _saveToJSONBin = async (data) => {
   try {
     // For demo purposes, we'll use localStorage as JSONBin requires API key for writes
     // In production, you would set up a proper API key

@@ -1,5 +1,5 @@
 import CommentsSection from '../components/CommentsSection'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
@@ -23,19 +23,24 @@ const SketchDetail = () => {
   // for DB-provided description rather than showing local markdown/plain text.
   const [sketch, setSketch] = useState(localSketch ? { ...localSketch, description: null } : null)
 
+  const location = useLocation()
+
   // Reset the visible sketch and image UI state whenever the route id changes.
-  // This ensures keyboard navigation (which changes the route) immediately
-  // displays the new sketch image instead of preserving the previous one.
+  // If navigation included `{ state: { keepFullscreen: true } }` then preserve fullscreen.
   useEffect(() => {
     const fresh = localSketch ? { ...localSketch, description: null } : null
     setSketch(fresh)
     // Reset image UI state so the new image isn't shown with previous zoom/pan
-    setIsFullscreen(false)
+    // Preserve fullscreen when navigation explicitly requested it via location.state
+    const keep = location && location.state && location.state.keepFullscreen
+    if (!keep) {
+      setIsFullscreen(false)
+    }
     setZoomLevel(1)
     setImagePosition({ x: 0, y: 0 })
     setIsDragging(false)
     setDragStart({ x: 0, y: 0 })
-  }, [id])
+  }, [id, localSketch, location])
   
   // Track sketch visit
   useAnalytics('sketch', id)
@@ -70,8 +75,8 @@ const SketchDetail = () => {
 
         // If API returned non-ok or missing sketch, do not overwrite local metadata's description.
         if (!cancelled) console.warn(`SketchDetail: API returned no sketch for id=${id}`)
-      } catch (err) {
-        console.warn('Could not fetch sketch details from API:', err && err.message)
+      } catch {
+        console.warn('Could not fetch sketch details from API:')
       }
     }
     if (id) load()
@@ -83,15 +88,15 @@ const SketchDetail = () => {
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const [aboutComments, setAboutComments] = useState([])
-  const [showCopySuccess, setShowCopySuccess] = useState(false)
+  const [, setAboutComments] = useState([])
+  const [, setShowCopySuccess] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
   const [detailLikeCount, setDetailLikeCount] = useState(null)
   const [detailLikeLoading, setDetailLikeLoading] = useState(true)
   const [detailLiked, setDetailLiked] = useState(() => {
     try {
       return typeof window !== 'undefined' && localStorage.getItem(`user_liked_${id}`) === 'true'
-    } catch (e) {
+    } catch {
       return false
     }
   })
@@ -113,23 +118,25 @@ const SketchDetail = () => {
   const previousSketch = currentIndex > 0 ? sketches[currentIndex - 1] : null
   const nextSketch = currentIndex < sketches.length - 1 ? sketches[currentIndex + 1] : null
 
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     if (previousSketch) {
-      navigate(`/sketch/${previousSketch.id}`);
+      // When navigating from fullscreen, signal the new route to keep fullscreen
+      navigate(`/sketch/${previousSketch.id}`, { state: { keepFullscreen: isFullscreen } });
       setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }, 0);
     }
-  }
+  }, [previousSketch, navigate, isFullscreen])
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (nextSketch) {
-      navigate(`/sketch/${nextSketch.id}`);
+      // When navigating from fullscreen, signal the new route to keep fullscreen
+      navigate(`/sketch/${nextSketch.id}`, { state: { keepFullscreen: isFullscreen } });
       setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }, 0);
     }
-  }
+  }, [nextSketch, navigate, isFullscreen])
 
   // Share functionality
   const handleCopyURL = async () => {
@@ -140,7 +147,7 @@ const SketchDetail = () => {
       setShowCopySuccess(true)
       setShowShareMenu(false)
       setTimeout(() => setShowCopySuccess(false), 2000)
-    } catch (err) {
+    } catch {
       // Fallback for older browsers
       const textArea = document.createElement('textarea')
       textArea.value = currentURL
@@ -155,31 +162,24 @@ const SketchDetail = () => {
   }
 
   const handleShareFacebook = () => {
-    const url = encodeURIComponent(window.location.href)
     const shareText = encodeURIComponent(`Check out this amazing pencil sketch: "${sketch.title}" by Sateesh Kumar Boggarapu`)
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${shareText}`, '_blank', 'width=600,height=400')
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${shareText}`, '_blank', 'width=600,height=400')
     setShowShareMenu(false)
   }
 
   const handleShareTwitter = () => {
-    const url = encodeURIComponent(window.location.href)
     const text = encodeURIComponent(`Check out this amazing pencil sketch: "${sketch.title}" by Sateesh Kumar Boggarapu`)
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'width=600,height=400')
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(window.location.href)}`, '_blank', 'width=600,height=400')
     setShowShareMenu(false)
   }
 
   const handleShareWhatsApp = () => {
-    const url = encodeURIComponent(window.location.href)
     const text = encodeURIComponent(`Check out this amazing pencil sketch: "${sketch.title}" by Sateesh Kumar Boggarapu ${window.location.href}`)
     window.open(`https://wa.me/?text=${text}`, '_blank')
     setShowShareMenu(false)
   }
 
-  const handleShareInstagram = () => {
-    // Instagram doesn't support direct URL sharing, so we'll copy the URL and show instructions
-    handleCopyURL()
-    alert('Instagram doesn\'t support direct link sharing. The URL has been copied to your clipboard. You can paste it in your Instagram post or story!')
-  }
+  // Instagram sharing isn't used in the UI; keep helper removed to avoid unused symbol
 
   const toggleShareMenu = () => {
     setShowShareMenu(!showShareMenu)
@@ -263,7 +263,7 @@ const SketchDetail = () => {
     setImagePosition({ x: 0, y: 0 })
   }, [])
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = useCallback((e) => {
     if (zoomLevel > 1) {
       setIsDragging(true)
       setDragStart({
@@ -271,20 +271,20 @@ const SketchDetail = () => {
         y: e.clientY - imagePosition.y
       })
     }
-  }
+  }, [zoomLevel, imagePosition])
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (isDragging && zoomLevel > 1) {
       setImagePosition({
         x: e.clientX - dragStart.x,
         y: e.clientY - dragStart.y
       })
     }
-  }
+  }, [isDragging, zoomLevel, dragStart])
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false)
-  }
+  }, [])
 
   const handleWheel = (e) => {
     // Only handle wheel when fullscreen is active
@@ -313,18 +313,12 @@ const SketchDetail = () => {
       resetZoom()
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault()
-      const currentIdx = sketches.findIndex(s => s.id === parseInt(id))
-      const prevSketch = currentIdx > 0 ? sketches[currentIdx - 1] : null
-      if (prevSketch) {
-        navigate(`/sketch/${prevSketch.id}`)
-      }
+      // In fullscreen use goToPrevious which will preserve fullscreen state
+      goToPrevious()
     } else if (e.key === 'ArrowRight') {
       e.preventDefault()
-      const currentIdx = sketches.findIndex(s => s.id === parseInt(id))
-      const nextSk = currentIdx < sketches.length - 1 ? sketches[currentIdx + 1] : null
-      if (nextSk) {
-        navigate(`/sketch/${nextSk.id}`)
-      }
+      // In fullscreen use goToNext which will preserve fullscreen state
+      goToNext()
     }
   }, [id, navigate, closeFullscreen, zoomIn, zoomOut, resetZoom])
 
@@ -341,7 +335,7 @@ const SketchDetail = () => {
         window.removeEventListener('mouseup', handleMouseUp)
       }
     }
-  }, [isFullscreen, handleKeyDown, isDragging, dragStart, imagePosition])
+  }, [isFullscreen, handleKeyDown, handleMouseMove, handleMouseUp, isDragging, dragStart, imagePosition])
 
   // Add navigation keyboard shortcuts when not in fullscreen
   useEffect(() => {
@@ -359,7 +353,7 @@ const SketchDetail = () => {
       window.addEventListener('keydown', handleGlobalKeyDown)
       return () => window.removeEventListener('keydown', handleGlobalKeyDown)
     }
-  }, [isFullscreen, currentIndex])
+  }, [isFullscreen, currentIndex, goToPrevious, goToNext])
 
 
 
@@ -393,8 +387,8 @@ const SketchDetail = () => {
           setDetailLikeCount(Number(stats.likes) || 0)
           setDetailLiked(Boolean(stats.userLiked))
         }
-      } catch (err) {
-        console.error('Error fetching sketch stats:', err)
+      } catch {
+        console.error('Error fetching sketch stats:')
         if (!cancelled) setDetailLikeCount(0)
       } finally {
         if (!cancelled) setDetailLikeLoading(false)
@@ -560,6 +554,7 @@ const SketchDetail = () => {
                 {/* Technique & Process removed as per request */}
 
                 {/* Comments Section */}
+                <div aria-hidden="true" style={{ height: '1px', background: '#e5e7eb', margin: '24px 0' }} />
                 <CommentsSection sketchId={id} sketchName={sketch.title} />
               </div>
 
@@ -609,7 +604,7 @@ const SketchDetail = () => {
                               } else if (newStats && typeof newStats.likes === 'number') {
                                 setDetailLikeCount(newStats.likes)
                               }
-                            } catch (fetchErr) {
+                              } catch {
                               // If stats fetch fails, fall back to returned newStats
                               if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
                             }
@@ -632,7 +627,7 @@ const SketchDetail = () => {
                               } else if (newStats && typeof newStats.likes === 'number') {
                                 setDetailLikeCount(newStats.likes)
                               }
-                            } catch (fetchErr) {
+                            } catch {
                               if (newStats && typeof newStats.likes === 'number') setDetailLikeCount(newStats.likes)
                             }
                           } catch (err) {
@@ -680,7 +675,7 @@ const SketchDetail = () => {
                 >
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.medium')}</span>
-                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Graphite</span>
+                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>6B to 5H Pencils</span>
                   </div>
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -692,7 +687,7 @@ const SketchDetail = () => {
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.paper')}</span>
-                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Strathmore</span>
+                    <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Drawing Paper</span>
                   </div>
                 </div>
               </div>

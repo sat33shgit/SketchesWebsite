@@ -13,56 +13,12 @@ const getDeviceId = () => {
   return deviceId
 }
 
-// Fallback localStorage functions
-const getStatsFromLocalStorage = (sketchId) => {
-  try {
-    const likes = JSON.parse(localStorage.getItem('sketch_likes') || '{}')
-    const dislikes = JSON.parse(localStorage.getItem('sketch_dislikes') || '{}')
-    const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
-    const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
-    
-    return {
-      likes: likes[sketchId] || 0,
-      dislikes: dislikes[sketchId] || 0,
-      userLiked,
-      userDisliked
-    }
-  } catch (error) {
-    return { likes: 0, dislikes: 0, userLiked: false, userDisliked: false }
-  }
-}
-
-const saveToLocalStorage = (sketchId, stats) => {
-  try {
-    const likes = JSON.parse(localStorage.getItem('sketch_likes') || '{}')
-    const dislikes = JSON.parse(localStorage.getItem('sketch_dislikes') || '{}')
-    
-    likes[sketchId] = stats.likes
-    dislikes[sketchId] = stats.dislikes
-    
-    localStorage.setItem('sketch_likes', JSON.stringify(likes))
-    localStorage.setItem('sketch_dislikes', JSON.stringify(dislikes))
-    
-    if (stats.userLiked) {
-      localStorage.setItem(`user_liked_${sketchId}`, 'true')
-    } else {
-      localStorage.removeItem(`user_liked_${sketchId}`)
-    }
-    
-    if (stats.userDisliked) {
-      localStorage.setItem(`user_disliked_${sketchId}`, 'true')
-    } else {
-      localStorage.removeItem(`user_disliked_${sketchId}`)
-    }
-  } catch (error) {
-    console.error('Error saving to localStorage:', error)
-  }
-}
-
-// Get sketch statistics from Vercel API
+// Get sketch statistics from Vercel API (always fetch from API, no caching) (always fetch from API, no caching)
 export const getSketchStats = async (sketchId) => {
   try {
-    const response = await fetch(`/api/sketches/${sketchId}/stats`)
+    const response = await fetch(`/api/sketches/${sketchId}/stats`, {
+      cache: 'no-store' // Force fresh fetch from API
+    })
 
     if (response.ok) {
       const result = await response.json()
@@ -87,7 +43,7 @@ export const getSketchStats = async (sketchId) => {
         }
       }
 
-      const deviceId = getDeviceId()
+      // Read userLiked state from localStorage only (for client-side UI state)
       const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
       const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
 
@@ -98,24 +54,25 @@ export const getSketchStats = async (sketchId) => {
         userDisliked
       }
 
-      // Save to localStorage for caching
-      saveToLocalStorage(sketchId, stats)
       return stats
     }
   } catch (error) {
-    // API unavailable, fall back to localStorage
+    console.error('Error fetching sketch stats from API:', error)
   }
   
-  // Fallback to localStorage
-  const localStats = getStatsFromLocalStorage(sketchId)
-  return localStats
+  // If API fails, return zeros (no localStorage fallback for counts)
+  const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
+  const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
+  return { likes: 0, dislikes: 0, userLiked, userDisliked }
 }
 
-// Toggle like using Vercel API
+// Toggle like using Vercel API (always calls Postgres-backed API)
 export const toggleLike = async (sketchId) => {
   const deviceId = getDeviceId()
-  const currentStats = getStatsFromLocalStorage(sketchId)
-  const action = currentStats.userLiked ? 'unlike' : 'like'
+  
+  // Read current user state from localStorage (UI state only, not counts)
+  const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
+  const action = userLiked ? 'unlike' : 'like'
   
   try {
     const response = await fetch(`/api/sketches/${sketchId}/like`, {
@@ -135,41 +92,53 @@ export const toggleLike = async (sketchId) => {
           userLiked: Boolean(result.data.userLiked),
           userDisliked: Boolean(result.data.userDisliked)
         }
-        saveToLocalStorage(sketchId, newStats)
+        
+        // Update only user state in localStorage (not counts)
+        if (newStats.userLiked) {
+          localStorage.setItem(`user_liked_${sketchId}`, 'true')
+        } else {
+          localStorage.removeItem(`user_liked_${sketchId}`)
+        }
+        if (newStats.userDisliked) {
+          localStorage.setItem(`user_disliked_${sketchId}`, 'true')
+        } else {
+          localStorage.removeItem(`user_disliked_${sketchId}`)
+        }
+        
         console.log('API like toggle result:', newStats)
         return newStats
       }
       // Some endpoints may return { success: true, count: N }
       if (result && typeof result.count === 'number') {
         const newStats = { likes: Number(result.count), dislikes: 0, userLiked: action === 'like', userDisliked: false }
-        saveToLocalStorage(sketchId, newStats)
+        
+        // Update user state in localStorage
+        if (action === 'like') {
+          localStorage.setItem(`user_liked_${sketchId}`, 'true')
+        } else {
+          localStorage.removeItem(`user_liked_${sketchId}`)
+        }
+        
         return newStats
       }
     }
+    
+    throw new Error('API request failed or returned unexpected format')
   } catch (error) {
-    console.log('API unavailable, using localStorage:', error.message)
+    console.error('Error toggling like via API:', error.message)
+    throw error // Propagate error so UI can handle it
   }
-  
-  // Fallback to localStorage
-  const newStats = {
-    likes: currentStats.userLiked ? Math.max(0, currentStats.likes - 1) : currentStats.likes + 1,
-    dislikes: currentStats.userDisliked ? Math.max(0, currentStats.dislikes - 1) : currentStats.dislikes,
-    userLiked: !currentStats.userLiked,
-    userDisliked: false
-  }
-  
-  saveToLocalStorage(sketchId, newStats)
-  console.log('Local fallback like toggle:', newStats)
-  return newStats
 }
 
-// Toggle dislike using Vercel API
+// Toggle dislike using Vercel API (always calls Postgres-backed API)
 export const toggleDislike = async (sketchId) => {
   console.log(`Toggling dislike for sketch ${sketchId}`)
   
   const deviceId = getDeviceId()
-  const currentStats = getStatsFromLocalStorage(sketchId)
-  const action = currentStats.userDisliked ? 'undislike' : 'dislike'
+  
+  // Read current user state from localStorage (UI state only, not counts)
+  const userDisliked = localStorage.getItem(`user_disliked_${sketchId}`) === 'true'
+  const action = userDisliked ? 'undislike' : 'dislike'
   
   try {
     const response = await fetch(`/api/sketches/${sketchId}/dislike`, {
@@ -184,24 +153,27 @@ export const toggleDislike = async (sketchId) => {
       const result = await response.json()
       if (result.success) {
         const newStats = result.data
-        saveToLocalStorage(sketchId, newStats)
+        
+        // Update only user state in localStorage (not counts)
+        if (newStats.userLiked) {
+          localStorage.setItem(`user_liked_${sketchId}`, 'true')
+        } else {
+          localStorage.removeItem(`user_liked_${sketchId}`)
+        }
+        if (newStats.userDisliked) {
+          localStorage.setItem(`user_disliked_${sketchId}`, 'true')
+        } else {
+          localStorage.removeItem(`user_disliked_${sketchId}`)
+        }
+        
         console.log('API dislike toggle result:', newStats)
         return newStats
       }
     }
+    
+    throw new Error('API request failed or returned unexpected format')
   } catch (error) {
-    console.log('API unavailable, using localStorage:', error.message)
+    console.error('Error toggling dislike via API:', error.message)
+    throw error // Propagate error so UI can handle it
   }
-  
-  // Fallback to localStorage
-  const newStats = {
-    likes: currentStats.userLiked ? Math.max(0, currentStats.likes - 1) : currentStats.likes,
-    dislikes: currentStats.userDisliked ? Math.max(0, currentStats.dislikes - 1) : currentStats.dislikes + 1,
-    userLiked: false,
-    userDisliked: !currentStats.userDisliked
-  }
-  
-  saveToLocalStorage(sketchId, newStats)
-  console.log('Local fallback dislike toggle:', newStats)
-  return newStats
 }

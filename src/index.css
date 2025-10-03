@@ -226,6 +226,7 @@ nav::after {
   gap: 0.5rem;
   text-decoration: none;
   color: #1f2937;
+  height: 48px;
 }
 
 .logo-icon {
@@ -242,6 +243,14 @@ nav::after {
 .logo-text {
   font-size: 1.25rem;
   font-weight: 600;
+}
+
+.logo-image {
+  height: 40px !important;
+  width: auto !important;
+  max-width: 160px !important;
+  display: block !important;
+  object-fit: contain !important;
 }
 
 .nav-links {
@@ -346,6 +355,31 @@ nav::after {
 .min-h-screen h1,
 .gallery-page h1 {
   text-align: center !important;
+}
+
+/* Gallery header styles */
+.gallery-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.gallery-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.gallery-description {
+  font-size: 1rem;
+  text-align: center !important;
+  display: block;
+  width: 100%;
+  max-width: 900px;
+  margin: 1.5rem auto 0 auto;
+  padding: 0 1rem;
 }
 
 /* Orientation-based image display */
@@ -592,7 +626,13 @@ nav::after {
   border: 1px solid #e5e7eb; /* match contact card borders */
   border-radius: 12px;
   padding: 1.5rem;
+  padding-bottom: 0.5rem; /* reduce bottom padding */
   box-shadow: none; /* remove shadow so border is clean */
+}
+
+/* Remove bottom padding completely for about-text container */
+.about-content > .about-text {
+  padding-bottom: 0 !important;
 }
 
 /* Shrink-wrap the profile card so the border only covers the content area and center it in the grid cell */
@@ -691,19 +731,23 @@ nav::after {
 .about-text {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* reduced gap to tighten spacing between paragraphs */
+  gap: 0 !important; /* remove gap to eliminate spacing between paragraphs */
 }
 
 .about-text p {
   font-size: 1.125rem;
   color: #374151;
   line-height: 1.7;
-  margin: 0 0 0.5rem 0; /* smaller bottom margin to reduce extra space */
+  margin: 0 0 0 0 !important; /* remove all margins */
 }
 
 /* Avoid extra gap at the bottom of the about card by removing bottom margin on the last paragraph */
-.about-text > div:last-child p {
-  margin-bottom: 0;
+.about-text > div:last-child p,
+.about-text p:last-child,
+.about-text > div:last-child,
+.about-text div:last-of-type {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .artist-statement {
@@ -813,8 +857,9 @@ nav::after {
 .contact-header p {
   font-size: 1.125rem;
   color: #6b7280;
-  max-width: 512px;
+  max-width: 100%;
   margin: 0 auto;
+  white-space: nowrap;
 }
 
 .contact-content {
@@ -926,6 +971,14 @@ nav::after {
 .submit-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.message-disabled-notice {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-style: italic;
+  margin-top: 0.75rem;
+  text-align: center;
 }
 
 .status-message {
@@ -1617,6 +1670,12 @@ nav::after {
   border-radius: 6px;
 }
 
+.comments-disabled-message {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
 .comments-list {
   display: flex;
   flex-direction: column;
@@ -2220,11 +2279,12 @@ footer {
 
   .gallery-description {
     font-size: 1rem;
-    text-align: center; /* center the tagline under the title */
+    text-align: center !important; /* center the tagline under the title */
     display: block;
     width: 100%;
     max-width: 900px;
-    margin: 0.5rem auto 0 auto;
+    margin: 1.5rem auto 0 auto;
+    padding: 0 1rem;
   }
   
   .page-container {
@@ -2306,11 +2366,20 @@ footer {
 }
 
 /* Keep img defaults minimal so our wrapper controls rounding. Remove global radius to avoid unwanted background showing behind the wrapper. */
-img {
+/* Gallery images have their own border-radius rules */
+img:not(.direct-gallery-image):not(.card-image) {
   max-width: 100%;
   height: auto;
   border-radius: 0; /* don't force a radius here; wrapper handles clipping */
   background: transparent;
+}
+
+/* Gallery images should have 8px border radius */
+.direct-gallery-image,
+.card-image,
+.elegant-gallery img,
+.elegant-card img {
+  border-radius: 8px !important;
 }
 
 /* Animations */
@@ -2694,11 +2763,20 @@ img {
 }
 
 /* Keep img defaults minimal so our wrapper controls rounding. Remove global radius to avoid unwanted background showing behind the wrapper. */
-img {
+/* Gallery images have their own border-radius rules */
+img:not(.direct-gallery-image):not(.card-image) {
   max-width: 100%;
   height: auto;
   border-radius: 0; /* don't force a radius here; wrapper handles clipping */
   background: transparent;
+}
+
+/* Gallery images should have 8px border radius */
+.direct-gallery-image,
+.card-image,
+.elegant-gallery img,
+.elegant-card img {
+  border-radius: 8px !important;
 }
 
 /* Rich text content */

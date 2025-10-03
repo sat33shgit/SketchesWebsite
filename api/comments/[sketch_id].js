@@ -1,13 +1,7 @@
 import { sql } from '@vercel/postgres';
-import validator from 'validator';
-
-function stripTags(input) {
-  // Remove all HTML tags
-  return input.replace(/<\/?[^>]+(>|$)/g, "");
-}
 
 export default async function handler(req, res) {
-  const sketchId = req.query.sketchId;
+  // sketchId from query is not used in this consolidated handler
 
     // Removed duplicate POST handler above. All POST logic handled below.
 
@@ -26,7 +20,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST' && typeof body === 'string') {
     try {
       body = JSON.parse(body);
-    } catch (e) {
+    } catch {
       return res.status(400).json({ error: 'Invalid JSON' });
     }
   }
@@ -45,9 +39,9 @@ export default async function handler(req, res) {
         ORDER BY created_at DESC
       `;
       return res.status(200).json(rows);
-    } catch (error) {
-      console.error('GET comments error:', error);
-      return res.status(500).json({ error: error.message });
+    } catch (err) {
+      console.error('GET comments error:', err && (err.message || err));
+      return res.status(500).json({ error: err && err.message });
     }
   } else if (method === 'POST') {
     // Add a new comment
@@ -61,9 +55,9 @@ export default async function handler(req, res) {
         VALUES (${sketch_id}, ${name}, ${comment}, 'Y', CURRENT_TIMESTAMP)
       `;
       return res.status(201).json({ message: 'Comment added' });
-    } catch (error) {
-      console.error('POST comment error:', error, 'Body:', body);
-      return res.status(500).json({ error: error.message });
+    } catch (err) {
+      console.error('POST comment error:', err && (err.message || err), 'Body:', body);
+      return res.status(500).json({ error: err && err.message });
     }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);

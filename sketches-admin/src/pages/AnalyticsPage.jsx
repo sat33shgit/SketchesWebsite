@@ -8,28 +8,28 @@ const AnalyticsPage = () => {
   const [error, setError] = useState(null)
   const [timeframe, setTimeframe] = useState('30d')
 
-  const fetchAnalytics = async (tf = timeframe) => {
+  const fetchAnalytics = React.useCallback(async (tf = timeframe) => {
     setLoading(true)
     setError(null)
     try {
       const response = await fetch(`${API_BASE}/api/analytics/stats?timeframe=${tf}`)
       const result = await response.json()
       
-      if (result.success) {
+      if (result && result.success) {
         setAnalyticsData(result.data)
       } else {
-        setError(result.error || 'Failed to fetch analytics')
+        setError((result && result.error) || 'Failed to fetch analytics')
       }
     } catch (err) {
-      setError('Error fetching analytics: ' + err.message)
+      setError('Error fetching analytics: ' + (err && err.message))
     } finally {
       setLoading(false)
     }
-  }
+  }, [timeframe])
 
   useEffect(() => {
     fetchAnalytics()
-  }, [])
+  }, [fetchAnalytics])
 
   const handleTimeframeChange = (tf) => {
     setTimeframe(tf)

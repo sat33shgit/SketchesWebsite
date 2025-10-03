@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify'
 import { sendNotificationEmail } from '../utils/emailService'
 import UserAvatar from './UserAvatar'
+import { useTranslation } from '../i18n'
 
 const CommentsSection = ({ sketchId, sketchName }) => {
+  const { t } = useTranslation();
   const [comments, setComments] = useState([]);
   const [form, setForm] = useState({ name: '', comment: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [commentsDisabled, setCommentsDisabled] = useState(false);
 
 
   useEffect(() => {
@@ -17,11 +20,31 @@ const CommentsSection = ({ sketchId, sketchName }) => {
     fetch(`/api/comments/${sketchId}`)
       .then(res => res.json())
       .then(data => {
-        setComments(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+          setComments(Array.isArray(data) ? data : []);
+          setLoading(false);
+        })
+        .catch(() => { setLoading(false); });
   }, [sketchId]);
+
+  // Fetch configuration to check if comments are disabled
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await fetch('/api/config?key=comments_disable');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data && data.data.comments_disable === 'Y') {
+            setCommentsDisabled(true);
+          }
+        }
+      } catch (err) {
+        // If config fetch fails, default to comments enabled
+        console.error('Failed to fetch config:', err);
+      }
+    };
+    
+    fetchConfig();
+  }, []);
 
   // Clear success and error messages when sketchId changes
   useEffect(() => {
@@ -85,15 +108,16 @@ const CommentsSection = ({ sketchId, sketchName }) => {
           commenterName: commenterName,
           message: `Hi,\nA new comment was posted on "${sketchName || sketchId}" by ${commenterName}\n\n${commenterComment}`
         })
-      } catch (emailErr) {
-        console.error('Failed to send comment notification email', emailErr)
+      } catch {
+        // Best-effort: don't surface email errors to the user
+        console.error('Failed to send comment notification email')
       }
       // Refresh comments
       const commentsRes = await fetch(`/api/comments/${sketchId}`);
       const commentsData = await commentsRes.json();
       setComments(Array.isArray(commentsData) ? commentsData : []);
-    } catch (err) {
-      setError('Failed to post comment.');
+    } catch {
+      setError('Failed to post comment.')
     }
     setLoading(false);
   };
@@ -117,6 +141,7 @@ const CommentsSection = ({ sketchId, sketchName }) => {
             onChange={handleChange}
             placeholder="Your name"
             className="name-input"
+            disabled={commentsDisabled}
             required
           />
         </div>
@@ -129,12 +154,20 @@ const CommentsSection = ({ sketchId, sketchName }) => {
             rows={4}
             className="comment-textarea"
             style={{ height: '80px', minHeight: '30px' }}
+            disabled={commentsDisabled}
             required
           />
         </div>
-        <button type="submit" disabled={loading} className="post-comment-btn">
-          {loading ? 'Posting...' : 'Post Comment'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button type="submit" disabled={loading || commentsDisabled} className="post-comment-btn">
+            {loading ? 'Posting...' : 'Post Comment'}
+          </button>
+          {commentsDisabled && (
+            <span className="comments-disabled-message">
+              {t('sketch.commentsDisabled')}
+            </span>
+          )}
+        </div>
         
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}

@@ -7,13 +7,13 @@ async function addSketchTestData() {
     
     // Insert test data for actual sketch IDs
     await sql`
-      INSERT INTO page_visits (page_type, page_id, visit_count, ip_hash, user_agent_hash) 
+      INSERT INTO page_visits (page_type, page_id, visit_count, country) 
       VALUES 
-        ('sketch', '11', 5, 'test_hash_oliver_swapna', 'test_ua_1'),
-        ('sketch', '12', 3, 'test_hash_oliver_sateesh', 'test_ua_2'),
-        ('sketch', '10', 8, 'test_hash_mother', 'test_ua_3'),
-        ('sketch', '9', 4, 'test_hash_juliana', 'test_ua_4')
-      ON CONFLICT (page_type, page_id, ip_hash, user_agent_hash) 
+        ('sketch', '11', 5, 'India'),
+        ('sketch', '12', 3, 'United States'),
+        ('sketch', '10', 8, 'United Kingdom'),
+        ('sketch', '9', 4, 'Canada')
+      ON CONFLICT (page_type, page_id, country) 
       DO UPDATE SET 
         visit_count = page_visits.visit_count + EXCLUDED.visit_count,
         updated_at = CURRENT_TIMESTAMP
@@ -26,7 +26,7 @@ async function addSketchTestData() {
     console.log(`📊 Found ${visits.rows.length} sketch visits:`);
     
     visits.rows.forEach((row, i) => {
-      console.log(`${i + 1}. Sketch ID ${row.page_id} - ${row.visit_count} visits`);
+      console.log(`${i + 1}. Sketch ID ${row.page_id} - ${row.visit_count} visits from ${row.country}`);
     });
     
   } catch (error) {

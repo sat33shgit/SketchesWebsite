@@ -7,8 +7,8 @@ export const getLikesData = () => {
   try {
     const likes = localStorage.getItem(LIKES_STORAGE_KEY)
     return likes ? JSON.parse(likes) : {}
-  } catch (error) {
-    console.error('Error reading likes from localStorage:', error)
+  } catch {
+    // Ignore localStorage read errors in environments where it's not available
     return {}
   }
 }
@@ -18,8 +18,8 @@ export const getDislikesData = () => {
   try {
     const dislikes = localStorage.getItem(DISLIKES_STORAGE_KEY)
     return dislikes ? JSON.parse(dislikes) : {}
-  } catch (error) {
-    console.error('Error reading dislikes from localStorage:', error)
+  } catch {
+    // Ignore localStorage read errors in environments where it's not available
     return {}
   }
 }
@@ -28,8 +28,8 @@ export const getDislikesData = () => {
 export const saveLikesData = (likesData) => {
   try {
     localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likesData))
-  } catch (error) {
-    console.error('Error saving likes to localStorage:', error)
+  } catch {
+    // Ignore save errors (best-effort caching)
   }
 }
 
@@ -37,8 +37,8 @@ export const saveLikesData = (likesData) => {
 export const saveDislikesData = (dislikesData) => {
   try {
     localStorage.setItem(DISLIKES_STORAGE_KEY, JSON.stringify(dislikesData))
-  } catch (error) {
-    console.error('Error saving dislikes to localStorage:', error)
+  } catch {
+    // Ignore save errors (best-effort caching)
   }
 }
 
@@ -59,7 +59,7 @@ export const hasUserLiked = (sketchId) => {
   try {
     const userLikes = localStorage.getItem(`user_liked_${sketchId}`)
     return userLikes === 'true'
-  } catch (error) {
+  } catch {
     return false
   }
 }
@@ -69,7 +69,7 @@ export const hasUserDisliked = (sketchId) => {
   try {
     const userDislikes = localStorage.getItem(`user_disliked_${sketchId}`)
     return userDislikes === 'true'
-  } catch (error) {
+  } catch {
     return false
   }
 }

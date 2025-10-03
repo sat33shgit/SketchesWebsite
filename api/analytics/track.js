@@ -2,7 +2,6 @@
 // File: /api/analytics/track.js
 
 import { sql } from '@vercel/postgres';
-import crypto from 'crypto';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -22,24 +21,38 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid pageType' });
     }
 
-    // Get client info for basic deduplication
-    const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || '';
-    const userAgent = req.headers['user-agent'] || '';
-    
-    // Create hashes for privacy (don't store raw IP/UA)
-    const ipHash = crypto.createHash('sha256').update(clientIP + 'salt').digest('hex');
-    const userAgentHash = crypto.createHash('sha256').update(userAgent + 'salt').digest('hex');
+    // Get country code from Vercel/Cloudflare headers (two-letter ISO code)
+    const countryCode = (req.headers['x-vercel-ip-country'] || 
+                         req.headers['cf-ipcountry'] || // Cloudflare
+                         'Unknown').toUpperCase();
+
+    // Convert ISO country code (eg. 'CA') to full country name (eg. 'canada')
+    function getFullCountryName(code) {
+      if (!code || code === 'UNKNOWN') return 'Unknown';
+      try {
+        // Intl.DisplayNames returns localized region names (e.g., 'Canada')
+        const dn = new Intl.DisplayNames(['en'], { type: 'region' });
+        const name = dn.of(code);
+        // Return the display name as-is (capitalized where appropriate). Fallback to uppercased code.
+        return (name || code).toString();
+      } catch (err) {
+        // Fallback: return the uppercased code (e.g., 'CA')
+        return code.toUpperCase();
+      }
+    }
+
+    const country = getFullCountryName(countryCode);
 
     // For pages without page_id (home, about, contact), use the page_type as page_id
     // This ensures the unique constraint works properly
     const normalizedPageId = pageId || pageType;
 
     // Insert or update visit count
-    // Using ON CONFLICT to increment visit_count if same visitor visits again
+    // Using ON CONFLICT to increment visit_count if same country visits again
     await sql`
-      INSERT INTO page_visits (page_type, page_id, visit_count, ip_hash, user_agent_hash, updated_at)
-      VALUES (${pageType}, ${normalizedPageId}, 1, ${ipHash}, ${userAgentHash}, CURRENT_TIMESTAMP)
-      ON CONFLICT (page_type, page_id, ip_hash, user_agent_hash)
+      INSERT INTO page_visits (page_type, page_id, visit_count, country, updated_at)
+  VALUES (${pageType}, ${normalizedPageId}, 1, ${country}, CURRENT_TIMESTAMP)
+      ON CONFLICT (page_type, page_id, country)
       DO UPDATE SET 
         visit_count = page_visits.visit_count + 1,
         updated_at = CURRENT_TIMESTAMP
@@ -47,7 +60,8 @@ export default async function handler(req, res) {
 
     res.status(200).json({ 
       success: true, 
-      message: 'Visit tracked successfully' 
+      message: 'Visit tracked successfully',
+      country: country
     });
 
   } catch (error) {

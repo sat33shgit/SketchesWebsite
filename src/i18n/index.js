@@ -8,9 +8,8 @@ async function loadNamespace(lang, namespace) {
 	try {
 		const mod = await import(`../locales/${lang}/${namespace}.json`)
 		return mod.default || mod
-	} catch (err) {
+	} catch {
 		// keep a quiet fallback; consumer can handle missing keys
-		// (avoid referencing err directly to reduce lint noise in some environments)
 		return {}
 	}
 }

@@ -37,7 +37,7 @@ async function setupContactDatabase() {
 
     // Create the update trigger function
     await sql`
-      CREATE OR REPLACE FUNCTION update_updated_at_column()
+      CREATE OR REPLACE FUNCTION upupdated_at_at_column()
       RETURNS TRIGGER AS $$
       BEGIN
           NEW.updated_at = CURRENT_TIMESTAMP;
@@ -56,7 +56,7 @@ async function setupContactDatabase() {
       CREATE TRIGGER update_contact_messages_updated_at
           BEFORE UPDATE ON contact_messages
           FOR EACH ROW
-          EXECUTE FUNCTION update_updated_at_column()
+          EXECUTE FUNCTION upupdated_at_at_column()
     `;
 
     console.log('✅ Trigger created/verified');

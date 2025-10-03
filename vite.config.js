@@ -20,7 +20,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3003', // Local API server
+        target: 'http://127.0.0.1:3003', // Local API server (use IPv4 loopback to avoid ::1 on Windows)
         changeOrigin: true,
         secure: false,
       },

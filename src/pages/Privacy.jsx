@@ -8,7 +8,7 @@ const Privacy = () => {
     // Ensure the page is scrolled to top and the main header receives focus for accessibility
     try {
       window.scrollTo(0, 0)
-    } catch (e) {
+    } catch {
       // ignore in non-browser environments
     }
     if (topRef.current && typeof topRef.current.focus === 'function') {

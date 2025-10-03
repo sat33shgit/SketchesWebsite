@@ -10,6 +10,7 @@
     "messageLabel": "Message *",
     "submit": "Send Message",
     "submitting": "Sending Message...",
+    "messageDisabled": "Message posting is currently disabled",
 
     "validation": {
       "required": "All fields are required.",

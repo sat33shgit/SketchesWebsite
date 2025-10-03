@@ -18,7 +18,7 @@ const CommentCount = ({ sketchId, showIcon = true, size = 'small' }) => {
         let data
         try {
           data = await res.json()
-        } catch (e) {
+        } catch {
           data = null
         }
 
@@ -44,7 +44,7 @@ const CommentCount = ({ sketchId, showIcon = true, size = 'small' }) => {
           // Non-ok response, still set derived count if any
           setCount(typeof next === 'number' ? next : 0)
         }
-      } catch (err) {
+      } catch {
         // Network error or API unreachable -> fallback to 0
         if (mounted) setCount(0)
       } finally {
