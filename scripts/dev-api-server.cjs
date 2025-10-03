@@ -244,6 +244,107 @@ app.get('/api/sketches/:id/stats', async (req, res) => {
   }
 });
 
+// Local POST handlers to mirror consolidated serverless behavior (like/react/dislike)
+app.post('/api/sketches/:id/like', async (req, res) => {
+  const sketchId = req.params.id;
+  const { deviceId, action } = req.body || {};
+  if (!deviceId) return res.status(400).json({ error: 'Device ID is required' });
+  if (!action || (action !== 'like' && action !== 'unlike')) {
+    return res.status(400).json({ success: false, error: 'Invalid action. Expected "like" or "unlike"' });
+  }
+
+  try {
+    // Try DB first
+    try {
+      if (action === 'like') {
+        await sql`INSERT INTO sketch_reactions (sketch_id, smiley_type, count) VALUES (${sketchId}, 'like', 1) ON CONFLICT (sketch_id, smiley_type) DO UPDATE SET count = sketch_reactions.count + 1, updated_at = NOW()`
+      } else {
+        await sql`UPDATE sketch_reactions SET count = GREATEST(count - 1, 0), updated_at = NOW() WHERE sketch_id = ${sketchId} AND smiley_type = 'like'`
+      }
+      const { rows } = await sql`SELECT count FROM sketch_reactions WHERE sketch_id = ${sketchId} AND smiley_type = 'like'`
+      const updatedCount = rows.length > 0 ? rows[0].count : 0
+      return res.status(200).json({ success: true, data: { sketchId, likes: updatedCount, dislikes: 0, userLiked: action === 'like', userDisliked: false } })
+    } catch (dbErr) {
+      console.warn('Postgres unavailable for like handler, falling back to file store:', dbErr && dbErr.message)
+    }
+
+    // Fallback to file store
+    const fs = require('fs')
+    const path = require('path')
+    const storePath = path.join(process.cwd(), 'data', 'likes.json')
+    let store = {}
+    try {
+      const dir = path.dirname(storePath)
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+      if (fs.existsSync(storePath)) {
+        const raw = fs.readFileSync(storePath, 'utf8')
+        store = raw ? JSON.parse(raw) : {}
+      } else {
+        store = {}
+      }
+    } catch (err) {
+      console.warn('Could not read likes store, starting with empty store:', err && err.message)
+      store = {}
+    }
+
+    const current = store[sketchId] || { likes: 0, dislikes: 0, likedBy: [], dislikedBy: [] }
+    current.likedBy = Array.isArray(current.likedBy) ? current.likedBy : []
+    current.dislikedBy = Array.isArray(current.dislikedBy) ? current.dislikedBy : []
+    if (action === 'like') {
+      if (!current.likedBy.includes(deviceId)) {
+        current.likes = (current.likes || 0) + 1
+        current.likedBy = current.likedBy.concat([deviceId])
+      }
+      current.dislikedBy = (current.dislikedBy || []).filter(d => d !== deviceId)
+    } else if (action === 'unlike') {
+      if (current.likedBy && current.likedBy.includes(deviceId)) {
+        current.likes = Math.max(0, (current.likes || 0) - 1)
+        current.likedBy = current.likedBy.filter(d => d !== deviceId)
+      }
+    }
+    store[sketchId] = current
+    try { fs.writeFileSync(storePath, JSON.stringify(store, null, 2), 'utf8') } catch (writeErr) { console.error('Warning: failed to persist likes store (write failed):', writeErr && writeErr.message) }
+    return res.status(200).json({ success: true, data: { sketchId, likes: current.likes, dislikes: current.dislikes || 0, userLiked: current.likedBy && current.likedBy.includes(deviceId), userDisliked: current.dislikedBy && current.dislikedBy.includes(deviceId) } })
+  } catch (error) {
+    console.error('Dev POST /api/sketches/:id/like error:', error)
+    return res.status(500).json({ success: false, error: 'Failed to toggle like' })
+  }
+})
+
+app.post('/api/sketches/:id/react', async (req, res) => {
+  const sketchId = req.params.id
+  const { smileyType, deviceId, action } = req.body || {}
+  if (!sketchId || !smileyType || !deviceId || !action) {
+    return res.status(400).json({ error: 'Missing required fields' })
+  }
+  try {
+    if (action === 'like') {
+      await sql`INSERT INTO sketch_reactions (sketch_id, smiley_type, count) VALUES (${sketchId}, ${smileyType}, 1) ON CONFLICT (sketch_id, smiley_type) DO UPDATE SET count = sketch_reactions.count + 1, updated_at = NOW()`
+    } else if (action === 'unlike') {
+      await sql`UPDATE sketch_reactions SET count = GREATEST(count - 1, 0), updated_at = NOW() WHERE sketch_id = ${sketchId} AND smiley_type = ${smileyType}`
+    }
+    const { rows } = await sql`SELECT count FROM sketch_reactions WHERE sketch_id = ${sketchId} AND smiley_type = ${smileyType}`
+    const updatedCount = rows.length > 0 ? rows[0].count : null
+    return res.status(200).json({ success: true, count: updatedCount })
+  } catch (error) {
+    console.error('Dev POST /api/sketches/:id/react error:', error)
+    return res.status(500).json({ error: 'Failed to save reaction', details: error && error.message })
+  }
+})
+
+app.post('/api/sketches/:id/dislike', async (req, res) => {
+  const sketchId = req.params.id
+  try {
+    const { deviceId, action } = req.body || {}
+    if (!deviceId) return res.status(400).json({ error: 'Device ID is required' })
+    const response = { success: true, data: { sketchId, likes: Math.floor(Math.random() * 50) + 10, dislikes: action === 'dislike' ? Math.floor(Math.random() * 10) + 1 : Math.floor(Math.random() * 10) + 1, userLiked: false, userDisliked: action === 'dislike' } }
+    return res.status(200).json(response)
+  } catch (error) {
+    console.error('Dev POST /api/sketches/:id/dislike error:', error)
+    return res.status(500).json({ success: false, error: 'Failed to toggle dislike' })
+  }
+})
+
 // Analytics stats endpoint
 app.get('/api/analytics/stats', async (req, res) => {
   try {
