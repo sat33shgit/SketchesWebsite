@@ -1,5 +1,5 @@
 import CommentsSection from '../components/CommentsSection'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import { getSketchById, sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
@@ -23,19 +23,24 @@ const SketchDetail = () => {
   // for DB-provided description rather than showing local markdown/plain text.
   const [sketch, setSketch] = useState(localSketch ? { ...localSketch, description: null } : null)
 
+  const location = useLocation()
+
   // Reset the visible sketch and image UI state whenever the route id changes.
-  // This ensures keyboard navigation (which changes the route) immediately
-  // displays the new sketch image instead of preserving the previous one.
+  // If navigation included `{ state: { keepFullscreen: true } }` then preserve fullscreen.
   useEffect(() => {
     const fresh = localSketch ? { ...localSketch, description: null } : null
     setSketch(fresh)
     // Reset image UI state so the new image isn't shown with previous zoom/pan
-    setIsFullscreen(false)
+    // Preserve fullscreen when navigation explicitly requested it via location.state
+    const keep = location && location.state && location.state.keepFullscreen
+    if (!keep) {
+      setIsFullscreen(false)
+    }
     setZoomLevel(1)
     setImagePosition({ x: 0, y: 0 })
     setIsDragging(false)
     setDragStart({ x: 0, y: 0 })
-  }, [id, localSketch])
+  }, [id, localSketch, location])
   
   // Track sketch visit
   useAnalytics('sketch', id)
@@ -115,21 +120,23 @@ const SketchDetail = () => {
 
   const goToPrevious = useCallback(() => {
     if (previousSketch) {
-      navigate(`/sketch/${previousSketch.id}`);
+      // When navigating from fullscreen, signal the new route to keep fullscreen
+      navigate(`/sketch/${previousSketch.id}`, { state: { keepFullscreen: isFullscreen } });
       setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }, 0);
     }
-  }, [previousSketch, navigate])
+  }, [previousSketch, navigate, isFullscreen])
 
   const goToNext = useCallback(() => {
     if (nextSketch) {
-      navigate(`/sketch/${nextSketch.id}`);
+      // When navigating from fullscreen, signal the new route to keep fullscreen
+      navigate(`/sketch/${nextSketch.id}`, { state: { keepFullscreen: isFullscreen } });
       setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }, 0);
     }
-  }, [nextSketch, navigate])
+  }, [nextSketch, navigate, isFullscreen])
 
   // Share functionality
   const handleCopyURL = async () => {
@@ -306,18 +313,12 @@ const SketchDetail = () => {
       resetZoom()
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault()
-      const currentIdx = sketches.findIndex(s => s.id === parseInt(id))
-      const prevSketch = currentIdx > 0 ? sketches[currentIdx - 1] : null
-      if (prevSketch) {
-        navigate(`/sketch/${prevSketch.id}`)
-      }
+      // In fullscreen use goToPrevious which will preserve fullscreen state
+      goToPrevious()
     } else if (e.key === 'ArrowRight') {
       e.preventDefault()
-      const currentIdx = sketches.findIndex(s => s.id === parseInt(id))
-      const nextSk = currentIdx < sketches.length - 1 ? sketches[currentIdx + 1] : null
-      if (nextSk) {
-        navigate(`/sketch/${nextSk.id}`)
-      }
+      // In fullscreen use goToNext which will preserve fullscreen state
+      goToNext()
     }
   }, [id, navigate, closeFullscreen, zoomIn, zoomOut, resetZoom])
 
