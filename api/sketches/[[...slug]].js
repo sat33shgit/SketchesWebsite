@@ -3,8 +3,11 @@ import { sql } from '@vercel/postgres'
 // Consolidated handler for multiple sketch-related routes to avoid many
 // individual serverless functions (keeps <=12 functions for Hobby plan).
 export default async function handler(req, res) {
+  console.log(`🔧 API Handler called: ${req.method} ${req.url}`)
+  
   const rawSlug = req.query && req.query.slug
   let slug = rawSlug ? (Array.isArray(rawSlug) ? rawSlug : [rawSlug]) : []
+  console.log(`📝 Raw slug:`, rawSlug, `Processed slug:`, slug)
 
   // Some runtimes (or proxied requests) do not populate req.query.slug for
   // catch-all routes. As a fallback, parse the path from req.url and extract
@@ -14,17 +17,21 @@ export default async function handler(req, res) {
     try {
       const path = String(req.url).split('?')[0]
       const parts = path.split('/').filter(Boolean)
+      console.log(`🔀 URL fallback parsing: path=${path}, parts=`, parts)
       const idx = parts.findIndex(p => p === 'sketches')
       if (idx >= 0) {
         slug = parts.slice(idx + 1)
+        console.log(`✅ URL fallback result: slug=`, slug)
       }
     } catch (e) {
+      console.error(`❌ URL fallback error:`, e)
       // ignore and keep slug as-is
     }
   }
 
   // Helper: get sketch id when present
   const sketchId = slug.length > 0 ? slug[0] : null
+  console.log(`🎯 Parsed sketchId: ${sketchId}, sub: ${slug[1] || 'none'}`)
 
   try {
     // GET /api/sketches/likes
@@ -154,7 +161,10 @@ export default async function handler(req, res) {
 
       // POST /api/sketches/[id]/like  (deviceId, action)
       if (sub === 'like' && req.method === 'POST') {
+        console.log(`💖 Like handler triggered for sketch ${sketchId}`)
         const { deviceId, action } = req.body || {}
+        console.log(`📱 Like request: deviceId=${deviceId}, action=${action}`)
+        
         if (!deviceId) {
           console.warn('Missing deviceId in request body for like toggle:', sketchId)
           return res.status(400).json({ error: 'Device ID is required' })
@@ -235,5 +245,7 @@ export default async function handler(req, res) {
   }
 
   // If no route matched
+  console.log(`❌ No route matched for: ${req.method} ${req.url}`)
+  console.log(`❌ Parsed data: sketchId=${sketchId}, sub=${slug[1] || 'none'}, slug=`, slug)
   return res.status(404).json({ success: false, error: 'Not found' })
 }
