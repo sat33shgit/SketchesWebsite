@@ -431,7 +431,7 @@ const SketchDetail = () => {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              {t('sketch.backToGallery', '← Back to Gallery')}
+              {t('sketch.backToGallery', 'Back to Gallery')}
             </Link>
           </div>
           
