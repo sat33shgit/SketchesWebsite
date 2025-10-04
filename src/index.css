@@ -1114,11 +1114,14 @@ nav::after {
   text-decoration: none;
   color: #666;
   font-weight: 500;
-  transition: color 0.2s;
+  padding: 8px 12px; /* add padding for better hover area */
+  border-radius: 6px; /* add border radius to match button style */
+  transition: color 0.2s, background-color 0.2s;
 }
 
 .back-nav-link:hover {
-  color: #333;
+  color: #3b82f6; /* same blue as View Details button */
+  background: #f3f4f6; /* same light grey background as View Details button */
 }
 
 .header-actions {
