@@ -60,10 +60,11 @@
     "dislikedBy": []
   },
   "11": {
-    "likes": 18,
+    "likes": 19,
     "dislikes": 1,
     "likedBy": [
-      "device_test_123"
+      "device_test_123",
+      "test-device-123"
     ],
     "dislikedBy": []
   },
