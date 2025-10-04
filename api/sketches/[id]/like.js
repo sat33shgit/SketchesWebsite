@@ -1,10 +1,6 @@
 import { sql } from '@vercel/postgres'
 
 export default async function handler(req, res) {
-  console.log('💖 Like route called:', req.method, req.url)
-  console.log('Query params:', req.query)
-  console.log('Body:', req.body)
-  
   const { id: sketchId } = req.query
   
   if (req.method !== 'POST') {
@@ -12,10 +8,8 @@ export default async function handler(req, res) {
   }
 
   const { deviceId, action } = req.body || {}
-  console.log(`📱 Like request: deviceId=${deviceId}, action=${action}`)
   
   if (!deviceId) {
-    console.warn('Missing deviceId in request body for like toggle:', sketchId)
     return res.status(400).json({ error: 'Device ID is required' })
   }
   if (!action || (action !== 'like' && action !== 'unlike')) {

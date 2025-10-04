@@ -1,9 +1,6 @@
 import { sql } from '@vercel/postgres'
 
 export default async function handler(req, res) {
-  console.log('📊 Stats route called:', req.method, req.url)
-  console.log('Query params:', req.query)
-  
   const { id: sketchId } = req.query
   
   if (req.method !== 'GET') {

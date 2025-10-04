@@ -15,18 +15,13 @@ const getDeviceId = () => {
 
 // Get sketch statistics from Vercel API (always fetch from API, no caching) (always fetch from API, no caching)
 export const getSketchStats = async (sketchId) => {
-  console.log(`📊 getSketchStats called for sketch ${sketchId}`)
-  
   try {
-    console.log(`🌐 Fetching stats from /api/sketches/${sketchId}/stats`)
     const response = await fetch(`/api/sketches/${sketchId}/stats`, {
       cache: 'no-store' // Force fresh fetch from API
     })
-    console.log(`📡 Stats response status: ${response.status}`)
 
     if (response.ok) {
       const result = await response.json()
-      console.log(`✅ Stats API response:`, result)
 
       // result may be one of several shapes. Normalize to { likes, dislikes }
       let likes = 0
@@ -73,17 +68,13 @@ export const getSketchStats = async (sketchId) => {
 
 // Toggle like using Vercel API (always calls Postgres-backed API)
 export const toggleLike = async (sketchId) => {
-  console.log(`🔄 toggleLike called for sketch ${sketchId}`)
   const deviceId = getDeviceId()
-  console.log(`📱 Device ID: ${deviceId}`)
   
   // Read current user state from localStorage (UI state only, not counts)
   const userLiked = localStorage.getItem(`user_liked_${sketchId}`) === 'true'
   const action = userLiked ? 'unlike' : 'like'
-  console.log(`👆 Current state: userLiked=${userLiked}, action=${action}`)
   
   try {
-    console.log(`🌐 Making request to /api/sketches/${sketchId}/like`)
     const response = await fetch(`/api/sketches/${sketchId}/like`, {
       method: 'POST',
       headers: {
@@ -92,11 +83,8 @@ export const toggleLike = async (sketchId) => {
       body: JSON.stringify({ deviceId, action })
     })
     
-    console.log(`📡 Response status: ${response.status} ${response.statusText}`)
-    
     if (response.ok) {
       const result = await response.json()
-      console.log(`✅ API response:`, result)
       if (result && result.success && result.data) {
         const newStats = {
           likes: Number(result.data.likes ?? result.data.count ?? 0) || 0,
@@ -117,12 +105,10 @@ export const toggleLike = async (sketchId) => {
           localStorage.removeItem(`user_disliked_${sketchId}`)
         }
         
-        console.log('📊 Processed stats:', newStats)
         return newStats
       }
       // Some endpoints may return { success: true, count: N }
       if (result && typeof result.count === 'number') {
-        console.log('📈 Using count format from API')
         const newStats = { likes: Number(result.count), dislikes: 0, userLiked: action === 'like', userDisliked: false }
         
         // Update user state in localStorage
@@ -136,10 +122,9 @@ export const toggleLike = async (sketchId) => {
       }
     }
     
-    console.error('❌ API request failed or returned unexpected format:', response.status, await response.text())
     throw new Error('API request failed or returned unexpected format')
   } catch (error) {
-    console.error('💥 Error toggling like via API:', error.message)
+    console.error('Error toggling like via API:', error.message)
     throw error // Propagate error so UI can handle it
   }
 }
