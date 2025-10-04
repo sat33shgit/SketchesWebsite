@@ -1,7 +1,8 @@
-import React, { createContext, useContext } from 'react'
+// Direct translation access without React Context to prevent FOUC
 import translations from './translations.js'
 
-// Pre-create the translation function to ensure it's immediately available
+// Create the translation function as a module-level constant
+// This ensures it's available immediately when imported
 const t = (key, fallback) => {
   if (!key) return fallback || key
   const parts = key.split('.')
@@ -25,30 +26,18 @@ const t = (key, fallback) => {
   return (curr !== undefined && curr !== null) ? curr : (fallback || key)
 }
 
-// Create context with the stable translation function
-const I18nContext = createContext({ 
-  t, 
-  lang: 'en', 
-  setLang: () => {} 
-})
-
-export function I18nProvider({ children, defaultLang = 'en' }) {
-  // Use the pre-created stable translation function
-  const contextValue = {
-    t,
-    lang: defaultLang,
-    setLang: () => {}
-  }
-
-  return (
-    <I18nContext.Provider value={contextValue}>
-      {children}
-    </I18nContext.Provider>
-  )
-}
-
+// Export the translation function directly
 export function useTranslation() {
-  return useContext(I18nContext)
+  return { 
+    t, 
+    lang: 'en', 
+    setLang: () => {} 
+  }
 }
 
-export default I18nContext
+// Keep the provider for compatibility but it does nothing now
+export function I18nProvider({ children }) {
+  return children
+}
+
+export default { useTranslation, I18nProvider }

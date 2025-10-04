@@ -1,0 +1,16 @@
+export default {
+  "nav": {
+    "logoText": "Sateesh Sketches",
+    "gallery": "Gallery",
+    "about": "About",
+    "contact": "Contact",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mobileMenuLabel": "Main menu"
+  },
+  "footer": {
+    "privacy": "Privacy Policy",
+    "contact": "Contact",
+    "copyright": "© 2025 Sateesh Boggarapu. All artwork is original and protected by copyright."
+  }
+}

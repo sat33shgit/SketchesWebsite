@@ -1,0 +1,25 @@
+export default {
+  "notFound": {
+    "title": "Sketch not found",
+    "returnLink": "Return to Sketch Book"
+  },
+  "backToGallery": "Back to Gallery",
+  "share": "Share",
+  "copyLink": "Copy link",
+  "facebook": "Facebook",
+  "twitter": "Twitter",
+  "whatsapp": "WhatsApp",
+  "instagramNote": "Instagram doesn't support direct link sharing. The URL has been copied to your clipboard.",
+  "viewFullscreen": "View Fullscreen",
+  "completed": "Completed",
+  "aboutThisPiece": "About This Sketch",
+  "comments": "Comments",
+  "commentsLabel": "Comments",
+  "commentsDisabled": "Comment posting is currently disabled",
+  "medium": "Medium",
+  "time": "Time",
+  "paper": "Paper",
+  "noImage": "No Image Available",
+  "exitFullscreen": "Exit Fullscreen",
+  "zoomInstructions": "Click and drag to pan around"
+}
