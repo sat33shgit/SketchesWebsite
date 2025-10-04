@@ -21,7 +21,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="logo">
           <img src="/images/logo.png" alt="Sateesh Sketches" className="logo-image" />
-          <span className="logo-text">{t('ui.nav.logoText')}</span>
+          <span className="logo-text">{t('ui.nav.logoText', 'Sateesh Sketches')}</span>
         </Link>
 
         {/* Navigation Links */}
@@ -30,26 +30,26 @@ const Navbar = () => {
             to="/"
             className={isActive('/') ? 'active' : ''}
           >
-            {t('ui.nav.gallery')}
+            {t('ui.nav.gallery', 'Gallery')}
           </Link>
           <Link
             to="/about"
             className={isActive('/about') ? 'active' : ''}
           >
-            {t('ui.nav.about')}
+            {t('ui.nav.about', 'About')}
           </Link>
           <Link
             to="/contact"
             className={isActive('/contact') ? 'active' : ''}
           >
-            {t('ui.nav.contact')}
+            {t('ui.nav.contact', 'Contact')}
           </Link>
         </div>
 
         {/* Mobile hamburger toggle (shown on small screens) */}
         <button
           className="hamburger"
-          aria-label={menuOpen ? t('ui.nav.closeMenu') : t('ui.nav.openMenu')}
+          aria-label={menuOpen ? t('ui.nav.closeMenu', 'Close menu') : t('ui.nav.openMenu', 'Open menu')}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(!menuOpen)}
         >
@@ -72,10 +72,10 @@ const Navbar = () => {
 
       {/* Mobile menu (renders below header when open) */}
       {menuOpen && (
-        <div className="mobile-menu" role="menu" aria-label={t('ui.nav.mobileMenuLabel')}>
-          <Link to="/" className={isActive('/') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.gallery')}</Link>
-          <Link to="/about" className={isActive('/about') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.about')}</Link>
-          <Link to="/contact" className={isActive('/contact') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.contact')}</Link>
+        <div className="mobile-menu" role="menu" aria-label={t('ui.nav.mobileMenuLabel', 'Main menu')}>
+          <Link to="/" className={isActive('/') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.gallery', 'Gallery')}</Link>
+          <Link to="/about" className={isActive('/about') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.about', 'About')}</Link>
+          <Link to="/contact" className={isActive('/contact') ? 'active' : ''} onClick={() => setMenuOpen(false)}>{t('ui.nav.contact', 'Contact')}</Link>
         </div>
       )}
     </nav>

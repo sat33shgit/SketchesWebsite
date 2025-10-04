@@ -99,8 +99,8 @@ const Gallery = () => {
     <div className="min-h-screen bg-white gallery-page">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="gallery-header">
-          <h1 className="gallery-title">{t('gallery.title')}</h1>
-          <p className="gallery-description">{t('gallery.description')}</p>
+          <h1 className="gallery-title">{t('gallery.title', 'Gallery')}</h1>
+          <p className="gallery-description">{t('gallery.description', 'Welcome to my collection of sketches and digital art. Each piece tells a story and captures moments of inspiration.')}</p>
         </div>
 
         <div className="elegant-gallery">
@@ -153,7 +153,7 @@ const Gallery = () => {
                         {commentLoading ? <span className="stat-shimmer" aria-hidden="true"></span> : (commentCounts[sketch.id] ?? 0)}
                       </span>
                     </div>
-                    <Link to={`/sketch/${sketch.id}`} className="view-details">{t('gallery.viewDetails')}<span className="arrow-icon">-&gt;</span></Link>
+                    <Link to={`/sketch/${sketch.id}`} className="view-details">{t('gallery.viewDetails', 'View Details')}<span className="arrow-icon">-&gt;</span></Link>
                   </div>
                 </div>
               </div>

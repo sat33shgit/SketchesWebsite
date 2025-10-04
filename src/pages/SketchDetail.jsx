@@ -207,9 +207,9 @@ const SketchDetail = () => {
         <div className="sketch-detail-container">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
             <div style={{ textAlign: 'center' }}>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>{t('sketch.notFound.title')}</h1>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', marginBottom: '1rem' }}>{t('sketch.notFound.title', 'Sketch Not Found')}</h1>
               <Link to="/" style={{ color: '#3b82f6', textDecoration: 'none' }}>
-                {t('sketch.notFound.returnLink')}
+                {t('sketch.notFound.returnLink', 'Return to Gallery')}
               </Link>
             </div>
           </div>
@@ -431,7 +431,7 @@ const SketchDetail = () => {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              {t('sketch.backToGallery')}
+              {t('sketch.backToGallery', '← Back to Gallery')}
             </Link>
           </div>
           
@@ -440,7 +440,7 @@ const SketchDetail = () => {
             <div className="share-menu-container">
               <button
                 onClick={toggleShareMenu}
-                aria-label={t('sketch.share')}
+                aria-label={t('sketch.share', 'Share this sketch')}
                 className="share-button"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -458,11 +458,11 @@ const SketchDetail = () => {
                       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
                       <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" strokeWidth="2"/>
                     </svg>
-                    {t('sketch.copyLink')}
+                    {t('sketch.copyLink', 'Copy Link')}
                   </button>
-                  <button onClick={handleShareFacebook}>{t('sketch.facebook')}</button>
-                  <button onClick={handleShareTwitter}>{t('sketch.twitter')}</button>
-                  <button onClick={handleShareWhatsApp}>{t('sketch.whatsapp')}</button>
+                  <button onClick={handleShareFacebook}>{t('sketch.facebook', 'Facebook')}</button>
+                  <button onClick={handleShareTwitter}>{t('sketch.twitter', 'Twitter')}</button>
+                  <button onClick={handleShareWhatsApp}>{t('sketch.whatsapp', 'WhatsApp')}</button>
                 </div>
               )}
             </div>
@@ -470,7 +470,7 @@ const SketchDetail = () => {
             {/* Fullscreen Button */}
             <button
               onClick={openFullscreen}
-              aria-label={t('sketch.viewFullscreen')}
+              aria-label={t('sketch.viewFullscreen', 'View fullscreen')}
               className="fullscreen-button"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -487,12 +487,12 @@ const SketchDetail = () => {
             <div className="meta-row">
               <div className="meta-item">
                 {sketch && sketch.completedDate ? (
-                  `${t('sketch.completed')}: ${new Date(sketch.completedDate).toLocaleDateString('en-US', {
+                  `${t('sketch.completed', 'Completed')}: ${new Date(sketch.completedDate).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                   })}`
-                ) : `${t('sketch.completed')}: —`}
+                ) : `${t('sketch.completed', 'Completed')}: —`}
               </div>
             </div>
           </div>
@@ -545,7 +545,7 @@ const SketchDetail = () => {
               <div className="main-content">
                 {/* About This Piece */}
                 <section className="content-section">
-                  <h2 className="section-title">{t('sketch.aboutThisPiece')}</h2>
+                  <h2 className="section-title">{t('sketch.aboutThisPiece', 'About This Piece')}</h2>
                   <div className="section-content">
                     {parseRichText(sketch.description)}
                   </div>
@@ -657,7 +657,7 @@ const SketchDetail = () => {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', paddingTop: '8px' }}>
                     <div style={{ color: '#6b7280', fontSize: '0.95rem', display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <span style={{ fontWeight: 600 }}><CommentCount sketchId={id} showIcon={true} size="large" /></span>
-                      <span style={{ fontWeight: 400, color: '#000000' }}>{t('sketch.commentsLabel')}</span>
+                      <span style={{ fontWeight: 400, color: '#000000' }}>{t('sketch.commentsLabel', 'Comments')}</span>
                     </div>
                   </div>
                 </div>
@@ -674,19 +674,19 @@ const SketchDetail = () => {
                   }}
                 >
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.medium')}</span>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.medium', 'Medium')}</span>
                     <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>6B to 5H Pencils</span>
                   </div>
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.time')}</span>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.time', 'Time Taken')}</span>
                     <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>
                       {sketch && (sketch.time || sketch.Time) ? (sketch.time || sketch.Time) : '—'}
                     </span>
                   </div>
                   
                   <div className="detail-item" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.paper')}</span>
+                    <span className="detail-label" style={{ color: '#6b7280', fontSize: '14px' }}>{t('sketch.paper', 'Paper')}</span>
                     <span className="detail-value" style={{ color: '#111827', fontSize: '14px', fontWeight: '500' }}>Drawing Paper</span>
                   </div>
                 </div>

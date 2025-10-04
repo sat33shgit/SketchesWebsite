@@ -139,18 +139,18 @@ const Contact = () => {
       <div className="contact-container">
         {/* Header */}
         <div className="contact-header">
-          <h1>{t('contact.title')}</h1>
-          <p>{t('contact.intro')}</p>
+          <h1>{t('contact.title', 'Contact Me')}</h1>
+          <p>{t('contact.intro', 'Have a question about my artwork or interested in commissioning a portrait? I\'d love to hear from you!')}</p>
         </div>
 
         <div className="contact-content">
           {/* Contact Form */}
           <div className="contact-form">
-            <h2>{t('contact.form.heading')}</h2>
+            <h2>{t('contact.form.heading', 'Send a Message')}</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="form-group">
                 <label htmlFor="name">
-                  {t('contact.form.nameLabel')}
+                  {t('contact.form.nameLabel', 'Your Name')}
                 </label>
                 <input
                   type="text"
@@ -166,7 +166,7 @@ const Contact = () => {
 
               <div className="form-group">
                 <label htmlFor="email">
-                  {t('contact.form.emailLabel')}
+                  {t('contact.form.emailLabel', 'Your Email')}
                 </label>
                 <input
                   type="email"
@@ -182,7 +182,7 @@ const Contact = () => {
 
               <div className="form-group">
                 <label htmlFor="subject">
-                  {t('contact.form.subjectLabel')}
+                  {t('contact.form.subjectLabel', 'Subject')}
                 </label>
                 <input
                   type="text"
@@ -198,7 +198,7 @@ const Contact = () => {
 
               <div className="form-group">
                 <label htmlFor="message">
-                  {t('contact.form.messageLabel')}
+                  {t('contact.form.messageLabel', 'Your Message')}
                 </label>
                 <textarea
                   id="message"
@@ -223,14 +223,14 @@ const Contact = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    {t('contact.form.submitting')}
+                    {t('contact.form.submitting', 'Sending...')}
                   </>
                 ) : (
                   <>
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
-                    {t('contact.form.submit')}
+                    {t('contact.form.submit', 'Send Message')}
                   </>
                 )}
               </button>
@@ -238,7 +238,7 @@ const Contact = () => {
               {/* Message Disabled Notice */}
               {messageDisabled && (
                 <div className="message-disabled-notice">
-                  {t('contact.form.messageDisabled')}
+                  {t('contact.form.messageDisabled', 'Contact form is temporarily disabled. Please email me directly at bsateeshk@gmail.com')}
                 </div>
               )}
               
@@ -270,14 +270,14 @@ const Contact = () => {
           <div className="contact-info">
             {/* Contact Details */}
             <div className="contact-info-card">
-              <h2>{t('contact.contactInfo.heading')}</h2>
+              <h2>{t('contact.contactInfo.heading', 'Get in Touch')}</h2>
               <div className="space-y-4">
                 <div className="contact-item">
                   <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <div className="contact-item-content">
-                    <p>{t('contact.contactInfo.emailLabel')}</p>
+                    <p>{t('contact.contactInfo.emailLabel', 'Email')}</p>
                     <a href="mailto:bsateeshk@gmail.com">
                       bsateeshk@gmail.com
                     </a>
@@ -290,8 +290,8 @@ const Contact = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <div className="contact-item-content">
-                    <p>{t('contact.contactInfo.locationLabel')}</p>
-                    <p>{t('contact.contactInfo.locationValue')}</p>
+                    <p>{t('contact.contactInfo.locationLabel', 'Location')}</p>
+                    <p>{t('contact.contactInfo.locationValue', 'Bangalore, India')}</p>
                   </div>
                 </div>
               </div>
@@ -299,7 +299,7 @@ const Contact = () => {
 
             {/* Social Media */}
             <div className="contact-info-card social-media">
-              <h2>{t('contact.social.heading')}</h2>
+              <h2>{t('contact.social.heading', 'Follow Me')}</h2>
               <div className="social-links-contact">
                 <a
                   href="https://www.facebook.com/media/set/?set=a.367537920160&type=3"

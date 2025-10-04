@@ -170,7 +170,7 @@ const CommentsSection = ({ sketchId, sketchName }) => {
           </button>
           {commentsDisabled && (
             <span className="comments-disabled-message">
-              {t('sketch.commentsDisabled')}
+              {t('sketch.commentsDisabled', 'Comments are disabled for this sketch.')}
             </span>
           )}
         </div>
