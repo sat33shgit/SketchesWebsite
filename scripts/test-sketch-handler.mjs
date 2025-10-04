@@ -1,4 +1,4 @@
-import handler from '../api/sketches/[id]/[[...slug]].js'
+import handler from '../api/sketches/[[...slug]].js'
 
 function makeRes() {
   let statusCode = 200
@@ -10,7 +10,11 @@ function makeRes() {
 
 async function runTest() {
   console.log('Testing GET /api/sketches/11')
-  const req = { method: 'GET', query: { id: '11' } }
+  const req = { 
+    method: 'GET', 
+    query: { slug: ['11'] },
+    url: '/api/sketches/11'
+  }
   const res = makeRes()
   await handler(req, res)
 }
