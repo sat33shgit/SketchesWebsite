@@ -1,36 +1,47 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext } from 'react'
 import translations from './translations.js'
 
-const I18nContext = createContext({ t: (k) => k, lang: 'en', setLang: () => {} })
+// Pre-create the translation function to ensure it's immediately available
+const t = (key, fallback) => {
+  if (!key) return fallback || key
+  const parts = key.split('.')
+  const ns = parts[0]
+  const rest = parts.slice(1)
+  
+  // Always use 'en' translations since they're pre-loaded
+  const langData = translations['en'] || {}
+  const data = langData[ns] || {}
+  
+  let curr = data
+  for (const p of rest) {
+    if (curr && Object.prototype.hasOwnProperty.call(curr, p)) {
+      curr = curr[p]
+    } else {
+      curr = undefined
+      break
+    }
+  }
+  
+  return (curr !== undefined && curr !== null) ? curr : (fallback || key)
+}
+
+// Create context with the stable translation function
+const I18nContext = createContext({ 
+  t, 
+  lang: 'en', 
+  setLang: () => {} 
+})
 
 export function I18nProvider({ children, defaultLang = 'en' }) {
-  const [lang, setLang] = useState(defaultLang)
-
-  const t = (key, fallback) => {
-    if (!key) return fallback || key
-    const parts = key.split('.')
-    const ns = parts[0]
-    const rest = parts.slice(1)
-    
-    // Get the language translations (fallback to 'en' if language not found)
-    const langData = translations[lang] || translations['en'] || {}
-    const data = langData[ns] || {}
-    
-    let curr = data
-    for (const p of rest) {
-      if (curr && Object.prototype.hasOwnProperty.call(curr, p)) {
-        curr = curr[p]
-      } else {
-        curr = undefined
-        break
-      }
-    }
-    
-    return (curr !== undefined && curr !== null) ? curr : (fallback || key)
+  // Use the pre-created stable translation function
+  const contextValue = {
+    t,
+    lang: defaultLang,
+    setLang: () => {}
   }
 
   return (
-    <I18nContext.Provider value={{ t, lang, setLang }}>
+    <I18nContext.Provider value={contextValue}>
       {children}
     </I18nContext.Provider>
   )
