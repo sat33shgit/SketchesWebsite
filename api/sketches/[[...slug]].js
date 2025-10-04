@@ -79,7 +79,7 @@ export default async function handler(req, res) {
 
         // fallback to local file
         try {
-          const module = await import('../../../src/data/sketches.js')
+          const module = await import('../../src/data/sketches.js')
           const localSketches = module.sketches || module.default || []
           const found = localSketches.find(s => String(s.id) === String(sketchId))
           if (found) return res.status(200).json({ success: true, data: found })
