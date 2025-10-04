@@ -1,5 +1,6 @@
 import validator from 'validator';
 import { sql } from '@vercel/postgres';
+import { rateLimit, getRateLimitIdentifier } from './utils/rateLimit.js';
 
 function stripTags(input) {
   return input.replace(/<\/?[^>]+(>|$)/g, "");
@@ -18,6 +19,16 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate limiting: 5 contact form submissions per hour per IP
+  const identifier = getRateLimitIdentifier(req)
+  if (!rateLimit(identifier, 5, 3600000)) {
+    return res.status(429).json({ 
+      success: false,
+      message: 'Too many contact form submissions. Please wait before sending another message.',
+      retryAfter: 3600 
+    })
   }
 
   const { name, email, subject, message } = req.body || {};

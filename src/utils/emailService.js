@@ -61,7 +61,7 @@ export const sendNotificationEmail = async ({ sketchName, commenterName, message
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        access_key: '92235cbf-7e66-4121-a028-ba50d463f041',
+        access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || '92235cbf-7e66-4121-a028-ba50d463f041',
   name: commenterName || 'Anonymous',
   message: bodyMessage,
   from_name: commenterName ? `${commenterName}` : 'Anonymous'

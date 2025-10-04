@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://sat33shgit.github.io/SketchesWebsite",
+  "homepage": "https://your-vercel-domain.vercel.app",
   "engines": {
     "node": ">=18.0.0"
   },

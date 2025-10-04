@@ -1,4 +1,5 @@
 import { sql } from '@vercel/postgres'
+import { rateLimit, getRateLimitIdentifier } from '../../utils/rateLimit.js'
 
 export default async function handler(req, res) {
   const { id: sketchId } = req.query
@@ -7,11 +8,27 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  // Rate limiting: 20 requests per minute per IP
+  const identifier = getRateLimitIdentifier(req)
+  if (!rateLimit(identifier, 20, 60000)) {
+    return res.status(429).json({ 
+      error: 'Too many requests. Please slow down.',
+      retryAfter: 60 
+    })
+  }
+
   const { deviceId, action } = req.body || {}
   
-  if (!deviceId) {
-    return res.status(400).json({ error: 'Device ID is required' })
+  // Validate sketch ID
+  if (!sketchId || !/^\d+$/.test(sketchId)) {
+    return res.status(400).json({ error: 'Invalid sketch ID' })
   }
+  
+  // Validate device ID (should be UUID-like)
+  if (!deviceId || typeof deviceId !== 'string' || deviceId.length < 10 || deviceId.length > 50) {
+    return res.status(400).json({ error: 'Invalid device ID' })
+  }
+  
   if (!action || (action !== 'like' && action !== 'unlike')) {
     return res.status(400).json({ success: false, error: 'Invalid action. Expected "like" or "unlike"' })
   }
