@@ -363,7 +363,7 @@ nav::after {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin-bottom: 2rem;
+  margin: 0 0 1rem 0; /* match contact page top margin */
 }
 
 .gallery-title {
@@ -562,12 +562,12 @@ nav::after {
 .about-container {
   max-width: 1024px;
   margin: 0 auto;
-  padding: 4rem 1rem;
+  padding: 2.5rem 1rem; /* reduced top padding to match contact page */
 }
 
 .about-header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin: 0rem 0 2rem 0; /* match contact page header margin, but keep more bottom margin for about content */
 }
 
 .about-header h1 {
@@ -817,7 +817,7 @@ nav::after {
   /* keep inner container spacing but let outer .content handle full-bleed background */
   background: transparent;
   min-height: calc(100vh - var(--header-height));
-  padding-top: 1.5rem;
+  padding-top: 0 rem; /* reduced to match contact page */
 }
 
 /* Apply full-bleed white background on the outer content when showing home or contact pages */
