@@ -761,7 +761,7 @@ nav::after {
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 2.25rem 1.5rem; /* top right bottom left - increased bottom padding for more space */
   margin-top: 1.5rem;
 }
 
@@ -793,7 +793,7 @@ nav::after {
   font-size: 1.125rem; /* increased for better readability */
   line-height: 1.6; /* slightly more breathing room between lines */
   color: #374151;
-  margin: 0; /* remove bottom margin to avoid trailing space in the card */
+  margin: 0 0 0 0; /* add bottom margin for spacing after the text */
   font-weight: 400;
   letter-spacing: 0; /* ensure consistent glyph spacing */
 }

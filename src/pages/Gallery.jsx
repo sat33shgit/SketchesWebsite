@@ -99,8 +99,8 @@ const Gallery = () => {
     <div className="min-h-screen bg-white gallery-page">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="gallery-header">
-          <h1 className="gallery-title">{t('gallery.title', 'Gallery')}</h1>
-          <p className="gallery-description">{t('gallery.description', 'Welcome to my collection of sketches and digital art. Each piece tells a story and captures moments of inspiration.')}</p>
+          <h1 className="gallery-title">{t('gallery.title', 'Pencil Sketches')}</h1>
+          <p className="gallery-description">{t('gallery.description', 'Welcome to my collection of pencil sketches. Each piece tells a story and captures moments of inspiration.')}</p>
         </div>
 
         <div className="elegant-gallery">

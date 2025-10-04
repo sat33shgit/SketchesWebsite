@@ -291,7 +291,7 @@ const Contact = () => {
                   </svg>
                   <div className="contact-item-content">
                     <p>{t('contact.contactInfo.locationLabel', 'Location')}</p>
-                    <p>{t('contact.contactInfo.locationValue', 'Bangalore, India')}</p>
+                    <p>{t('contact.contactInfo.locationValue', 'Victoria, Canada')}</p>
                   </div>
                 </div>
               </div>

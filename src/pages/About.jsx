@@ -35,9 +35,9 @@ const About = () => {
               />
             </div>
             <div className="profile-info">
-              <h2>{t('about.profile.name', 'Sateesh')}</h2>
+              <h2>{t('about.profile.name', 'Sateesh Kumar Boggarapu')}</h2>
               <br></br>
-              <p>{t('about.profile.role', 'Portrait & Sketch Artist')}</p>
+              <p>{t('about.profile.role', 'Pencil Sketch Artist')}</p>
             </div>
           </div>
 
@@ -45,15 +45,22 @@ const About = () => {
           <div className="about-text">
             {/* Bio */}
             <div>
-              <p>{t('about.bio.p1', 'I am a passionate artist with over a decade of experience in portrait and sketch art. My journey began in childhood, inspired by the beauty of human expressions and the stories they tell.')}</p>
+              <p>{t('about.bio.p1', 'I\'m an IT professional and pencil sketch artist living in Victoria, Canada, who grew up in India. I have a deep passion for capturing the essence of my subjects through detailed and life like portraits and still life drawings. My work reflects a profound understanding of light, shadow, and texture, bringing my art to life on paper using pencil(s).')}</p>
             </div>
             <div>
-              <p>{t('about.bio.p2', 'Through my art, I strive to capture not just the physical appearance, but the essence and personality of my subjects. Each sketch is a conversation between the artist and the viewer.')}</p>
+              <p><br></br>{t('about.bio.p2', 'I\'ve been passionate about art since I was a child. For over twenty years, I\'ve focused on creating detailed portraits and sketches.')}</p>
+            </div>
+            <div>
+              <p><br></br>{t('about.bio.p3', 'My goal is to capture more than just what a person looks like; I want to show their true personality and feeling. I use light, shadow, and texture to bring my drawings to life on the page.')}</p>
+            </div>
+            <div>
+              <p><br></br>{t('about.bio.p4', 'Every piece I create is like a conversation with the person looking at it. This dedication to emotion and detail has helped my work gain appreciation from art lovers and collectors.')}</p>
+                <br></br>
             </div>
           </div>
           <div className="artist-statement-card">
             <h3>{t('about.artistStatement.heading', 'Artist Statement')}</h3>
-            <p>{t('about.artistStatement.body', 'Art is the language of the soul. Through sketches and portraits, I aim to create a bridge between the inner world of emotions and the outer expression of beauty. Every line drawn is a step towards understanding humanity.')}</p>
+            <p>{t('about.artistStatement.body', 'My art is a reflection of the world around me, a way to capture the beauty and emotion I see in everyday life. Through pencil sketches, I aim to create a connection between the viewer and the subject, inviting them to see the world through my eyes. Each stroke is a step in a journey of discovery, a process of bringing a vision to life on paper. I am driven by a desire to constantly improve and explore new techniques, pushing the boundaries of what can be achieved with a simple pencil.')}</p>
           </div>
         </div>
       </div>

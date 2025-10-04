@@ -19,7 +19,7 @@ const inlineTranslations = {
     },
     gallery: {
       title: "Pencil Sketches",
-      description: "A curated collection of pencil artwork capturing life's beauty through detailed drawings and artistic expression.",
+      description: "Welcome to my collection of pencil sketches. Each piece tells a story and captures moments of inspiration.",
       viewDetails: "View Details",
       stats: {
         viewsAria: "views",
@@ -28,14 +28,16 @@ const inlineTranslations = {
       }
     },
     about: {
-      title: "About the Artist",
+      title: "About Me",
       profile: {
         name: "Sateesh Kumar Boggarapu",
         role: "Pencil Sketch Artist"
       },
       bio: {
-        p1: "Sateesh is a talented pencil sketch artist based in Victoria, Canada, originally from India. With a passion for capturing the essence of his subjects, Sateesh creates detailed and lifelike portraits, and still life drawings. His work showcases a deep understanding of light, shadow, and texture, bringing his art to life on paper using pencil(s).",
-        p2: "Sateesh's dedication to his craft and his ability to convey emotion through his art have earned him recognition and appreciation from art enthusiasts and collectors alike."
+        p1: "I'm an IT professional and pencil sketch artist living in Victoria, Canada, who grew up in India. I have a deep passion for capturing the essence of my subjects through detailed and life like portraits and still life drawings. My work reflects a profound understanding of light, shadow, and texture, bringing my art to life on paper using pencil(s).",
+        p2: "I've been passionate about art since I was a child. For over twenty years, I've focused on creating detailed portraits and sketches.",
+        p3: "My goal is to capture more than just what a person looks like; I want to show their true personality and feeling. I use light, shadow, and texture to bring my drawings to life on the page.",
+        p4: "Every piece I create is like a conversation with the person looking at it. This dedication to emotion and detail has helped my work gain appreciation from art lovers and collectors."
       },
       artistStatement: {
         heading: "Artist Statement",
@@ -43,7 +45,7 @@ const inlineTranslations = {
       }
     },
     contact: {
-      title: "Contact",
+      title: "Contact Me",
       intro: "Have a question or want to share feedback about my work? I'd love to hear from you.",
       form: {
         heading: "Send a Message",
