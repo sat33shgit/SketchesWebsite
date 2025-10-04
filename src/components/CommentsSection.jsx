@@ -116,6 +116,12 @@ const CommentsSection = ({ sketchId, sketchName }) => {
       const commentsRes = await fetch(`/api/comments/${sketchId}`);
       const commentsData = await commentsRes.json();
       setComments(Array.isArray(commentsData) ? commentsData : []);
+      
+      // Dispatch custom event to notify CommentCount components to refresh
+      const commentAddedEvent = new CustomEvent('commentAdded', {
+        detail: { sketchId: sketchId }
+      });
+      window.dispatchEvent(commentAddedEvent);
     } catch {
       setError('Failed to post comment.')
     }

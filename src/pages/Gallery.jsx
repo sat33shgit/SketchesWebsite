@@ -32,6 +32,27 @@ const Gallery = () => {
         setCommentCounts({})
         setCommentLoading(false)
       })
+      
+    // Listen for comment updates to refresh gallery comment counts
+    const handleCommentUpdate = (event) => {
+      if (event.detail && event.detail.sketchId) {
+        // Refresh comment counts when a new comment is added
+        fetch('/api/comments/counts')
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.success) setCommentCounts(data.data)
+          })
+          .catch(() => {
+            // If fetch fails, don't update
+          })
+      }
+    }
+
+    window.addEventListener('commentAdded', handleCommentUpdate)
+
+    return () => {
+      window.removeEventListener('commentAdded', handleCommentUpdate)
+    }
   }, [])
 
   useEffect(() => {
