@@ -1,14 +1,29 @@
 import { getAssetPath } from '../utils/paths'
 import useAnalytics from '../hooks/useAnalytics'
 import { useTranslation } from '../i18n'
+import useMaintenance from '../hooks/useMaintenance'
+import MaintenanceOverlay from '../components/MaintenanceOverlay'
 
 const About = () => {
   // Track page visit
   useAnalytics('about')
   
   const { t } = useTranslation()
+  const { isMaintenanceMode, isLoading } = useMaintenance()
 
-  return (
+  if (isLoading) {
+    return (
+      <div className="about-page">
+        <div className="about-container">
+          <div className="about-header">
+            <h1>Loading...</h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const aboutContent = (
     <div className="about-page">
       <div className="about-container">
         {/* Header */}
@@ -65,7 +80,13 @@ const About = () => {
         </div>
       </div>
     </div>
-  )
+  );
+
+  return isMaintenanceMode ? (
+    <MaintenanceOverlay>
+      {aboutContent}
+    </MaintenanceOverlay>
+  ) : aboutContent;
 }
 
 export default About

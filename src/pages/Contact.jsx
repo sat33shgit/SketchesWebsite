@@ -3,6 +3,8 @@ import { sendContactEmail } from '../utils/emailService'
 import DOMPurify from 'dompurify'
 import useAnalytics from '../hooks/useAnalytics'
 import { useTranslation } from '../i18n'
+import useMaintenance from '../hooks/useMaintenance'
+import MaintenanceOverlay from '../components/MaintenanceOverlay'
 
 function sanitizeInput(input) {
   // Remove all HTML tags and attributes
@@ -41,6 +43,7 @@ const Contact = () => {
   // Track page visit
   useAnalytics('contact')
   const { t } = useTranslation()
+  const { isMaintenanceMode, isLoading } = useMaintenance()
   // validateFields now accepts `t` directly; no global bridge required.
   
   const [formData, setFormData] = useState({
@@ -83,6 +86,15 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Block form submission during maintenance mode
+    if (isMaintenanceMode) {
+      setSubmitStatus({ 
+        message: t('contact.form.maintenanceMode', 'Contact form is unavailable during maintenance. Please try again later.'), 
+        isError: true 
+      })
+      return
+    }
 
     // Sanitize input
     const sanitized = {
@@ -134,7 +146,19 @@ const Contact = () => {
     }
   }
 
-  return (
+  if (isLoading) {
+    return (
+      <div className="contact-page">
+        <div className="contact-container">
+          <div className="contact-header">
+            <h1>Loading...</h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const contactContent = (
     <div className="contact-page">
       <div className="contact-container">
         {/* Header */}
@@ -160,7 +184,7 @@ const Contact = () => {
                   maxLength={100}
                   value={formData.name}
                   onChange={handleChange}
-                  disabled={messageDisabled}
+                  disabled={messageDisabled || isMaintenanceMode}
                 />
               </div>
 
@@ -176,7 +200,7 @@ const Contact = () => {
                   maxLength={100}
                   value={formData.email}
                   onChange={handleChange}
-                  disabled={messageDisabled}
+                  disabled={messageDisabled || isMaintenanceMode}
                 />
               </div>
 
@@ -192,7 +216,7 @@ const Contact = () => {
                   maxLength={100}
                   value={formData.subject}
                   onChange={handleChange}
-                  disabled={messageDisabled}
+                  disabled={messageDisabled || isMaintenanceMode}
                 />
               </div>
 
@@ -208,13 +232,13 @@ const Contact = () => {
                   maxLength={1000}
                   value={formData.message}
                   onChange={handleChange}
-                  disabled={messageDisabled}
+                  disabled={messageDisabled || isMaintenanceMode}
                 />
               </div>
 
                 <button
                 type="submit"
-                disabled={isSubmitting || messageDisabled}
+                disabled={isSubmitting || messageDisabled || isMaintenanceMode}
                 className="submit-button"
               >
                 {isSubmitting ? (
@@ -235,8 +259,15 @@ const Contact = () => {
                 )}
               </button>
 
+              {/* Maintenance Mode Notice */}
+              {isMaintenanceMode && (
+                <div className="message-disabled-notice">
+                  {t('contact.form.maintenanceNotice', 'Contact form is temporarily unavailable during maintenance. Please email me directly at bsateeshk@gmail.com')}
+                </div>
+              )}
+
               {/* Message Disabled Notice */}
-              {messageDisabled && (
+              {messageDisabled && !isMaintenanceMode && (
                 <div className="message-disabled-notice">
                   {t('contact.form.messageDisabled', 'Contact form is temporarily disabled. Please email me directly at bsateeshk@gmail.com')}
                 </div>
@@ -329,7 +360,13 @@ const Contact = () => {
         </div>
       </div>
     </div>
-  )
+  );
+
+  return isMaintenanceMode ? (
+    <MaintenanceOverlay>
+      {contactContent}
+    </MaintenanceOverlay>
+  ) : contactContent;
 }
 
 export default Contact

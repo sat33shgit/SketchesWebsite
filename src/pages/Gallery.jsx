@@ -2,12 +2,15 @@ import { Link } from 'react-router-dom'
 import { sketches } from '../data/sketches'
 import { getAssetPath } from '../utils/paths'
 import useAnalytics from '../hooks/useAnalytics'
+import useMaintenance from '../hooks/useMaintenance'
+import MaintenanceOverlay from '../components/MaintenanceOverlay'
 
 import { useEffect, useState } from 'react'
 import { useTranslation } from '../i18n'
 
 const Gallery = () => {
   const { t } = useTranslation()
+  const { isMaintenanceMode, loading } = useMaintenance()
   const [likeCounts, setLikeCounts] = useState({})
   const [commentCounts, setCommentCounts] = useState({})
   const [likeLoading, setLikeLoading] = useState(true)
@@ -95,7 +98,20 @@ const Gallery = () => {
       })
   }, [])
 
-  return (
+  // Loading state while checking maintenance mode
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white gallery-page">
+        <div className="page-container home-page">
+          <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+            <div>Loading...</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const galleryContent = (
     <div className="min-h-screen bg-white gallery-page">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="gallery-header">
@@ -162,7 +178,13 @@ const Gallery = () => {
         </div>
       </div>
     </div>
-  )
+  );
+
+  return isMaintenanceMode ? (
+    <MaintenanceOverlay>
+      {galleryContent}
+    </MaintenanceOverlay>
+  ) : galleryContent;
 }
 
 export default Gallery

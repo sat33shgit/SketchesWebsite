@@ -10,11 +10,21 @@ import CommentCount from '../components/CommentCount'
 import ViewCount from '../components/ViewCount'
 import useAnalytics from '../hooks/useAnalytics'
 import { useTranslation } from '../i18n'
+import useMaintenance from '../hooks/useMaintenance'
 
 
 const SketchDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { isMaintenanceMode, isLoading } = useMaintenance()
+  
+  // Redirect to gallery if maintenance mode is enabled
+  useEffect(() => {
+    if (isMaintenanceMode && !isLoading) {
+      navigate('/', { replace: true })
+    }
+  }, [isMaintenanceMode, isLoading, navigate])
+  
   // Local fallback metadata (title/image) for immediate UI skeleton only.
   // IMPORTANT: do not display local description text — always fetch the authoritative
   // description from the API (DB-backed) and render whatever the DB returns
@@ -419,6 +429,25 @@ const SketchDetail = () => {
     return () => { cancelled = true }
   }, [id])
 
+  // Show loading while checking maintenance mode to prevent flash
+  if (isLoading) {
+    return (
+      <div className="sketch-detail-page single-view">
+        <div className="sketch-detail-container single-view-container">
+          <div className="sketch-header">
+            <div className="header-nav">
+              <Link to="/gallery" className="back-nav-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Loading...
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sketch-detail-page single-view">
