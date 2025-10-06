@@ -301,7 +301,47 @@ WEB3FORMS_ACCESS_KEY=your_web3forms_access_key
 - **Email Service**: Web3Forms integration for reliable email delivery
 - **Input Sanitization**: XSS protection and SQL injection prevention
 
-## 📄 License
+## � Security
+
+### Security Headers
+The website implements comprehensive security headers to protect against common web vulnerabilities:
+
+- **Content-Security-Policy**: Prevents XSS attacks by controlling resource loading
+- **X-Frame-Options**: Protects against clickjacking attacks
+- **X-Content-Type-Options**: Prevents MIME-sniffing attacks
+- **Referrer-Policy**: Controls referrer information for privacy protection
+- **Permissions-Policy**: Disables unnecessary browser features (camera, microphone, etc.)
+- **Strict-Transport-Security**: Enforces HTTPS connections with HSTS
+
+### Security Testing Tools
+Regular security assessments are performed using these industry-standard tools:
+
+#### 🔍 **SSL/TLS Security**
+- **SSL Labs**: https://www.ssllabs.com/ssltest/
+  - Tests SSL/TLS configuration and certificate security
+  - Provides detailed analysis of encryption strength and vulnerabilities
+  - Recommended for checking HTTPS implementation quality
+
+#### 🛡️ **Website Security Scanner**
+- **Sucuri SiteCheck**: https://sucuri.net/
+  - Comprehensive website security and malware scanner
+  - Checks for malware, blacklisting, and security issues
+  - Monitors website reputation and safety status
+
+#### 📋 **Security Headers Analysis**
+- **Security Headers**: https://securityheaders.com/
+  - Analyzes HTTP security headers implementation
+  - Provides detailed scoring and recommendations
+  - Essential for checking Content-Security-Policy and other headers
+
+### Security Best Practices
+- **Regular Scanning**: Weekly security scans using the above tools
+- **Header Validation**: Automated testing of security headers on deployment
+- **Dependency Updates**: Regular updates of dependencies for security patches
+- **Input Sanitization**: All user inputs are sanitized and validated
+- **HTTPS Everywhere**: Strict HTTPS enforcement with HSTS headers
+
+## �📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
 
