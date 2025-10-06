@@ -101,7 +101,7 @@ export const sketches = [
   {
     id: 5,
     title: "Gayathri Devi",
-    description: "This is my oldest sketch, created in 2006, portraying the elegance and grace of Queen Gayathri Devi. The sketch is done entirely in graphite pencil, focusing on soft shading, sharp contrasts, and smooth gradients to bring out the depth in facial features. The highlights in the eyes, subtle shading on the cheeks, and the fine details in the hair and jewelry reflect my early exploration of realism. Despite being my initial attempt, the artwork captures a strong expression with a natural flow.",
+    description: "This is my oldest sketch portraying the elegance and grace of Queen Gayathri Devi of India. The sketch is done entirely in graphite pencil, focusing on soft shading, sharp contrasts, and smooth gradients to bring out the depth in facial features. The highlights in the eyes, subtle shading on the cheeks, and the fine details in the hair and jewelry reflect my early exploration of realism. Despite being my initial attempt, the artwork captures a strong expression with a natural flow.",
     completedDate: "2006-03-12",
     imagePath: "/images/Gayathri-Devi.jpg",
     orientation: "portrait",

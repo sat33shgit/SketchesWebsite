@@ -409,7 +409,7 @@ const SketchDetail = () => {
     return () => { cancelled = true }
   }, [id])
 
-  // Fetch visible comments for this sketch and display their comment text under "About This Piece"
+  // Fetch visible comments for this sketch and display their comment text under "About This Sketch"
   useEffect(() => {
     let cancelled = false
     const loadComments = async () => {
@@ -529,7 +529,7 @@ const SketchDetail = () => {
           {/* Title */}
           <h1 className="sketch-main-title">{sketch.title}</h1>
           
-          {/* Description moved to 'About This Piece' below the image */}
+          {/* Description moved to 'About This Sketch' below the image */}
         </div>
 
         {/* Main Content */}
@@ -572,9 +572,9 @@ const SketchDetail = () => {
             <div className="content-and-sidebar">
               {/* Left: Main Content */}
               <div className="main-content">
-                {/* About This Piece */}
+                {/* About This Sketch */}
                 <section className="content-section">
-                  <h2 className="section-title">{t('sketch.aboutThisPiece', 'About This Piece')}</h2>
+                  <h2 className="section-title">{t('sketch.aboutThisSketch', 'About This Sketch')}</h2>
                   <div className="section-content">
                     {parseRichText(sketch.description)}
                   </div>

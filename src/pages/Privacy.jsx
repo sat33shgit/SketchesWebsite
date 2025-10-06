@@ -149,7 +149,7 @@ const Privacy = () => {
                 </ul>
 
                 <h4 style={{ fontWeight: 600, marginBottom: 8 }}>Cookies & Local Storage</h4>
-                <p style={{ color: '#6b7280' }}>I may use minimal cookies or local storage to remember your preferences (such as theme settings) and provide a better browsing experience. No personal information is stored in these cookies.</p>
+                <p style={{ color: '#6b7280' }}>I don't use cookies and use minimal local storage to remember your preferences (such as likes) and provide a better browsing experience.</p>
               </div>
             </div>
           </div>
@@ -174,7 +174,7 @@ const Privacy = () => {
                 <p style={{ color: '#6b7280', marginBottom: 12 }}>Since I don't collect personal information for general browsing, there's minimal data to control. However, you can:</p>
 
                 <ul style={{ color: '#6b7280', marginLeft: 20, marginBottom: 12, listStyleType: 'disc' }}>
-                  <li style={{ marginBottom: 8 }}>Browse with cookies disabled (may affect functionality)</li>
+                  <li style={{ marginBottom: 8 }}>Browse with cookies disabled</li>
                   <li style={{ marginBottom: 8 }}>Use private/incognito browsing mode</li>
                   <li style={{ marginBottom: 8 }}>Clear your browser's local storage at any time</li>
                   <li style={{ marginBottom: 8 }}>Contact me with any privacy concerns</li>
@@ -216,7 +216,7 @@ const Privacy = () => {
           <div style={{ background: '#f3f4f6', borderRadius: 8, padding: '22px 24px', maxWidth: 850, margin: '0 auto 32px', textAlign: 'center', color: '#374151' }}>
             <div style={{ fontWeight: 600, marginBottom: 8, color: '#111827' }}>Privacy Summary</div>
             <div style={{ color: '#6b7280', maxWidth: 720, margin: '0 auto', lineHeight: 1.8 }}>
-              This pencil portrait gallery is designed with privacy in mind. I don't collect personal information for general browsing; I use minimal analytics for improvement, and I protect both visitor privacy and artwork integrity.
+              This pencil sketch gallery is designed with privacy in mind. I don't collect personal information for general browsing; I use minimal analytics for improvement, and I protect both visitor privacy and artwork integrity.
             </div>
             <div style={{ marginTop: 12, color: '#6b7280' }}>Questions? Visit the <Link to="/contact">Contact</Link> page or email me directly.</div>
           </div>
