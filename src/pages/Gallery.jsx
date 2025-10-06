@@ -10,7 +10,7 @@ import { useTranslation } from '../i18n'
 
 const Gallery = () => {
   const { t } = useTranslation()
-  const { isMaintenanceMode, loading } = useMaintenance()
+  const { isMaintenanceMode } = useMaintenance()
   const [likeCounts, setLikeCounts] = useState({})
   const [commentCounts, setCommentCounts] = useState({})
   const [likeLoading, setLikeLoading] = useState(true)
@@ -97,19 +97,6 @@ const Gallery = () => {
         setLikeLoading(false)
       })
   }, [])
-
-  // Loading state while checking maintenance mode
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white gallery-page">
-        <div className="page-container home-page">
-          <div className="loading-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
-            <div>Loading...</div>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   const galleryContent = (
     <div className="min-h-screen bg-white gallery-page">

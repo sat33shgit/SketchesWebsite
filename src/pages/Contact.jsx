@@ -43,7 +43,7 @@ const Contact = () => {
   // Track page visit
   useAnalytics('contact')
   const { t } = useTranslation()
-  const { isMaintenanceMode, isLoading } = useMaintenance()
+  const { isMaintenanceMode } = useMaintenance()
   // validateFields now accepts `t` directly; no global bridge required.
   
   const [formData, setFormData] = useState({
@@ -144,18 +144,6 @@ const Contact = () => {
     } finally {
       setIsSubmitting(false)
     }
-  }
-
-  if (isLoading) {
-    return (
-      <div className="contact-page">
-        <div className="contact-container">
-          <div className="contact-header">
-            <h1>Loading...</h1>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   const contactContent = (

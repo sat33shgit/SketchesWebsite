@@ -9,19 +9,7 @@ const About = () => {
   useAnalytics('about')
   
   const { t } = useTranslation()
-  const { isMaintenanceMode, isLoading } = useMaintenance()
-
-  if (isLoading) {
-    return (
-      <div className="about-page">
-        <div className="about-container">
-          <div className="about-header">
-            <h1>Loading...</h1>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { isMaintenanceMode } = useMaintenance()
 
   const aboutContent = (
     <div className="about-page">
