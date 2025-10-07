@@ -20,7 +20,7 @@ const Navbar = () => {
       <div className="nav-container">
         {/* Logo */}
         <Link to="/" className="logo">
-          <img src="/images/logo.png" alt="Sateesh Sketches" className="logo-image" />
+          <img src="/images/logo.svg" alt="Sateesh Sketches" className="logo-image" />
           <span className="logo-text">{t('ui.nav.logoText', 'Sateesh Sketches')}</span>
         </Link>
 
