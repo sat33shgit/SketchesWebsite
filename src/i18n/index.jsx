@@ -14,7 +14,7 @@ const inlineTranslations = {
       footer: {
         privacy: "Privacy Policy",
         contact: "Contact",
-        copyright: "© 2025 Sateesh Boggarapu. All artwork is original and protected by copyright."
+        copyright: "© 2025 Sateesh Sketches. All artwork is original and protected by copyright."
       }
     },
     gallery: {
