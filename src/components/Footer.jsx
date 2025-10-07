@@ -13,11 +13,7 @@ const Footer = () => {
         </div>
 
         <div style={{ textAlign: 'center', color: '#6b7280' }}>
-          {t('ui.footer.copyright', '© 2025 Sateesh Sketches. All artwork is original and protected by copyright.')}
-        </div>
-
-        <div style={{ textAlign: 'center', color: '#9ca3af', fontSize: '0.75rem', marginTop: '4px' }}>
-          v1.0.0
+          {t('ui.footer.copyright', '© 2025 Sateesh Sketches. All artwork is original and protected by copyright. v1.0.0')}
         </div>
       </div>
     </footer>
