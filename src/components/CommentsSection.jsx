@@ -88,12 +88,25 @@ const CommentsSection = ({ sketchId, sketchName }) => {
       return;
     }
     setLoading(true);
+    let country = 'Unknown';
+    try {
+      // Get country from ipapi.co
+      const geoRes = await fetch('https://ipapi.co/json/');
+      if (geoRes.ok) {
+        const geoData = await geoRes.json();
+        if (geoData && geoData.country_name) {
+          country = geoData.country_name;
+        }
+      }
+    } catch (geoErr) {
+      // Ignore geolocation errors, fallback to Unknown
+      console.warn('Country detection failed:', geoErr);
+    }
     try {
       const res = await fetch(`/api/comments/${sketchId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // send sanitized values
-        body: JSON.stringify({ name: sanitized.name, comment: sanitized.comment })
+        body: JSON.stringify({ name: sanitized.name, comment: sanitized.comment, country })
       });
       if (!res.ok) throw new Error('Failed to post comment');
       // capture values for email notification before clearing form
