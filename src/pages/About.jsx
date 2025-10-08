@@ -65,6 +65,35 @@ const About = () => {
             <h3>{t('about.artistStatement.heading', 'Artist Statement')}</h3>
             <p>{t('about.artistStatement.body', 'My art is a reflection of the world around me, a way to capture the beauty and emotion I see in everyday life. Through pencil sketches, I aim to create a connection between the viewer and the subject, inviting them to see the world through my eyes. Each stroke is a step in a journey of discovery, a process of bringing a vision to life on paper. I am driven by a desire to constantly improve and explore new techniques, pushing the boundaries of what can be achieved with a simple pencil.')}</p>
           </div>
+          
+          {/* Techniques & Tools */}
+          <div className="artist-statement-card">
+            <h3>{t('about.toolsAndTechniques.heading', 'Tools & Techniques')}</h3>
+            
+            <div className="tools-grid">
+              <div className="tools-section">
+                <h4>{t('about.toolsAndTechniques.materials', 'Preferred Materials')}</h4>
+                <ul className="tools-list">
+                  <li>{t('about.toolsAndTechniques.graphite', 'Graphite Pencils (2H - 6B)')}</li>
+                  <li>{t('about.toolsAndTechniques.charcoal', 'Charcoal Sticks')}</li>
+                  <li>{t('about.toolsAndTechniques.blending', 'Blending Stumps')}</li>
+                  <li>{t('about.toolsAndTechniques.erasers', 'Kneaded Erasers')}</li>
+                  <li>{t('about.toolsAndTechniques.paper', 'Strathmore Paper')}</li>
+                </ul>
+              </div>
+              
+              <div className="tools-section">
+                <h4>{t('about.toolsAndTechniques.techniques', 'Specialty Techniques')}</h4>
+                <ul className="tools-list">
+                  <li>{t('about.toolsAndTechniques.crossHatching', 'Cross-hatching')}</li>
+                  <li>{t('about.toolsAndTechniques.stippling', 'Stippling')}</li>
+                  <li>{t('about.toolsAndTechniques.smudging', 'Smudging & Blending')}</li>
+                  <li>{t('about.toolsAndTechniques.layered', 'Layered Shading')}</li>
+                  <li>{t('about.toolsAndTechniques.negative', 'Negative Space Work')}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
