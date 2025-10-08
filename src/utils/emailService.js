@@ -78,7 +78,7 @@ export const sendNotificationEmail = async ({ sketchName, commenterName, message
     console.error('Notification email failed:', err)
     // fallback: log the notification with timestamp and return success to avoid blocking UX
     try {
-  console.log('Notification fallback:', { sketchName, commenterName, commentText: bodyMessage, timestamp })
+  // Notification fallback suppressed: do not log to console
       return { success: true }
     } catch {
       return { success: false }
