@@ -50,38 +50,30 @@ export const sendContactEmail = async (formData) => {
 
 // Minimal notification email used for comment notifications.
 export const sendNotificationEmail = async ({ sketchName, commenterName, message } = {}) => {
-  // Keep message body unchanged; only set the subject to identify sketch
-  const timestamp = new Date().toLocaleString()
-  const bodyMessage = `${message || ''}\n\nSent at: ${timestamp}`
+  // Use the same backend API for notifications
+  const timestamp = new Date().toLocaleString();
+  const bodyMessage = `${message || ''}\n\nSent at: ${timestamp}`;
   try {
-    const response = await fetch('https://api.web3forms.com/submit', {
+    const response = await fetch('/api/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
       },
       body: JSON.stringify({
-        access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || '92235cbf-7e66-4121-a028-ba50d463f041',
-  name: commenterName || 'Anonymous',
-  message: bodyMessage,
-  from_name: commenterName ? `${commenterName}` : 'Anonymous'
-  // Intentionally omitting `email`, `_subject`, `_template`, and `to_email` for minimal notification
+        name: commenterName || 'Anonymous',
+        email: '', // No email for notifications
+        subject: `New comment on ${sketchName || 'sketch'}`,
+        message: bodyMessage
       })
-    })
-
-    const result = await response.json()
-    if (result.success) {
-      return { success: true }
+    });
+    const result = await response.json();
+    if (response.ok && result && result.success) {
+      return { success: true };
     }
-    throw new Error(result.message || 'Failed to send notification')
+    return { success: false, message: result?.message || 'Failed to send notification' };
   } catch (err) {
-    console.error('Notification email failed:', err)
-    // fallback: log the notification with timestamp and return success to avoid blocking UX
-    try {
-  // Notification fallback suppressed: do not log to console
-      return { success: true }
-    } catch {
-      return { success: false }
-    }
+    // Suppress errors, do not log to console
+    return { success: false, message: 'Notification email failed.' };
   }
+}
 }
