@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify'
 import { sendNotificationEmail } from '../utils/emailService'
+import { getCountryName } from '../utils/geo'
 import UserAvatar from './UserAvatar'
 import { useTranslation } from '../i18n'
 
@@ -88,20 +89,8 @@ const CommentsSection = ({ sketchId, sketchName }) => {
       return;
     }
     setLoading(true);
-    let country = 'Unknown';
-    try {
-      // Get country from ipapi.co
-      const geoRes = await fetch('https://ipapi.co/json/');
-      if (geoRes.ok) {
-        const geoData = await geoRes.json();
-        if (geoData && geoData.country_name) {
-          country = geoData.country_name;
-        }
-      }
-    } catch (geoErr) {
-      // Ignore geolocation errors, fallback to Unknown
-      console.warn('Country detection failed:', geoErr);
-    }
+    // Use reusable utility for country detection
+    const country = await getCountryName();
     try {
       const res = await fetch(`/api/comments/${sketchId}`, {
         method: 'POST',
