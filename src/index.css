@@ -430,7 +430,7 @@ nav::after {
 .sketch-detail-image.portrait {
   max-width: 1050px; /* increased ~1.5x to enlarge view area */
   max-height: 95vh; /* increased to allow larger visual area (approx 1.5x) */
-  aspect-ratio: 3/4;
+  /* aspect-ratio: 3/4; /* Removed to prevent cropping */
   object-fit: contain;
   border-radius: 16px; /* More rounded edges */
   background: #ffffff;
@@ -439,7 +439,7 @@ nav::after {
 .sketch-detail-image.landscape {
   max-width: 100%;
   max-height: 95vh; /* increased to allow larger visual area (approx 1.5x) */
-  aspect-ratio: 4/3;
+  /* aspect-ratio: 4/3; /* Removed to prevent cropping */
   object-fit: contain;
   border-radius: 16px; /* More rounded edges */
   background: #ffffff;
@@ -2142,13 +2142,13 @@ footer {
 
 /* Let the detail image occupy more layout space (not clipped) on medium+ screens */
 @media (min-width: 768px) {
-  /* On desktop make the image fill the view area; crop sides if necessary to avoid white bars */
+  /* On desktop make the image show completely without cropping */
   .image-center > img.sketch-detail-image {
     width: auto !important;
     /* Increase desktop image height to ~1.5x of previous to enlarge view area */
-    height: 95vh !important; /* larger visual area */
-    object-fit: cover !important; /* crop to fill the area */
-    max-width: none !important;
+    max-height: 95vh !important; /* larger visual area */
+    object-fit: contain !important; /* show full image without cropping */
+    max-width: 100% !important;
     position: static !important;
     transform: none !important; /* no scaling */
     margin-left: auto !important;
@@ -2156,7 +2156,7 @@ footer {
   }
 
   .single-view-image {
-    overflow: hidden !important; /* clip scaled image edges */
+    overflow: visible !important; /* don't clip the image */
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
