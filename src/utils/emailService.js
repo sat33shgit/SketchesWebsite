@@ -44,8 +44,8 @@ export async function sendNotificationEmail({ sketchName, commenterName, message
       },
       body: JSON.stringify({
         name: commenterName || 'Anonymous',
-        email: '',
-        subject: `New comment on ${sketchName || 'sketch'}`,
+        email: 'bsateeshk@gmail.com',
+        subject: `New comment notification: ${sketchName || 'sketch'}`,
         message: bodyMessage
       })
     });
