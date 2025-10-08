@@ -49,12 +49,33 @@ export default async function handler(req, res) {
     if (!name || !comment) {
       return res.status(400).json({ error: 'Name and comment are required' });
     }
+    // Automated country detection using ipapi.co
+    let country = 'Unknown';
+    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.headers['x-real-ip'] || req.connection?.remoteAddress;
+    if (body.country && typeof body.country === 'string') {
+      country = body.country;
+    } else if (req.headers['x-country'] && typeof req.headers['x-country'] === 'string') {
+      country = req.headers['x-country'];
+    } else if (ip && ip !== '127.0.0.1' && ip !== '::1') {
+      try {
+        const fetch = (await import('node-fetch')).default;
+        const geoRes = await fetch(`https://ipapi.co/${ip}/json/`);
+        if (geoRes.ok) {
+          const geoData = await geoRes.json();
+          if (geoData && geoData.country_name) {
+            country = geoData.country_name;
+          }
+        }
+      } catch (geoErr) {
+        console.warn('Country detection failed:', geoErr);
+      }
+    }
     try {
       await sql`
-        INSERT INTO comments (sketch_id, name, comment, visible, updated_at)
-        VALUES (${sketch_id}, ${name}, ${comment}, 'Y', CURRENT_TIMESTAMP)
+        INSERT INTO comments (sketch_id, name, comment, country, visible, updated_at)
+        VALUES (${sketch_id}, ${name}, ${comment}, ${country}, 'Y', CURRENT_TIMESTAMP)
       `;
-      return res.status(201).json({ message: 'Comment added' });
+      return res.status(201).json({ message: 'Comment added', country });
     } catch (err) {
       console.error('POST comment error:', err && (err.message || err), 'Body:', body);
       return res.status(500).json({ error: err && err.message });
