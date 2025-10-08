@@ -31,7 +31,7 @@ const _getStatsFromLocalStorage = (sketchId) => {
       userDisliked
     }
   } catch (error) {
-    console.error('LocalStorage error:', error)
+  // console.error('LocalStorage error:', error)
     return { likes: 0, dislikes: 0, userLiked: false, userDisliked: false }
   }
 }
@@ -60,9 +60,9 @@ const _saveStatsToLocalStorage = (sketchId, stats) => {
       localStorage.removeItem(`user_disliked_${sketchId}`)
     }
     
-    console.log(`Saved stats for sketch ${sketchId}:`, stats)
+  // console.log(`Saved stats for sketch ${sketchId}:`, stats)
   } catch (error) {
-    console.error('Error saving to localStorage:', error)
+  // console.error('Error saving to localStorage:', error)
   }
 }
 
@@ -78,14 +78,14 @@ const _fetchFromJSONBin = async () => {
     
     if (response.ok) {
       const data = await response.json()
-      console.log('Fetched data from JSONBin:', data.record)
+  // console.log('Fetched data from JSONBin:', data.record)
       return data.record || {}
     } else {
-      console.log('JSONBin fetch failed, using localStorage')
+  // console.log('JSONBin fetch failed, using localStorage')
       return null
     }
   } catch (error) {
-    console.log('JSONBin unavailable, using localStorage:', error.message)
+  // console.log('JSONBin unavailable, using localStorage:', error.message)
     return null
   }
 }
@@ -95,10 +95,10 @@ const _saveToJSONBin = async (data) => {
   try {
     // For demo purposes, we'll use localStorage as JSONBin requires API key for writes
     // In production, you would set up a proper API key
-    console.log('Would save to JSONBin:', data)
+  // console.log('Would save to JSONBin:', data)
     return true
   } catch (error) {
-    console.error('Error saving to JSONBin:', error)
+  // console.error('Error saving to JSONBin:', error)
     return false
   }
 }
@@ -116,7 +116,7 @@ const initializeGlobalStats = () => {
       globalStats = JSON.parse(saved)
     }
   } catch (error) {
-    console.error('Error loading global stats:', error)
+  // console.error('Error loading global stats:', error)
   }
 }
 
@@ -125,7 +125,7 @@ const saveGlobalStats = () => {
   try {
     localStorage.setItem('global_sketch_stats', JSON.stringify(globalStats))
   } catch (error) {
-    console.error('Error saving global stats:', error)
+  // console.error('Error saving global stats:', error)
   }
 }
 
@@ -134,7 +134,7 @@ initializeGlobalStats()
 
 // Get sketch statistics with cross-device sync
 export const getSketchStats = async (sketchId) => {
-  console.log(`Getting stats for sketch ${sketchId}`)
+  // console.log(`Getting stats for sketch ${sketchId}`)
   
   // Initialize sketch stats if not exists
   if (!globalStats[sketchId]) {
@@ -156,13 +156,13 @@ export const getSketchStats = async (sketchId) => {
     userDisliked: sketchData.dislikedBy?.includes(deviceId) || false
   }
   
-  console.log('Current stats:', stats)
+  // console.log('Current stats:', stats)
   return stats
 }
 
 // Toggle like for a sketch with global persistence
 export const toggleLike = async (sketchId) => {
-  console.log(`Toggling like for sketch ${sketchId}`)
+  // console.log(`Toggling like for sketch ${sketchId}`)
   
   const deviceId = getDeviceId()
   

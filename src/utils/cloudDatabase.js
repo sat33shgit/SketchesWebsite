@@ -49,7 +49,7 @@ const getCloudData = async () => {
 
 // Get sketch statistics
 export const getSketchStats = async (sketchId) => {
-  console.log(`Getting stats for sketch ${sketchId}`)
+  // console.log(`Getting stats for sketch ${sketchId}`)
   
   // Try to get cloud data first
   const cloudData = await getCloudData()
@@ -68,19 +68,19 @@ export const getSketchStats = async (sketchId) => {
       userDisliked
     }
     
-    console.log('Cloud stats:', stats)
+  // console.log('Cloud stats:', stats)
     return stats
   }
   
   // Fallback to localStorage
   const localStats = getLocalStorageStats(sketchId)
-  console.log('Local stats:', localStats)
+  // console.log('Local stats:', localStats)
   return localStats
 }
 
 // Toggle like for a sketch
 export const toggleLike = async (sketchId) => {
-  console.log(`Toggling like for sketch ${sketchId}`)
+  // console.log(`Toggling like for sketch ${sketchId}`)
 
   const currentStats = await getSketchStats(sketchId)
 
@@ -118,13 +118,13 @@ export const toggleLike = async (sketchId) => {
   localStorage.setItem('sketch_likes', JSON.stringify(likes))
   localStorage.setItem('sketch_dislikes', JSON.stringify(dislikes))
 
-  console.log('New stats after like toggle:', newStats)
+  // console.log('New stats after like toggle:', newStats)
   return newStats
 }
 
 // Toggle dislike for a sketch
 export const toggleDislike = async (sketchId) => {
-  console.log(`Toggling dislike for sketch ${sketchId}`)
+  // console.log(`Toggling dislike for sketch ${sketchId}`)
   
   const currentStats = await getSketchStats(sketchId)
   
@@ -162,6 +162,6 @@ export const toggleDislike = async (sketchId) => {
   localStorage.setItem('sketch_likes', JSON.stringify(likes))
   localStorage.setItem('sketch_dislikes', JSON.stringify(dislikes))
   
-  console.log('New stats after dislike toggle:', newStats)
+  // console.log('New stats after dislike toggle:', newStats)
   return newStats
 }
