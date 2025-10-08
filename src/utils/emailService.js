@@ -45,8 +45,9 @@ export async function sendNotificationEmail({ sketchName, commenterName, message
       body: JSON.stringify({
         name: commenterName || 'Anonymous',
         email: 'bsateeshk@gmail.com',
-        subject: `New comment notification: ${sketchName || 'sketch'}`,
-        message: bodyMessage
+        subject: `A new comment from ${commenterName || 'Anonymous'}`,
+        message: bodyMessage,
+        from_name: 'Sateesh Sketches Form'
       })
     });
     const result = await response.json();
