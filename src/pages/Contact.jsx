@@ -215,6 +215,7 @@ const Contact = () => {
                 <textarea
                   id="message"
                   name="message"
+                  className="comment-textarea"
                   required
                   rows={6}
                   maxLength={1000}
