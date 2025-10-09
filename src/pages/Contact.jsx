@@ -165,6 +165,7 @@ const Contact = () => {
                   {t('contact.form.nameLabel', 'Your Name')}
                 </label>
                 <input
+                  className="name-input"
                   type="text"
                   id="name"
                   name="name"
@@ -181,6 +182,7 @@ const Contact = () => {
                   {t('contact.form.emailLabel', 'Your Email')}
                 </label>
                 <input
+                  className="name-input"
                   type="email"
                   id="email"
                   name="email"
@@ -197,6 +199,7 @@ const Contact = () => {
                   {t('contact.form.subjectLabel', 'Subject')}
                 </label>
                 <input
+                  className="name-input"
                   type="text"
                   id="subject"
                   name="subject"
