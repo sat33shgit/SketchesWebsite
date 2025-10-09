@@ -12,11 +12,11 @@ const useAnalytics = (pageType, pageId = null) => {
         const enableTracking = true // Always enable for now
         
         if (!enableTracking) {
-          console.log(`[Analytics] Would track: ${pageType}${pageId ? ` - ${pageId}` : ''}`)
+          // console.log(`[Analytics] Would track: ${pageType}${pageId ? ` - ${pageId}` : ''}`)
           return
         }
 
-        console.log(`[Analytics] Tracking: ${pageType}${pageId ? ` - ${pageId}` : ''}`) // Debug log
+  // console.log(`[Analytics] Tracking: ${pageType}${pageId ? ` - ${pageId}` : ''}`) // Debug log
 
         const response = await fetch('/api/analytics/track', {
           method: 'POST',
@@ -30,12 +30,12 @@ const useAnalytics = (pageType, pageId = null) => {
         })
 
         if (!response.ok) {
-          console.warn('Failed to track visit:', response.status, response.statusText)
+          // console.warn('Failed to track visit:', response.status, response.statusText)
         } else {
-          console.log(`[Analytics] Successfully tracked: ${pageType}${pageId ? ` - ${pageId}` : ''}`)
+          // console.log(`[Analytics] Successfully tracked: ${pageType}${pageId ? ` - ${pageId}` : ''}`)
         }
       } catch (error) {
-        console.warn('Error tracking visit:', error)
+  // console.warn('Error tracking visit:', error)
       }
     }
 
